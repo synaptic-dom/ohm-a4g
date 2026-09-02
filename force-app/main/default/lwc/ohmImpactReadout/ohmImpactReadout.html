@@ -1,0 +1,70 @@
+<template>
+    <section class="ohm-impact" aria-labelledby="ohm-impact-heading">
+        <h2
+            id="ohm-impact-heading"
+            class="ohm-impact__heading"
+            data-focus-heading
+            tabindex="-1"
+        >
+            Your agents' yearly footprint
+        </h2>
+
+        <c-ohm-efficiency-rating
+            grade={grade}
+            score={score}
+            calm-mode={calmMode}
+            data-id="rating"
+        ></c-ohm-efficiency-rating>
+
+        <h3 class="ohm-impact__subheading">Organization-wide</h3>
+        <c-ohm-impact-receipt
+            metrics={orgMetrics}
+            calm-mode={calmMode}
+            volume-assumption={scaledVolume}
+            confidence={confidence}
+            telemetry-backed={telemetryBacked}
+            data-id="org-receipt"
+        ></c-ohm-impact-receipt>
+
+        <c-ohm-volume-scrubber
+            calm-mode={calmMode}
+            value={currentSessions}
+            onvolumechange={handleVolumeChange}
+            data-id="scrubber"
+        ></c-ohm-volume-scrubber>
+
+        <template lwc:if={hasArtifacts}>
+            <h3 class="ohm-impact__subheading">By artifact</h3>
+            <ul class="ohm-impact__artifacts" data-id="artifact-rows">
+                <template for:each={artifactRows} for:item="row">
+                    <li key={row.id} class="ohm-impact__artifact" data-id="artifact-row">
+                        <span class="ohm-impact__artifact-label">{row.label}</span>
+                        <span class="ohm-impact__artifact-energy">{row.energyText}</span>
+                        <span class="ohm-impact__artifact-savings">{row.savingsText}</span>
+                        <span
+                            class="ohm-impact__artifact-provenance"
+                            data-id="artifact-provenance"
+                            >{row.provenance}</span
+                        >
+                    </li>
+                </template>
+            </ul>
+        </template>
+
+        <c-ohm-methodology-panel
+            assumptions={assumptions}
+            telemetry-backed={telemetryBacked}
+            calm-mode={calmMode}
+            data-id="methodology"
+        ></c-ohm-methodology-panel>
+
+        <lightning-button
+            variant="brand"
+            label="See recommendations"
+            title="See recommendations"
+            onclick={handleViewRecommendations}
+            data-id="view-recommendations"
+            class="ohm-impact__cta"
+        ></lightning-button>
+    </section>
+</template>

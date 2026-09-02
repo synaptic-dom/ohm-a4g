@@ -1,0 +1,30 @@
+<template>
+    <dl class="ohm-receipt" data-id="receipt">
+        <template for:each={displayRows} for:item="row">
+            <div class="ohm-receipt__row" key={row.id} data-id="receipt-row">
+                <dt class="ohm-receipt__term" data-id="receipt-term">{row.label}</dt>
+                <dd class="ohm-receipt__desc" data-id="receipt-desc">
+                    <span class="ohm-receipt__central" data-id="receipt-central"
+                        >{row.centralText}</span
+                    >
+                    <span class="ohm-receipt__range" data-id="receipt-range"
+                        >{row.rangeText}</span
+                    >
+                    <span class="ohm-receipt__provenance" data-id="receipt-provenance"
+                        >{row.provenance}</span
+                    >
+                    <template lwc:if={row.showBar}>
+                        <c-ohm-uncertainty-bar
+                            label={row.label}
+                            unit={row.unit}
+                            low={row.low}
+                            central={row.central}
+                            high={row.high}
+                            data-id="receipt-bar"
+                        ></c-ohm-uncertainty-bar>
+                    </template>
+                </dd>
+            </div>
+        </template>
+    </dl>
+</template>

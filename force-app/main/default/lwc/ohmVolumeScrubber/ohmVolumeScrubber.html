@@ -1,0 +1,45 @@
+<template>
+    <div class="ohm-scrubber">
+        <span id="ohm-scrubber-label" class="ohm-scrubber__label">
+            Daily sessions modeled
+        </span>
+
+        <template lwc:if={calmMode}>
+            <lightning-input
+                type="number"
+                label="Daily sessions modeled"
+                value={value}
+                min={minNum}
+                max={maxNum}
+                step={step}
+                onchange={handleNumberChange}
+                data-id="scrubber-number"
+            ></lightning-input>
+        </template>
+
+        <template lwc:else>
+            <div
+                class="ohm-scrubber__slider"
+                role="slider"
+                tabindex="0"
+                aria-labelledby="ohm-scrubber-label"
+                aria-valuemin={minNum}
+                aria-valuemax={maxNum}
+                aria-valuenow={value}
+                aria-valuetext={valueText}
+                onkeydown={handleKeydown}
+                data-id="scrubber-slider"
+            >
+                <span class="ohm-scrubber__value" aria-hidden="true">{valueText}</span>
+            </div>
+        </template>
+
+        <div
+            class="ohm-scrubber__announce"
+            aria-live="polite"
+            data-id="scrubber-announce"
+        >
+            {announceText}
+        </div>
+    </div>
+</template>

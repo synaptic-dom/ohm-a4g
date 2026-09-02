@@ -1,0 +1,35 @@
+<template>
+    <section class="ohm-recs" aria-labelledby="ohm-recs-heading">
+        <h2
+            id="ohm-recs-heading"
+            class="ohm-recs__heading"
+            data-focus-heading
+            tabindex="-1"
+        >
+            Recommended changes
+        </h2>
+
+        <template lwc:if={hasFindings}>
+            <ul class="ohm-recs__list" data-id="rec-list">
+                <template for:each={cards} for:item="card">
+                    <li key={card.key} class="ohm-recs__item">
+                        <c-ohm-recommendation-card
+                            finding={card.finding}
+                            calm-mode={calmMode}
+                            volume-assumption={volumeAssumption}
+                            telemetry-backed={telemetryBacked}
+                            error-message={card.error}
+                            oncreatetask={handleCreateTask}
+                            data-id="rec-card"
+                        ></c-ohm-recommendation-card>
+                    </li>
+                </template>
+            </ul>
+        </template>
+        <template lwc:else>
+            <p class="ohm-recs__empty" data-id="rec-empty">
+                No findings — this org's agents are already running lean.
+            </p>
+        </template>
+    </section>
+</template>

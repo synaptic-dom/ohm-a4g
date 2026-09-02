@@ -1,0 +1,15 @@
+<template>
+    <div class="ohm-calm-toggle">
+        <lightning-input
+            type="toggle"
+            label="Calm Mode"
+            message-toggle-active="On"
+            message-toggle-inactive="Off"
+            checked={calmMode}
+            onchange={handleChange}
+        ></lightning-input>
+        <span class="ohm-calm-toggle__state" data-id="state-text">
+            Calm Mode is {stateText}
+        </span>
+    </div>
+</template>

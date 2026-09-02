@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Annual_Energy_Savings_Wh_High__c</fullName>
+    <label>Annual Energy Savings Wh High</label>
+    <type>Number</type>
+    <precision>16</precision>
+    <scale>4</scale>
+    <required>false</required>
+    <externalId>false</externalId>
+    <unique>false</unique>
+    <trackTrending>false</trackTrending>
+</CustomField>

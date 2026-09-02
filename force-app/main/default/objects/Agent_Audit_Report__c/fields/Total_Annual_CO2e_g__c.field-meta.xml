@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Total_Annual_CO2e_g__c</fullName>
+    <label>Total Annual CO2e g</label>
+    <type>Summary</type>
+    <summaryForeignKey>Finding__c.Agent_Audit_Report__c</summaryForeignKey>
+    <summaryOperation>sum</summaryOperation>
+    <summarizedField>Finding__c.Annual_CO2e_g_Central__c</summarizedField>
+    <trackTrending>false</trackTrending>
+</CustomField>

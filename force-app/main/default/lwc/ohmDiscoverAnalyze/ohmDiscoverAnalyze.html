@@ -1,0 +1,37 @@
+<template>
+    <section class="ohm-discover" aria-labelledby="ohm-discover-heading">
+        <h2
+            id="ohm-discover-heading"
+            class="ohm-discover__heading"
+            data-focus-heading
+            tabindex="-1"
+        >
+            {headingText}
+        </h2>
+
+        <template lwc:if={showSpinner}>
+            <div class="ohm-discover__spinner" data-id="spinner" aria-hidden="true"></div>
+        </template>
+
+        <lightning-progress-bar
+            value={progressValue}
+            size="large"
+            data-id="progress-bar"
+        ></lightning-progress-bar>
+        <p class="ohm-discover__percent">{progressValue}% complete</p>
+
+        <h3 class="ohm-discover__log-heading" id="ohm-discover-log-heading">
+            Progress log
+        </h3>
+        <ul
+            class="ohm-discover__log"
+            data-id="progress-log"
+            aria-live="polite"
+            aria-labelledby="ohm-discover-log-heading"
+        >
+            <template for:each={logEntries} for:item="entry">
+                <li key={entry.id} class="ohm-discover__log-item">{entry.text}</li>
+            </template>
+        </ul>
+    </section>
+</template>

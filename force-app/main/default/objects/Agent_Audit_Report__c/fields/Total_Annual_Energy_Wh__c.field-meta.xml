@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Total_Annual_Energy_Wh__c</fullName>
+    <label>Total Annual Energy Wh</label>
+    <type>Summary</type>
+    <summaryForeignKey>Finding__c.Agent_Audit_Report__c</summaryForeignKey>
+    <summaryOperation>sum</summaryOperation>
+    <summarizedField>Finding__c.Annual_Energy_Wh_Central__c</summarizedField>
+    <trackTrending>false</trackTrending>
+</CustomField>

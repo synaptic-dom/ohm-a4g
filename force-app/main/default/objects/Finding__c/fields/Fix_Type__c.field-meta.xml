@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Fix_Type__c</fullName>
+    <label>Fix Type</label>
+    <type>Picklist</type>
+    <required>false</required>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>Replace_With_Flow</fullName><default>false</default><label>Replace_With_Flow</label></value>
+            <value><fullName>Replace_With_Apex</fullName><default>false</default><label>Replace_With_Apex</label></value>
+            <value><fullName>Downsize_Model</fullName><default>false</default><label>Downsize_Model</label></value>
+            <value><fullName>Trim_Instructions</fullName><default>false</default><label>Trim_Instructions</label></value>
+            <value><fullName>Consolidate_Calls</fullName><default>false</default><label>Consolidate_Calls</label></value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

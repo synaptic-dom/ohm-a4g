@@ -1,0 +1,88 @@
+<template>
+    <template lwc:if={isReady}>
+        <div class="ohm-experience">
+            <div class="ohm-experience__toolbar">
+                <c-ohm-calm-mode-toggle
+                    calm-mode={calmMode}
+                    oncalmtoggle={handleCalmToggle}
+                    data-id="calm-toggle"
+                ></c-ohm-calm-mode-toggle>
+            </div>
+
+            <template lwc:if={isWelcome}>
+                <c-ohm-welcome
+                    calm-mode={calmMode}
+                    onstartaudit={handleStart}
+                    data-screen="welcome"
+                    data-id="welcome"
+                ></c-ohm-welcome>
+            </template>
+
+            <template lwc:if={isDiscoverAnalyze}>
+                <c-ohm-discover-analyze
+                    report-id={reportId}
+                    run-status={runStatus}
+                    stage-message={stageMessage}
+                    percent-complete={percentComplete}
+                    calm-mode={calmMode}
+                    data-screen="discover"
+                    data-id="discover"
+                ></c-ohm-discover-analyze>
+            </template>
+
+            <template lwc:if={isImpact}>
+                <c-ohm-impact-readout
+                    readout={readout}
+                    calm-mode={calmMode}
+                    onviewrecommendations={handleViewRecommendations}
+                    data-screen="impact"
+                    data-id="impact"
+                ></c-ohm-impact-readout>
+            </template>
+
+            <template lwc:if={isRecommendations}>
+                <div class="ohm-experience__recs">
+                    <c-ohm-recommendations
+                        findings={findings}
+                        report-id={reportId}
+                        calm-mode={calmMode}
+                        volume-assumption={volumeAssumption}
+                        telemetry-backed={telemetryBacked}
+                        data-screen="recs"
+                        data-id="recommendations"
+                    ></c-ohm-recommendations>
+                    <lightning-button
+                        variant="neutral"
+                        label="Back to impact"
+                        title="Back to impact"
+                        onclick={handleBack}
+                        data-id="back-button"
+                    ></lightning-button>
+                </div>
+            </template>
+
+            <template lwc:if={isError}>
+                <section
+                    class="ohm-experience__error"
+                    aria-labelledby="ohm-error-heading"
+                >
+                    <h2
+                        id="ohm-error-heading"
+                        data-focus-heading
+                        tabindex="-1"
+                    >
+                        The audit hit a problem
+                    </h2>
+                    <p role="alert" data-id="error-message">{errorMessage}</p>
+                    <lightning-button
+                        variant="brand"
+                        label="Try again"
+                        title="Try again"
+                        onclick={handleRetry}
+                        data-id="retry-button"
+                    ></lightning-button>
+                </section>
+            </template>
+        </div>
+    </template>
+</template>

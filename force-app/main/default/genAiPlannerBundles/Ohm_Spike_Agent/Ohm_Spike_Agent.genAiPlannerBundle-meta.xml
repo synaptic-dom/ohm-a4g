@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPlannerBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Throwaway spike planner bundle proving GenAiPlannerBundle deploys and binds an apex-backed function.</description>
+    <masterLabel>Ohm Spike Agent</masterLabel>
+    <plannerType>AiCopilot__ReAct</plannerType>
+    <genAiPlugins>
+        <genAiPluginName>Ohm_Spike_Topic</genAiPluginName>
+    </genAiPlugins>
+</GenAiPlannerBundle>

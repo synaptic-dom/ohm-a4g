@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Signal_Type__c</fullName>
+    <label>Signal Type</label>
+    <type>Picklist</type>
+    <required>false</required>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>LLM_WHERE_DETERMINISTIC</fullName><default>false</default><label>LLM_WHERE_DETERMINISTIC</label></value>
+            <value><fullName>MODEL_RIGHTSIZING</fullName><default>false</default><label>MODEL_RIGHTSIZING</label></value>
+            <value><fullName>INSTRUCTION_BLOAT</fullName><default>false</default><label>INSTRUCTION_BLOAT</label></value>
+            <value><fullName>REDUNDANT_CALLS</fullName><default>false</default><label>REDUNDANT_CALLS</label></value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

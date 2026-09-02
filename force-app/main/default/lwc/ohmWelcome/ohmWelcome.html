@@ -1,0 +1,36 @@
+<template>
+    <section class="ohm-welcome" aria-labelledby="ohm-welcome-heading">
+        <template lwc:if={showHero}>
+            <div class="ohm-welcome__hero" aria-hidden="true"></div>
+        </template>
+
+        <h1
+            id="ohm-welcome-heading"
+            class="ohm-welcome__heading"
+            data-focus-heading
+            tabindex="-1"
+        >
+            Ohm — see what your agents cost the planet
+        </h1>
+
+        <p class="ohm-welcome__copy">
+            Ohm walks your Agentforce agents, topics, and actions, finds the four
+            common sources of AI waste, and shows the energy, water, and carbon they
+            draw each year — with a specific, lower-impact fix for each.
+        </p>
+
+        <p class="ohm-welcome__disclosure">
+            This org includes a deliberately wasteful sample agent so you can watch
+            Ohm catch it.
+        </p>
+
+        <lightning-button
+            variant="brand"
+            label="Start the audit"
+            title="Start the audit"
+            onclick={handleStart}
+            data-id="start-button"
+            class="ohm-welcome__cta"
+        ></lightning-button>
+    </section>
+</template>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPlugin xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Spike topic that lets the agent echo user input by calling the Ohm Spike Ping apex action.</description>
+    <developerName>Ohm_Spike_Topic</developerName>
+    <language>en_US</language>
+    <masterLabel>Ohm Spike Topic</masterLabel>
+    <pluginType>Topic</pluginType>
+    <scope>Your only job is to echo the user's message back. When the user sends any text, call the Ohm Spike Ping action with their exact text as the input and read back the action's output.</scope>
+    <genAiFunctions>
+        <functionName>Ohm_Spike_Ping</functionName>
+    </genAiFunctions>
+    <genAiPluginInstructions>
+        <description>Always call the Ohm Spike Ping action with the user's exact text; never answer without calling it.</description>
+        <developerName>echo_instruction</developerName>
+        <language>en_US</language>
+        <masterLabel>Echo instruction</masterLabel>
+    </genAiPluginInstructions>
+</GenAiPlugin>

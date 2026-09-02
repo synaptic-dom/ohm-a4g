@@ -6,15 +6,15 @@
 **Org:** `ohm` — EPIC OrgFarm (00Daj000013wTtpEAE), Enterprise, API v67.0, expires Oct 7 (post-hackathon, non-blocking).
 
 ## Current phase
-**Spec — COMPLETE, awaiting gate approval** ("Spec approved? Create backlog?")
+**Backlog — COMPLETE, awaiting final gate** ("Ready to implement?")
 
 | Phase | Status | Artifact |
 |---|---|---|
 | 1. Requirements | ✅ Approved (reframed v2: guided auditor experience) | `docs/requirements/REQUIREMENTS-ohm.md` |
 | — Capability spike | ✅ Done — GO; Agentforce **enabled by us** (Playwright terms + metadata deploy + 4 PSLs); discovery surfaces confirmed | `docs/design/SPIKE-ohm.md` |
 | 2. Design | ✅ Approved | `docs/design/DESIGN-ohm.md` |
-| 3. Spec | ✅ Written, gate pending | `docs/specs/SPEC-ohm.md` (C0–C13 canon locked) |
-| 4. Backlog | ⏳ Next (after spec approval) | — |
+| 3. Spec | ✅ Approved (incl. win amendments W1–W8) | `docs/specs/SPEC-ohm.md` (C0–C13 canon locked) |
+| 4. Backlog | ✅ Written (66 tasks, ~96.5h est), gate pending | `docs/backlog/BACKLOG-ohm.md` |
 | 5. Execute (TDD) | Not started | — |
 | 6. Physical UAT | Not started | UAT script in SPEC §T.6 |
 | 7. Document/submit | Not started | Submission checklist in CONCEPT-BRIEF |

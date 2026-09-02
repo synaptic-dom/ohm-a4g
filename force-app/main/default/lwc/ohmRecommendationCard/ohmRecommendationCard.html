@@ -1,0 +1,41 @@
+<template>
+    <article class="ohm-rec-card" data-id="rec-card">
+        <h3 class="ohm-rec-card__signal" data-id="rec-signal">{signalLabel}</h3>
+
+        <p class="ohm-rec-card__severity" data-id="rec-severity">{severityText}</p>
+        <p class="ohm-rec-card__effort" data-id="rec-effort">{effortText}</p>
+
+        <span
+            class="ohm-rec-card__generated-by"
+            data-id="rec-generated-by"
+            data-generated-by={generatedByText}
+            >{generatedByText}</span
+        >
+
+        <p class="ohm-rec-card__recommendation" data-id="rec-text">
+            {displayRecommendation}
+        </p>
+
+        <p class="ohm-rec-card__savings" data-id="rec-savings">{savingsText}</p>
+        <p class="ohm-rec-card__provenance" data-id="rec-provenance">{provenance}</p>
+
+        <template lwc:if={created}>
+            <p class="ohm-rec-card__done" data-id="rec-done">Task created</p>
+        </template>
+        <template lwc:else>
+            <lightning-button
+                variant="neutral"
+                label="Create remediation task"
+                title="Create remediation task"
+                onclick={handleCreateTask}
+                data-id="rec-create-task"
+            ></lightning-button>
+        </template>
+
+        <template lwc:if={errorMessage}>
+            <p class="ohm-rec-card__error" data-id="rec-error" role="alert">
+                {errorMessage}
+            </p>
+        </template>
+    </article>
+</template>

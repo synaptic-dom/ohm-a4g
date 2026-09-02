@@ -1,0 +1,7 @@
+node_modules/
+coverage/
+.sfdx/
+.sf/
+.localdevserver/
+*.log
+ohm-secrets.json

@@ -1,0 +1,15 @@
+{
+  "name": "ohm-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ohm — Agentic AI Sustainability Auditor (LWC experience cluster)",
+  "scripts": {
+    "test:unit": "sfdx-lwc-jest",
+    "test:unit:coverage": "sfdx-lwc-jest --coverage",
+    "test:unit:watch": "sfdx-lwc-jest --watch"
+  },
+  "devDependencies": {
+    "@sa11y/jest": "^8.0.0",
+    "@salesforce/sfdx-lwc-jest": "^7.9.0"
+  }
+}

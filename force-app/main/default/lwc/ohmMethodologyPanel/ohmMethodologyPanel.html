@@ -1,0 +1,26 @@
+<template>
+    <section class="ohm-methodology" aria-labelledby="ohm-methodology-heading">
+        <h3 id="ohm-methodology-heading" class="ohm-methodology__heading">
+            How is this estimated?
+        </h3>
+        <p class="ohm-methodology__telemetry" data-id="methodology-telemetry">
+            {telemetryText}
+        </p>
+        <dl class="ohm-methodology__list" data-id="methodology-list">
+            <template for:each={entries} for:item="entry">
+                <div class="ohm-methodology__row" key={entry.key}>
+                    <dt class="ohm-methodology__term" data-id="methodology-term">
+                        {entry.label}
+                    </dt>
+                    <dd
+                        class="ohm-methodology__value"
+                        data-id="methodology-value"
+                        data-key={entry.key}
+                    >
+                        {entry.value}
+                    </dd>
+                </div>
+            </template>
+        </dl>
+    </section>
+</template>

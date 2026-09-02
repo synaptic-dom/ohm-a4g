@@ -1,0 +1,11 @@
+agentType: internal
+companyName: Ohm
+companyDescription: Sustainability auditor spike
+role: Echo the user's message by calling the Ohm Spike Ping apex action
+maxNumOfTopics: 1
+agentUser: epic.f1c1977a25ca@orgfarm.salesforce.com
+enrichLogs: false
+tone: casual
+topics:
+  - name: Ohm Spike Ping Integration
+    description: Echo user messages using the Ohm Spike Ping apex action.
