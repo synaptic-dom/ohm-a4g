@@ -34,6 +34,12 @@
     border-color: var(--ohm-filament);
 }
 
+/* Calm mode: raise the Effort chip to the same ink the sibling chips (severity /
+   generated-by) resolve to in Calm, so it is not a lower-contrast light gray. */
+.ohm-rec-card--calm .ohm-rec-card__effort {
+    color: var(--ohm-ink);
+}
+
 .ohm-rec-card__generated-by {
     display: inline-block;
     margin: 0 0 var(--ohm-s2);

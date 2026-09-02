@@ -1,14 +1,14 @@
 import { LightningElement, api } from 'lwc';
 import {
     SIGNAL_LABELS,
-    formatNumber,
+    formatSavingsBand,
     provenanceLabel
 } from 'c/ohmConstants';
 
 /**
  * One recommendation card per finding (S4).
  * - displayRecommendation = agentNarrative ?? recommendationText (hybrid seam).
- * - savings shown as a band ("saves low–central–high Wh/yr").
+ * - savings shown as a band ("saves central Wh/yr (low–high)").
  * - severity + signal rendered as TEXT (never colour alone).
  * - W7 provenance line under every savings figure.
  * Emits `createtask` { findingId }; the container performs the Apex call and
@@ -21,6 +21,10 @@ export default class OhmRecommendationCard extends LightningElement {
     @api volumeAssumption;
     @api telemetryBacked = false;
     @api errorMessage;
+
+    get cardClass() {
+        return this.calmMode ? 'ohm-rec-card ohm-rec-card--calm' : 'ohm-rec-card';
+    }
 
     get displayRecommendation() {
         const f = this.finding || {};
@@ -46,9 +50,11 @@ export default class OhmRecommendationCard extends LightningElement {
 
     get savingsText() {
         const f = this.finding || {};
-        return `saves ${formatNumber(f.estimatedSavingsLow)}–${formatNumber(
-            f.estimatedSavingsCentral
-        )}–${formatNumber(f.estimatedSavingsHigh)} Wh/yr`;
+        return `saves ${formatSavingsBand(
+            f.estimatedSavingsLow,
+            f.estimatedSavingsCentral,
+            f.estimatedSavingsHigh
+        )}`;
     }
 
     get provenance() {

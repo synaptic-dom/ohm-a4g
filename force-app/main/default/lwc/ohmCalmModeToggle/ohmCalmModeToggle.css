@@ -1,28 +1,99 @@
-/* A labelled "switch plate" — a physical control on the instrument face.
-   It carries its own light surface so the toggle's built-in label stays legible
-   in both the dark (loud) and light (calm) panels, and text never relies on
-   colour alone. */
+/* Calm Mode control — a control that belongs to the instrument panel, not a
+   bolted-on plate. Loud (dark) mode: a raised dark card in the panel palette.
+   Calm (light) mode: a flush hairline treatment on the light ground. The switch
+   is a custom role="switch" so its "on" fill is the instrument's muted cool /
+   low-saturation ink — never the saturated SLDS toggle blue. State is carried as
+   a persistent visible word (never colour alone). All contents share one
+   baseline. */
 .ohm-calm-toggle {
     display: inline-flex;
     align-items: center;
-    gap: var(--ohm-s2);
     padding: 8px 14px;
-    border-radius: 999px;
-    background: #eef2f2;
-    border: 1px solid #c4d1d1;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
-
-    /* Keep the base toggle's text/controls dark on this pale plate. */
-    --slds-c-input-text-color: #14242a;
-    --slds-c-checkbox-toggle-color-background-checked: #0e1518;
-    color: #14242a;
+    border-radius: var(--ohm-radius);
 }
 
+/* LOUD: raised dark card — panel-2 surface, hairline border, ink label. */
+.ohm-calm-toggle--loud {
+    background: var(--ohm-panel-2);
+    border: 1px solid var(--ohm-hairline);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* CALM: flush on the light ground — a quiet hairline, no heavy plate/shadow. */
+.ohm-calm-toggle--calm {
+    background: transparent;
+    border: 1px solid var(--ohm-hairline);
+    box-shadow: none;
+}
+
+/* The whole control is one button; its text content is its accessible name. */
+.ohm-calm-toggle__switch {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ohm-s2);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    line-height: 1;
+    cursor: pointer;
+}
+.ohm-calm-toggle__switch:focus-visible {
+    outline: 2px solid var(--ohm-cool);
+    outline-offset: 3px;
+    border-radius: 6px;
+}
+
+.ohm-calm-toggle__label {
+    font-family: var(--ohm-font-head);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--ohm-ink);
+    white-space: nowrap;
+}
+
+/* The switch itself: an off-state hairline track with an ink knob. */
+.ohm-calm-toggle__track {
+    position: relative;
+    flex: none;
+    width: 40px;
+    height: 22px;
+    border-radius: 999px;
+    background: var(--ohm-hairline);
+    border: 1px solid var(--ohm-hairline);
+    transition: background-color 120ms ease, border-color 120ms ease;
+}
+.ohm-calm-toggle__thumb {
+    position: absolute;
+    top: 50%;
+    left: 2px;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--ohm-ink);
+    transition: left 120ms ease, background-color 120ms ease;
+}
+
+/* ON: muted cool (loud) / low-saturation ink (calm) fill; knob slides right. */
+.ohm-calm-toggle__switch[aria-checked="true"] .ohm-calm-toggle__track {
+    background: var(--ohm-cool);
+    border-color: var(--ohm-cool);
+}
+.ohm-calm-toggle__switch[aria-checked="true"] .ohm-calm-toggle__thumb {
+    left: 20px;
+    background: var(--ohm-panel);
+}
+
+/* The single status word, on the same baseline as the switch. */
 .ohm-calm-toggle__state {
     font-family: var(--ohm-font-data);
     font-size: 12px;
     font-weight: 600;
-    letter-spacing: 0.02em;
-    color: #14242a;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ohm-muted);
     white-space: nowrap;
 }

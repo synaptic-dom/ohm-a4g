@@ -1,15 +1,20 @@
 <template>
-    <div class="ohm-calm-toggle">
-        <lightning-input
-            type="toggle"
-            label="Calm Mode"
-            message-toggle-active="On"
-            message-toggle-inactive="Off"
-            checked={calmMode}
-            onchange={handleChange}
-        ></lightning-input>
-        <span class="ohm-calm-toggle__state" data-id="state-text">
-            Calm Mode is {stateText}
-        </span>
+    <div class={containerClass}>
+        <button
+            type="button"
+            role="switch"
+            aria-checked={calmMode}
+            class="ohm-calm-toggle__switch"
+            onclick={handleToggle}
+            data-id="calm-switch"
+        >
+            <span class="ohm-calm-toggle__label">Calm Mode</span>
+            <span class="ohm-calm-toggle__track" aria-hidden="true">
+                <span class="ohm-calm-toggle__thumb"></span>
+            </span>
+            <span class="ohm-calm-toggle__state" data-id="state-text">
+                {stateText}
+            </span>
+        </button>
     </div>
 </template>

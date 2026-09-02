@@ -78,6 +78,19 @@ export function formatRange(low, high, dp = 0) {
 }
 
 /**
+ * A savings/impact band rendered as CENTRAL with a parenthetical low–high range:
+ * "52,921 Wh/yr (47,041–58,802)". Uses an en dash and the same thousands
+ * grouping as formatNumber. `unit` is placed after the central figure.
+ */
+export function formatSavingsBand(low, central, high, unit = 'Wh/yr', dp = 0) {
+    const u = unit ? ` ${unit}` : '';
+    return `${formatNumber(central, dp)}${u} (${formatNumber(
+        low,
+        dp
+    )}–${formatNumber(high, dp)})`;
+}
+
+/**
  * W7 point-of-display provenance: "at 50 sessions/day × 6 turns, modeled — Confidence: Low".
  * telemetryBacked=true swaps "modeled" for "telemetry-backed".
  */

@@ -25,16 +25,24 @@ describe('c-ohm-calm-mode-toggle', () => {
         expect(state2.textContent).toContain('Off');
     });
 
-    it('emits calmtoggle with enabled from the input change', () => {
+    it('emits calmtoggle with enabled from the switch click', () => {
         const el = create({ calmMode: false });
         const handler = jest.fn();
         el.addEventListener('calmtoggle', handler);
 
-        const input = el.shadowRoot.querySelector('lightning-input');
-        input.dispatchEvent(new CustomEvent('change', { detail: { checked: true } }));
+        const sw = el.shadowRoot.querySelector('[data-id="calm-switch"]');
+        expect(sw.getAttribute('role')).toBe('switch');
+        expect(sw.getAttribute('aria-checked')).toBe('false');
+        sw.click();
 
         expect(handler).toHaveBeenCalledTimes(1);
         expect(handler.mock.calls[0][0].detail).toEqual({ enabled: true });
+    });
+
+    it('reflects calmMode as aria-checked on the switch', () => {
+        const el = create({ calmMode: true });
+        const sw = el.shadowRoot.querySelector('[data-id="calm-switch"]');
+        expect(sw.getAttribute('aria-checked')).toBe('true');
     });
 
     it('is accessible in both Calm variants', async () => {

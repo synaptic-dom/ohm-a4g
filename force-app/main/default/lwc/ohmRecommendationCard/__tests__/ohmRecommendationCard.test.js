@@ -64,7 +64,7 @@ describe('c-ohm-recommendation-card', () => {
                 confidence: 'Low'
             })
         });
-        expect(text(el, 'rec-savings')).toBe('saves 10–20–30 Wh/yr');
+        expect(text(el, 'rec-savings')).toBe('saves 20 Wh/yr (10–30)');
         expect(text(el, 'rec-provenance')).toContain('Confidence: Low');
         expect(text(el, 'rec-provenance')).toContain('50 sessions/day');
     });

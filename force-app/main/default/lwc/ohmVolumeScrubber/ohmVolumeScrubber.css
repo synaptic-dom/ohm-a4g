@@ -23,8 +23,8 @@
     position: relative;
     display: flex;
     align-items: center;
-    min-height: 44px;
-    padding: 0 var(--ohm-s3);
+    min-height: 48px;
+    padding: 0 var(--ohm-s4) 0 var(--ohm-s3);
     border-radius: 999px;
     background: linear-gradient(
         90deg,
@@ -46,11 +46,16 @@
     color: var(--ohm-filament);
     letter-spacing: 0.01em;
 }
+/* Decrement / increment steppers: sized for a real hit target, spaced apart,
+   inset from the card edge, and centred on the value's baseline. */
 .ohm-scrubber__slider::after {
     content: "◄ ►";
     margin-left: auto;
-    font-size: 12px;
-    letter-spacing: 0.1em;
+    align-self: center;
+    padding: 8px 0;
+    font-size: 18px;
+    line-height: 1;
+    letter-spacing: 0.55em;
     color: var(--ohm-muted);
 }
 

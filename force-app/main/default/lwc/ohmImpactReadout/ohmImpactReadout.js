@@ -1,5 +1,5 @@
 import { LightningElement, api, track } from 'lwc';
-import { formatNumber, provenanceLabel } from 'c/ohmConstants';
+import { formatNumber, formatSavingsBand, provenanceLabel } from 'c/ohmConstants';
 
 /**
  * S3 Impact readout (composition). Composes the efficiency rating, the org-wide
@@ -107,9 +107,11 @@ export default class OhmImpactReadout extends LightningElement {
                 id: f.id,
                 label: art.label || art.apiName || 'Artifact',
                 energyText: `${formatNumber(this._scaled(f.energyWhCentral))} Wh/yr`,
-                savingsText: `saves ${formatNumber(
-                    this._scaled(f.estimatedSavingsCentral)
-                )} Wh/yr`,
+                savingsText: `saves ${formatSavingsBand(
+                    this._scaled(f.estimatedSavingsLow),
+                    this._scaled(f.estimatedSavingsCentral),
+                    this._scaled(f.estimatedSavingsHigh)
+                )}`,
                 provenance: prov
             };
         });
