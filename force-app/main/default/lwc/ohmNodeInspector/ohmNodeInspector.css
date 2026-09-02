@@ -1,0 +1,403 @@
+/* ============================================================================
+   OHM v2 — Node inspector. Inherits the Instrument tokens; declares its own for
+   standalone render. The signature is the highlighted-excess instruction block:
+   normal text quiet, the over-budget tail on an amber wash + underline. Calm Mode
+   strips colour to ink but KEEPS the highlight (a marked band + a caption), so
+   the "waste" meaning never rides on colour alone.
+   ========================================================================== */
+:host {
+    --ohm-panel: #0e1518;
+    --ohm-panel-2: #16232a;
+    --ohm-panel-3: #1d2f37;
+    --ohm-ink: #eaf2f0;
+    --ohm-muted: #7e9aa0;
+    --ohm-filament: #ffb24c;
+    --ohm-filament-hot: #ff6b4a;
+    --ohm-cool: #4fd1c5;
+    --ohm-hairline: #2a3b42;
+    --ohm-radius: 10px;
+    --ohm-font-data: ui-monospace, "SF Mono", "Cascadia Mono", Consolas,
+        "Liberation Mono", monospace;
+    --ohm-font-head: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: block;
+    height: 100%;
+}
+
+.ohm-inspector {
+    height: 100%;
+    color: var(--ohm-ink);
+    font-family: var(--ohm-font-head);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.ohm-inspector * {
+    box-sizing: border-box;
+}
+
+/* ---- header --------------------------------------------------------------- */
+.ohm-inspector__header {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--ohm-hairline);
+}
+.ohm-inspector__title-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+}
+.ohm-inspector__title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--ohm-ink);
+    line-height: 1.25;
+}
+.ohm-inspector__type {
+    font-family: var(--ohm-font-data);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ohm-muted);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: 999px;
+    padding: 2px 9px;
+    flex: none;
+}
+.ohm-inspector__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--ohm-font-data);
+    font-size: 12px;
+    color: var(--ohm-muted);
+}
+.ohm-inspector__api {
+    color: var(--ohm-muted);
+}
+.ohm-inspector__tokens {
+    color: var(--ohm-ink);
+}
+.ohm-inspector__kv b {
+    color: var(--ohm-ink);
+    font-weight: 700;
+}
+
+/* ---- finding summary ------------------------------------------------------ */
+.ohm-inspector__finding {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+    border: 1px solid var(--ohm-filament);
+    border-left-width: 3px;
+    border-radius: var(--ohm-radius);
+    background: rgba(255, 178, 76, 0.06);
+}
+.ohm-inspector__finding-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+.ohm-inspector__signal {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ohm-filament);
+}
+.ohm-inspector__chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--ohm-hairline);
+    font-family: var(--ohm-font-data);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    flex: none;
+}
+.ohm-inspector__chip--hot {
+    border-color: var(--ohm-filament-hot);
+    color: var(--ohm-filament-hot);
+    background: rgba(255, 107, 74, 0.12);
+}
+.ohm-inspector__chip--warm {
+    border-color: var(--ohm-filament);
+    color: var(--ohm-filament);
+    background: rgba(255, 178, 76, 0.12);
+}
+.ohm-inspector__chip--cool {
+    border-color: var(--ohm-cool);
+    color: var(--ohm-cool);
+    background: rgba(79, 209, 197, 0.12);
+}
+.ohm-inspector__chip--muted {
+    border-color: var(--ohm-muted);
+    color: var(--ohm-ink);
+}
+.ohm-inspector__evidence {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ohm-ink);
+}
+.ohm-inspector__savings {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.ohm-inspector__savings-label {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ohm-muted);
+}
+.ohm-inspector__savings-value {
+    font-family: var(--ohm-font-data);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ohm-cool);
+}
+
+/* ---- instructions --------------------------------------------------------- */
+.ohm-inspector__instr-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+.ohm-inspector__section-label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ohm-muted);
+}
+.ohm-inspector__instr {
+    margin: 0;
+    max-height: 320px;
+    overflow: auto;
+    padding: 14px;
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: var(--ohm-radius);
+    font-family: var(--ohm-font-data);
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--ohm-ink);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+.ohm-inspector__instr-normal {
+    color: var(--ohm-ink);
+}
+/* the over-budget tail: amber wash + underline so it reads as excess */
+.ohm-inspector__instr-excess {
+    background: rgba(255, 178, 76, 0.28);
+    color: #ffe6c2;
+    box-shadow: inset 0 -2px 0 var(--ohm-filament);
+    border-radius: 2px;
+}
+.ohm-inspector__excess-caption {
+    margin: 0;
+    font-family: var(--ohm-font-data);
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--ohm-filament);
+}
+.ohm-inspector__no-instr {
+    margin: 0;
+    color: var(--ohm-muted);
+    font-style: italic;
+    font-size: 13px;
+}
+
+/* ---- fix CTAs ------------------------------------------------------------- */
+.ohm-inspector__fixes {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 14px;
+    border-top: 1px solid var(--ohm-hairline);
+}
+.ohm-inspector__cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.ohm-inspector__cta {
+    appearance: none;
+    background: var(--ohm-filament);
+    color: #0e1518;
+    border: 1px solid var(--ohm-filament);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-family: var(--ohm-font-head);
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+}
+.ohm-inspector__cta:hover {
+    background: var(--ohm-filament-hot);
+    border-color: var(--ohm-filament-hot);
+}
+.ohm-inspector__cta--active {
+    background: var(--ohm-filament-hot);
+    border-color: var(--ohm-filament-hot);
+}
+.ohm-inspector__cta:focus-visible {
+    outline: 2px solid var(--ohm-cool);
+    outline-offset: 2px;
+}
+
+.ohm-inspector__fix-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+    background: var(--ohm-panel-2);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: var(--ohm-radius);
+}
+.ohm-inspector__fix-kv {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.ohm-inspector__fix-key {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ohm-muted);
+}
+.ohm-inspector__fix-target {
+    font-family: var(--ohm-font-data);
+    font-size: 13px;
+    color: var(--ohm-cool);
+    font-weight: 700;
+}
+.ohm-inspector__fix-rec {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ohm-ink);
+}
+.ohm-inspector__task-btn {
+    appearance: none;
+    align-self: flex-start;
+    background: var(--ohm-panel-3);
+    color: var(--ohm-ink);
+    border: 1px solid var(--ohm-cool);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-family: var(--ohm-font-head);
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+}
+.ohm-inspector__task-btn:hover:not([disabled]) {
+    background: rgba(79, 209, 197, 0.12);
+}
+.ohm-inspector__task-btn[disabled] {
+    opacity: 0.65;
+    cursor: default;
+}
+.ohm-inspector__task-btn:focus-visible {
+    outline: 2px solid var(--ohm-cool);
+    outline-offset: 2px;
+}
+.ohm-inspector__task-done {
+    margin: 0;
+    font-family: var(--ohm-font-data);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ohm-cool);
+}
+.ohm-inspector__task-error {
+    margin: 0;
+    font-family: var(--ohm-font-data);
+    font-size: 12px;
+    color: var(--ohm-filament-hot);
+}
+
+/* ---- clean / empty -------------------------------------------------------- */
+.ohm-inspector__clean {
+    margin: 0;
+    padding: 14px;
+    color: var(--ohm-cool);
+    font-size: 13px;
+    border: 1px dashed var(--ohm-hairline);
+    border-radius: var(--ohm-radius);
+    background: rgba(79, 209, 197, 0.05);
+}
+.ohm-inspector__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 100%;
+    min-height: 200px;
+    color: var(--ohm-muted);
+    text-align: center;
+}
+.ohm-inspector__empty-glyph {
+    font-size: 34px;
+    opacity: 0.5;
+}
+.ohm-inspector__empty p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* ============================================================================
+   CALM MODE — light, quiet, colour-independent. The excess band keeps a visible
+   marked treatment (grey wash + strong underline) + the caption carries the
+   number, so meaning never rides on colour alone.
+   ========================================================================== */
+.ohm-inspector--calm {
+    --ohm-panel: #f7f9f9;
+    --ohm-panel-2: #ffffff;
+    --ohm-panel-3: #eef3f3;
+    --ohm-ink: #14242a;
+    --ohm-muted: #4c5f65;
+    --ohm-filament: #14242a;
+    --ohm-filament-hot: #14242a;
+    --ohm-cool: #14242a;
+    --ohm-hairline: #c2d0d0;
+}
+.ohm-inspector--calm .ohm-inspector__finding {
+    background: rgba(20, 36, 42, 0.04);
+    border-color: #14242a;
+}
+.ohm-inspector--calm .ohm-inspector__instr {
+    background: #ffffff;
+    color: #14242a;
+}
+.ohm-inspector--calm .ohm-inspector__instr-excess {
+    background: rgba(20, 36, 42, 0.14);
+    color: #14242a;
+    box-shadow: inset 0 -2px 0 #14242a;
+}
+.ohm-inspector--calm .ohm-inspector__cta {
+    color: #ffffff;
+}
+.ohm-inspector--calm .ohm-inspector__savings-value,
+.ohm-inspector--calm .ohm-inspector__fix-target,
+.ohm-inspector--calm .ohm-inspector__task-done,
+.ohm-inspector--calm .ohm-inspector__clean {
+    color: #14242a;
+}
+.ohm-inspector--calm .ohm-inspector__chip--hot,
+.ohm-inspector--calm .ohm-inspector__chip--warm,
+.ohm-inspector--calm .ohm-inspector__chip--cool,
+.ohm-inspector--calm .ohm-inspector__chip--muted {
+    background: transparent;
+    border-color: #b7c6c6;
+    color: #14242a;
+}

@@ -46,12 +46,21 @@
 
             <!-- Tab body ------------------------------------------------- -->
             <main class="ohm-app__body">
-                <template lwc:if={isFleet}>
+                <template lwc:if={isFleetList}>
                     <c-ohm-fleet-table
                         calm-mode={calmMode}
                         onopenprocess={handleOpenProcess}
                         data-id="fleet"
                     ></c-ohm-fleet-table>
+                </template>
+
+                <template lwc:if={isProcessOpen}>
+                    <c-ohm-process-page
+                        planner-id={selectedPlannerId}
+                        calm-mode={calmMode}
+                        onbacktofleet={handleBackToFleet}
+                        data-id="process-page"
+                    ></c-ohm-process-page>
                 </template>
 
                 <template lwc:if={isPlaceholder}>

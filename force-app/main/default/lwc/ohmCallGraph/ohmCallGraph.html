@@ -1,0 +1,65 @@
+<template>
+    <div class={hostClass} data-id="graph-root">
+        <template lwc:if={hasNodes}>
+            <div class="ohm-graph__scroll" data-id="graph-scroll">
+                <div
+                    class="ohm-graph__canvas"
+                    style={model.canvasStyle}
+                    data-id="graph-canvas"
+                >
+                    <!-- Connector edges (SVG layer, behind the nodes) -->
+                    <svg
+                        class="ohm-graph__edges"
+                        viewBox={model.viewBox}
+                        width={model.width}
+                        height={model.height}
+                        aria-hidden="true"
+                        focusable="false"
+                    >
+                        <template for:each={model.edges} for:item="edge">
+                            <path
+                                key={edge.id}
+                                class={edge.cssClass}
+                                d={edge.d}
+                                fill="none"
+                            ></path>
+                        </template>
+                    </svg>
+
+                    <!-- Node buttons (overlay) -->
+                    <template for:each={model.nodeButtons} for:item="node">
+                        <button
+                            key={node.id}
+                            type="button"
+                            class={node.cssClass}
+                            style={node.style}
+                            data-id="graph-node"
+                            data-node-id={node.id}
+                            aria-label={node.ariaLabel}
+                            aria-pressed={node.ariaPressed}
+                            onclick={handleNodeClick}
+                        >
+                            <span class="ohm-graph__node-top">
+                                <span class="ohm-graph__node-tag">{node.typeTag}</span>
+                                <template lwc:if={node.wasteful}>
+                                    <span
+                                        class="ohm-graph__node-warn"
+                                        aria-hidden="true"
+                                        >⚠</span
+                                    >
+                                </template>
+                            </span>
+                            <span class="ohm-graph__node-label">{node.label}</span>
+                        </button>
+                    </template>
+                </div>
+            </div>
+        </template>
+
+        <template lwc:else>
+            <div class="ohm-graph__empty" data-id="graph-empty">
+                No graph nodes for this process.
+            </div>
+        </template>
+    </div>
+</template>

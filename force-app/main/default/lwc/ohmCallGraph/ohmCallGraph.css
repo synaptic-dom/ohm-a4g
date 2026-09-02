@@ -1,0 +1,214 @@
+/* ============================================================================
+   OHM v2 — Call graph. Inherits the Instrument tokens from ohmApp/ohmProcessPage
+   but also declares its own so it renders standalone. SVG draws the edges; real
+   <button> nodes overlay the canvas (keyboard-accessible, aria-labelled). Waste
+   is amber/hot filament outline+glow; clean nodes stay quiet teal/muted. Calm
+   Mode strips meaning-colour to ink (the ⚠ + aria word carry status instead).
+   ========================================================================== */
+:host {
+    --ohm-panel: #0e1518;
+    --ohm-panel-2: #16232a;
+    --ohm-panel-3: #1d2f37;
+    --ohm-ink: #eaf2f0;
+    --ohm-muted: #7e9aa0;
+    --ohm-filament: #ffb24c;
+    --ohm-filament-hot: #ff6b4a;
+    --ohm-cool: #4fd1c5;
+    --ohm-hairline: #2a3b42;
+    --ohm-radius: 10px;
+    --ohm-font-data: ui-monospace, "SF Mono", "Cascadia Mono", Consolas,
+        "Liberation Mono", monospace;
+    --ohm-font-head: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: block;
+    height: 100%;
+}
+
+.ohm-graph {
+    height: 100%;
+    color: var(--ohm-ink);
+    font-family: var(--ohm-font-head);
+}
+.ohm-graph * {
+    box-sizing: border-box;
+}
+
+/* ---- scroll container (never breaks page layout) -------------------------- */
+.ohm-graph__scroll {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    padding: 4px;
+    /* subtle grid so the graph reads as an "instrument" workspace */
+    background-image: radial-gradient(
+        rgba(126, 154, 160, 0.12) 1px,
+        transparent 1px
+    );
+    background-size: 22px 22px;
+    background-position: -1px -1px;
+    border-radius: var(--ohm-radius);
+}
+
+.ohm-graph__canvas {
+    position: relative;
+    margin: 0 auto;
+}
+
+/* ---- edges ---------------------------------------------------------------- */
+.ohm-graph__edges {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: visible;
+    pointer-events: none;
+}
+.ohm-graph__edge {
+    stroke: var(--ohm-hairline);
+    stroke-width: 2;
+}
+.ohm-graph__edge--waste {
+    stroke: var(--ohm-filament);
+    stroke-width: 2.5;
+    stroke-dasharray: 5 4;
+    opacity: 0.85;
+}
+
+/* ---- nodes ---------------------------------------------------------------- */
+.ohm-graph__node {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--ohm-panel-2);
+    border: 1.5px solid var(--ohm-hairline);
+    border-radius: 12px;
+    color: var(--ohm-ink);
+    cursor: pointer;
+    font-family: var(--ohm-font-head);
+    transition: transform 120ms ease, border-color 120ms ease,
+        box-shadow 120ms ease, background-color 120ms ease;
+}
+.ohm-graph__node:hover {
+    background: var(--ohm-panel-3);
+    transform: translateY(-1px);
+}
+.ohm-graph__node:focus-visible {
+    outline: 2px solid var(--ohm-cool);
+    outline-offset: 2px;
+}
+
+.ohm-graph__node-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+.ohm-graph__node-tag {
+    font-family: var(--ohm-font-data);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ohm-muted);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: 999px;
+    padding: 1px 8px;
+}
+.ohm-graph__node-warn {
+    font-size: 14px;
+    line-height: 1;
+    color: var(--ohm-filament);
+}
+.ohm-graph__node-label {
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1.25;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+/* agent = the process root: a touch more presence */
+.ohm-graph__node--agent {
+    background: var(--ohm-panel-3);
+    border-color: var(--ohm-muted);
+}
+.ohm-graph__node--agent .ohm-graph__node-label {
+    font-size: 15px;
+}
+
+/* clean nodes: quiet teal accent on the tag */
+.ohm-graph__node--clean .ohm-graph__node-tag {
+    border-color: rgba(79, 209, 197, 0.4);
+    color: var(--ohm-cool);
+}
+
+/* wasteful nodes: amber outline + warm glow */
+.ohm-graph__node--waste {
+    border-color: var(--ohm-filament);
+    background: linear-gradient(
+        180deg,
+        rgba(255, 178, 76, 0.14),
+        rgba(255, 178, 76, 0.04)
+    );
+    box-shadow: 0 0 0 1px rgba(255, 178, 76, 0.25),
+        0 6px 20px -8px rgba(255, 178, 76, 0.55);
+}
+.ohm-graph__node--waste .ohm-graph__node-tag {
+    border-color: var(--ohm-filament);
+    color: var(--ohm-filament);
+}
+
+/* selected: cool ring, wins over waste glow */
+.ohm-graph__node--selected {
+    border-color: var(--ohm-cool);
+    box-shadow: 0 0 0 3px rgba(79, 209, 197, 0.55),
+        0 8px 24px -8px rgba(79, 209, 197, 0.5);
+}
+
+/* ---- empty ---------------------------------------------------------------- */
+.ohm-graph__empty {
+    padding: var(--ohm-radius);
+    color: var(--ohm-muted);
+    font-style: italic;
+    text-align: center;
+}
+
+/* ============================================================================
+   CALM MODE — light, quiet, colour-independent. Meaning rides on the ⚠ glyph
+   and the aria word, not colour.
+   ========================================================================== */
+.ohm-graph--calm {
+    --ohm-panel: #f7f9f9;
+    --ohm-panel-2: #ffffff;
+    --ohm-panel-3: #eef3f3;
+    --ohm-ink: #14242a;
+    --ohm-muted: #4c5f65;
+    --ohm-filament: #14242a;
+    --ohm-filament-hot: #14242a;
+    --ohm-cool: #14242a;
+    --ohm-hairline: #c2d0d0;
+}
+.ohm-graph--calm .ohm-graph__scroll {
+    background-image: radial-gradient(
+        rgba(20, 36, 42, 0.08) 1px,
+        transparent 1px
+    );
+}
+.ohm-graph--calm .ohm-graph__node--waste {
+    background: #ffffff;
+    border-color: #14242a;
+    border-width: 2px;
+    box-shadow: none;
+}
+.ohm-graph--calm .ohm-graph__node--waste .ohm-graph__node-warn {
+    color: #14242a;
+}
+.ohm-graph--calm .ohm-graph__edge--waste {
+    stroke: #14242a;
+}
+.ohm-graph--calm .ohm-graph__node--selected {
+    box-shadow: 0 0 0 3px rgba(20, 36, 42, 0.35);
+}

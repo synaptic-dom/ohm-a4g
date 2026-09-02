@@ -1,0 +1,164 @@
+<template>
+    <div class={hostClass} data-id="process-root">
+        <!-- Back affordance ------------------------------------------------ -->
+        <button
+            type="button"
+            class="ohm-process__back"
+            data-id="back"
+            onclick={handleBack}
+        >
+            ‹ Back to fleet
+        </button>
+
+        <!-- Loading -------------------------------------------------------- -->
+        <template lwc:if={isLoading}>
+            <div class="ohm-process__loading" data-id="loading" role="status">
+                <span class="ohm-process__spinner" aria-hidden="true"></span>
+                Loading process…
+            </div>
+        </template>
+
+        <!-- Load error ----------------------------------------------------- -->
+        <template lwc:if={loadError}>
+            <div class="ohm-process__error" data-id="load-error" role="alert">
+                <p>{loadError}</p>
+                <button
+                    type="button"
+                    class="ohm-process__btn"
+                    onclick={handleRetry}
+                >
+                    Retry
+                </button>
+            </div>
+        </template>
+
+        <!-- Content -------------------------------------------------------- -->
+        <template lwc:if={hasDetail}>
+            <!-- Context header -------------------------------------------- -->
+            <header class="ohm-process__header" data-id="context-header">
+                <div class="ohm-process__identity">
+                    <h1 class="ohm-process__title" data-id="process-label">
+                        {label}
+                    </h1>
+                    <div class="ohm-process__subline">
+                        <template lwc:if={domain}>
+                            <span class="ohm-process__domain">{domain}</span>
+                        </template>
+
+                        <template lwc:if={isAudited}>
+                            <span
+                                class={gradeChipClass}
+                                data-id="grade-chip"
+                                title={gradeWord}
+                            >
+                                <span class="ohm-process__chip-letter"
+                                    >{grade}</span
+                                >
+                                <span class="ohm-process__chip-word"
+                                    >{gradeWord}</span
+                                >
+                            </span>
+                            <span
+                                class="ohm-process__energy"
+                                data-id="process-energy"
+                                >{energyText}</span
+                            >
+                        </template>
+                    </div>
+                </div>
+
+                <div class="ohm-process__actions">
+                    <template lwc:if={isAudited}>
+                        <button
+                            type="button"
+                            class="ohm-process__btn ohm-process__btn--reaudit"
+                            data-id="reaudit"
+                            onclick={handleReaudit}
+                            disabled={isReauditing}
+                        >
+                            <template lwc:if={isReauditing}>
+                                <span
+                                    class="ohm-process__spinner ohm-process__spinner--sm"
+                                    aria-hidden="true"
+                                ></span>
+                                Re-auditing…
+                            </template>
+                            <template lwc:else>Re-audit</template>
+                        </button>
+                    </template>
+                    <template lwc:else>
+                        <button
+                            type="button"
+                            class="ohm-process__btn ohm-process__btn--audit"
+                            data-id="audit-cta"
+                            onclick={handleReaudit}
+                            disabled={isReauditing}
+                        >
+                            <template lwc:if={isReauditing}>
+                                <span
+                                    class="ohm-process__spinner ohm-process__spinner--sm"
+                                    aria-hidden="true"
+                                ></span>
+                                Auditing…
+                            </template>
+                            <template lwc:else>Audit this process</template>
+                        </button>
+                    </template>
+                </div>
+            </header>
+
+            <template lwc:if={isUnaudited}>
+                <p class="ohm-process__unaudited-note" data-id="unaudited-note">
+                    This process hasn't been audited yet. Run an audit to score its
+                    call graph and surface waste.
+                </p>
+            </template>
+
+            <!-- Graph + inspector ----------------------------------------- -->
+            <div class="ohm-process__grid">
+                <section
+                    class="ohm-process__graph-pane"
+                    aria-label="Call graph"
+                >
+                    <div class="ohm-process__pane-label">Call graph</div>
+                    <c-ohm-call-graph
+                        nodes={nodes}
+                        selected-node-id={selectedNodeId}
+                        calm-mode={calmMode}
+                        onselectnode={handleSelectNode}
+                        data-id="call-graph"
+                    ></c-ohm-call-graph>
+                </section>
+
+                <aside
+                    class="ohm-process__inspector-pane"
+                    aria-label="Node inspector"
+                >
+                    <div class="ohm-process__pane-label">Inspector</div>
+                    <c-ohm-node-inspector
+                        node={selectedNode}
+                        finding={selectedFinding}
+                        report-id={reportId}
+                        calm-mode={calmMode}
+                        data-id="node-inspector"
+                    ></c-ohm-node-inspector>
+                </aside>
+            </div>
+
+            <!-- Ask Ohm assistant strip (Wave 6 seam) --------------------- -->
+            <section class="ohm-process__assistant" data-id="assistant-strip">
+                <span class="ohm-process__assistant-badge"
+                    >Coming in this build</span
+                >
+                <div class="ohm-process__assistant-body">
+                    <span class="ohm-process__assistant-title">Ask Ohm</span>
+                    <span class="ohm-process__assistant-hint">
+                        “Why is this wasteful?” · “Draft the trimmed
+                        instructions” — the grounded per-process assistant lands
+                        in a later build.
+                    </span>
+                </div>
+            </section>
+        </template>
+    </div>
+</template>

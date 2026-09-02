@@ -1,0 +1,189 @@
+<template>
+    <div class={hostClass} data-id="inspector-root">
+        <!-- Empty state ---------------------------------------------------- -->
+        <template lwc:if={hasNode}>
+            <!-- Node header ------------------------------------------------ -->
+            <header class="ohm-inspector__header">
+                <div class="ohm-inspector__title-row">
+                    <h3 class="ohm-inspector__title" data-id="node-label">
+                        {node.label}
+                    </h3>
+                    <span class="ohm-inspector__type" data-id="node-type"
+                        >{typeLabel}</span
+                    >
+                </div>
+                <div class="ohm-inspector__meta">
+                    <span class="ohm-inspector__api" data-id="node-api"
+                        >{node.apiName}</span
+                    >
+                    <span class="ohm-inspector__dot">·</span>
+                    <span class="ohm-inspector__tokens" data-id="node-tokens"
+                        >{tokenText}</span
+                    >
+                </div>
+                <div class="ohm-inspector__meta">
+                    <template lwc:if={isAction}>
+                        <template lwc:if={invocationTarget}>
+                            <span class="ohm-inspector__kv" data-id="node-invocation">
+                                Invocation:
+                                <b>{invocationTarget}</b>
+                            </span>
+                        </template>
+                    </template>
+                    <template lwc:if={boundModel}>
+                        <span class="ohm-inspector__kv" data-id="node-model">
+                            Model: <b>{boundModel}</b>
+                        </span>
+                    </template>
+                </div>
+            </header>
+
+            <!-- Finding summary (wasteful only) ---------------------------- -->
+            <template lwc:if={isWasteful}>
+                <section class="ohm-inspector__finding" data-id="node-finding">
+                    <div class="ohm-inspector__finding-head">
+                        <span class="ohm-inspector__signal" data-id="node-signal"
+                            >⚠ {signalLabel}</span
+                        >
+                        <span class={severityChipClass} data-id="node-severity">
+                            {severityLabel}
+                        </span>
+                    </div>
+                    <template lwc:if={evidenceText}>
+                        <p class="ohm-inspector__evidence" data-id="node-evidence">
+                            {evidenceText}
+                        </p>
+                    </template>
+                    <template lwc:if={hasSavings}>
+                        <div class="ohm-inspector__savings" data-id="node-savings">
+                            <span class="ohm-inspector__savings-label"
+                                >Estimated savings</span
+                            >
+                            <span class="ohm-inspector__savings-value"
+                                >{savingsText}</span
+                            >
+                        </div>
+                    </template>
+                </section>
+            </template>
+
+            <!-- Instructions (with highlighted excess) --------------------- -->
+            <section class="ohm-inspector__instr-wrap">
+                <div class="ohm-inspector__section-label">Instructions</div>
+                <template lwc:if={hasInstructions}>
+                    <pre
+                        class="ohm-inspector__instr"
+                        data-id="node-instructions"
+                    ><span class="ohm-inspector__instr-normal">{normalInstructions}</span
+                    ><template lwc:if={isHighlighted}><span class="ohm-inspector__instr-excess" data-id="instr-excess">{excessInstructions}</span></template></pre>
+                    <template lwc:if={isHighlighted}>
+                        <p class="ohm-inspector__excess-caption" data-id="excess-caption">
+                            {excessCaption}
+                        </p>
+                    </template>
+                </template>
+                <template lwc:else>
+                    <p class="ohm-inspector__no-instr" data-id="no-instructions">
+                        This node has no instruction text.
+                    </p>
+                </template>
+            </section>
+
+            <!-- Fix CTAs --------------------------------------------------- -->
+            <template lwc:if={isWasteful}>
+                <section class="ohm-inspector__fixes" data-id="node-fixes">
+                    <div class="ohm-inspector__cta-row">
+                        <template for:each={fixCtas} for:item="cta">
+                            <button
+                                key={cta.key}
+                                type="button"
+                                class={cta.cssClass}
+                                data-id="fix-cta"
+                                data-fix={cta.key}
+                                onclick={handleCtaClick}
+                            >
+                                {cta.label}
+                            </button>
+                        </template>
+                    </div>
+
+                    <template lwc:if={showFixPanel}>
+                        <div class="ohm-inspector__fix-panel" data-id="fix-panel">
+                            <template lwc:if={recommendedTarget}>
+                                <div class="ohm-inspector__fix-kv">
+                                    <span class="ohm-inspector__fix-key"
+                                        >Recommended target</span
+                                    >
+                                    <span
+                                        class="ohm-inspector__fix-target"
+                                        data-id="fix-target"
+                                        >{recommendedTarget}</span
+                                    >
+                                </div>
+                            </template>
+                            <template lwc:if={recommendationText}>
+                                <p
+                                    class="ohm-inspector__fix-rec"
+                                    data-id="fix-rec"
+                                >
+                                    {recommendationText}
+                                </p>
+                            </template>
+
+                            <!-- Create remediation task -->
+                            <template lwc:if={taskDone}>
+                                <p
+                                    class="ohm-inspector__task-done"
+                                    data-id="task-done"
+                                    role="status"
+                                >
+                                    ✓ Remediation task created.
+                                </p>
+                            </template>
+                            <template lwc:else>
+                                <button
+                                    type="button"
+                                    class="ohm-inspector__task-btn"
+                                    data-id="create-task"
+                                    onclick={handleCreateTask}
+                                    disabled={isSavingTask}
+                                >
+                                    <template lwc:if={isSavingTask}
+                                        >Creating…</template
+                                    >
+                                    <template lwc:else
+                                        >Create remediation task</template
+                                    >
+                                </button>
+                            </template>
+                            <template lwc:if={taskFailed}>
+                                <p
+                                    class="ohm-inspector__task-error"
+                                    data-id="task-error"
+                                    role="alert"
+                                >
+                                    {taskError}
+                                </p>
+                            </template>
+                        </div>
+                    </template>
+                </section>
+            </template>
+
+            <template lwc:else>
+                <p class="ohm-inspector__clean" data-id="node-clean">
+                    No waste found on this node.
+                </p>
+            </template>
+        </template>
+
+        <template lwc:else>
+            <div class="ohm-inspector__empty" data-id="inspector-empty">
+                <span class="ohm-inspector__empty-glyph" aria-hidden="true"
+                    >◎</span
+                >
+                <p>Select a node to inspect it.</p>
+            </div>
+        </template>
+    </div>
+</template>

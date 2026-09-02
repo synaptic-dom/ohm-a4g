@@ -26,6 +26,31 @@ jest.mock(
     { virtual: true }
 );
 
+// ohmProcessPage (mounted when a row is opened) pulls in its own Apex too.
+jest.mock(
+    '@salesforce/apex/OhmAuditController.getProcessDetail',
+    () =>
+        ({
+            default: jest.fn(() =>
+                Promise.resolve({
+                    plannerId: '0Ai000000000001',
+                    label: 'Lead Concierge',
+                    domain: 'Sales',
+                    grade: 'F',
+                    reportId: 'R1',
+                    findings: [],
+                    nodes: []
+                })
+            )
+        }),
+    { virtual: true }
+);
+jest.mock(
+    '@salesforce/apex/OhmAuditController.createRemediationTask',
+    () => ({ default: jest.fn() }),
+    { virtual: true }
+);
+
 async function flush(times = 6) {
     for (let i = 0; i < times; i += 1) {
         // eslint-disable-next-line no-await-in-loop
@@ -127,7 +152,7 @@ describe('c-ohm-app', () => {
         ).toBe(true);
     });
 
-    it('records openprocess into the breadcrumb (Wave-3 seam)', async () => {
+    it('opens the process page + breadcrumb from openprocess, and returns via backtofleet', async () => {
         const el = create();
         await flush();
 
@@ -144,6 +169,21 @@ describe('c-ohm-app', () => {
         const crumb = el.shadowRoot.querySelector('[data-id="breadcrumb"]');
         expect(crumb.textContent).toContain('Fleet');
         expect(crumb.textContent).toContain('Lead Concierge');
+        // fleet table swapped out for the process page
+        const page = el.shadowRoot.querySelector('[data-id="process-page"]');
+        expect(page).not.toBeNull();
+        expect(page.plannerId).toBe('0Ai000000000001');
+        expect(el.shadowRoot.querySelector('[data-id="fleet"]')).toBeNull();
+
+        // backtofleet returns to the fleet list
+        page.dispatchEvent(
+            new CustomEvent('backtofleet', { bubbles: true, composed: true })
+        );
+        await flush();
+        expect(
+            el.shadowRoot.querySelector('[data-id="process-page"]')
+        ).toBeNull();
+        expect(el.shadowRoot.querySelector('[data-id="fleet"]')).not.toBeNull();
     });
 
     it('moves between tabs with arrow keys', async () => {

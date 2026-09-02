@@ -9,9 +9,9 @@ import setCalmModePreference from '@salesforce/apex/OhmAuditController.setCalmMo
  * and passed down to every child). FLEET renders <c-ohm-fleet-table>; the other
  * three tabs render an on-brand "coming in this build" placeholder for now.
  *
- * Leaves a clean seam for Wave 3: an `openprocess` event from a fleet row is
- * captured into `selectedPlannerId` (and logged); the process page itself is
- * NOT built here.
+ * Wave 3: an `openprocess` event from a fleet row swaps the FLEET body from the
+ * fleet table to <c-ohm-process-page> (the drill-down) and sets the breadcrumb
+ * "Fleet › <label>"; a `backtofleet` event (or clicking any tab) returns home.
  */
 const TABS = [
     { id: 'FLEET', label: 'Fleet' },
@@ -25,7 +25,7 @@ export default class OhmApp extends LightningElement {
     @track calmMode = false;
     @track isReady = false;
 
-    // Wave-3 seam: which process a fleet row asked us to open (records only).
+    // Which process a fleet row asked us to open (drives the process page).
     @track selectedPlannerId;
     @track selectedPlannerLabel;
 
@@ -65,6 +65,13 @@ export default class OhmApp extends LightningElement {
 
     get isFleet() {
         return this.activeTab === 'FLEET';
+    }
+    // The process page lives inside the FLEET tab once a row is opened.
+    get isProcessOpen() {
+        return this.isFleet && !!this.selectedPlannerId;
+    }
+    get isFleetList() {
+        return this.isFleet && !this.selectedPlannerId;
     }
     get isFindings() {
         return this.activeTab === 'FINDINGS';
@@ -110,7 +117,12 @@ export default class OhmApp extends LightningElement {
     // ---- interaction --------------------------------------------------------
     handleTabClick(event) {
         const tabId = event.currentTarget.dataset.tab;
-        if (tabId && tabId !== this.activeTab) {
+        if (!tabId) {
+            return;
+        }
+        // Any tab click returns home from an open process (incl. FLEET itself).
+        this._clearProcess();
+        if (tabId !== this.activeTab) {
             this.activeTab = tabId;
         }
     }
@@ -136,17 +148,22 @@ export default class OhmApp extends LightningElement {
         });
     }
 
-    // Wave-3 seam: record + log the requested process; no navigation yet.
+    // Open the process page for the requested planner (drill-down from a row).
     handleOpenProcess(event) {
         const detail = event.detail || {};
+        this.activeTab = 'FLEET';
         this.selectedPlannerId = detail.plannerId;
         this.selectedPlannerLabel = detail.label;
-        // eslint-disable-next-line no-console
-        console.log(
-            `[ohmApp] openprocess requested for planner ${detail.plannerId} (${
-                detail.label || 'unknown'
-            }) — process page arrives in Wave 3.`
-        );
+    }
+
+    // Return to the fleet list (back affordance on the process page).
+    handleBackToFleet() {
+        this._clearProcess();
+    }
+
+    _clearProcess() {
+        this.selectedPlannerId = undefined;
+        this.selectedPlannerLabel = undefined;
     }
 
     // ---- Calm Mode ----------------------------------------------------------

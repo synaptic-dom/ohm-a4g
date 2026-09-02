@@ -1,0 +1,355 @@
+/* ============================================================================
+   OHM v2 — Process page. The drill-down layout: context header, the call-graph
+   centerpiece (main), the node inspector (side), an Ask-Ohm assistant seam.
+   Inherits Instrument tokens; declares its own for standalone render. Calm Mode
+   flips the tokens on the root so it propagates through the composed children.
+   ========================================================================== */
+:host {
+    --ohm-panel: #0e1518;
+    --ohm-panel-2: #16232a;
+    --ohm-panel-3: #1d2f37;
+    --ohm-ink: #eaf2f0;
+    --ohm-muted: #7e9aa0;
+    --ohm-filament: #ffb24c;
+    --ohm-filament-hot: #ff6b4a;
+    --ohm-cool: #4fd1c5;
+    --ohm-hairline: #2a3b42;
+    --ohm-radius: 10px;
+    --ohm-s2: 12px;
+    --ohm-s3: 20px;
+    --ohm-font-data: ui-monospace, "SF Mono", "Cascadia Mono", Consolas,
+        "Liberation Mono", monospace;
+    --ohm-font-head: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: block;
+}
+
+.ohm-process {
+    color: var(--ohm-ink);
+    font-family: var(--ohm-font-head);
+    display: flex;
+    flex-direction: column;
+    gap: var(--ohm-s3);
+}
+.ohm-process * {
+    box-sizing: border-box;
+}
+
+/* ---- back ----------------------------------------------------------------- */
+.ohm-process__back {
+    appearance: none;
+    align-self: flex-start;
+    background: transparent;
+    border: 0;
+    color: var(--ohm-cool);
+    font-family: var(--ohm-font-head);
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 6px;
+}
+.ohm-process__back:hover {
+    text-decoration: underline;
+}
+.ohm-process__back:focus-visible {
+    outline: 2px solid var(--ohm-cool);
+    outline-offset: 2px;
+}
+
+/* ---- context header ------------------------------------------------------- */
+.ohm-process__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--ohm-s3);
+    flex-wrap: wrap;
+    padding-bottom: var(--ohm-s3);
+    border-bottom: 1px solid var(--ohm-hairline);
+}
+.ohm-process__identity {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+.ohm-process__title {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--ohm-ink);
+}
+.ohm-process__subline {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--ohm-s2);
+}
+.ohm-process__domain {
+    font-family: var(--ohm-font-data);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ohm-muted);
+}
+
+/* grade chip (letter + word, like the fleet chip) */
+.ohm-process__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px 3px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--ohm-hairline);
+    font-family: var(--ohm-font-data);
+    line-height: 1.2;
+}
+.ohm-process__chip-letter {
+    font-weight: 800;
+    font-size: 14px;
+}
+.ohm-process__chip-word {
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--ohm-muted);
+}
+.ohm-process__chip--hot {
+    border-color: var(--ohm-filament-hot);
+    color: var(--ohm-filament-hot);
+    background: rgba(255, 107, 74, 0.1);
+}
+.ohm-process__chip--warm {
+    border-color: var(--ohm-filament);
+    color: var(--ohm-filament);
+    background: rgba(255, 178, 76, 0.1);
+}
+.ohm-process__chip--muted {
+    border-color: var(--ohm-muted);
+    color: var(--ohm-ink);
+}
+.ohm-process__chip--cool {
+    border-color: var(--ohm-cool);
+    color: var(--ohm-cool);
+    background: rgba(79, 209, 197, 0.1);
+}
+.ohm-process__energy {
+    font-family: var(--ohm-font-data);
+    font-size: 13px;
+    color: var(--ohm-filament);
+}
+
+.ohm-process__actions {
+    flex: none;
+}
+
+/* ---- buttons -------------------------------------------------------------- */
+.ohm-process__btn {
+    appearance: none;
+    background: var(--ohm-panel-2);
+    color: var(--ohm-ink);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-family: var(--ohm-font-head);
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.ohm-process__btn:hover:not([disabled]) {
+    background: var(--ohm-panel-3);
+}
+.ohm-process__btn[disabled] {
+    opacity: 0.7;
+    cursor: default;
+}
+.ohm-process__btn:focus-visible {
+    outline: 2px solid var(--ohm-cool);
+    outline-offset: 2px;
+}
+.ohm-process__btn--audit,
+.ohm-process__btn--reaudit {
+    background: var(--ohm-filament);
+    color: #0e1518;
+    border-color: var(--ohm-filament);
+}
+.ohm-process__btn--audit:hover:not([disabled]),
+.ohm-process__btn--reaudit:hover:not([disabled]) {
+    background: var(--ohm-filament-hot);
+    border-color: var(--ohm-filament-hot);
+}
+
+.ohm-process__unaudited-note {
+    margin: 0;
+    color: var(--ohm-muted);
+    font-size: 14px;
+    line-height: 1.55;
+    max-width: 60ch;
+}
+
+/* ---- graph + inspector grid ---------------------------------------------- */
+.ohm-process__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(300px, 1fr);
+    gap: var(--ohm-s3);
+    align-items: stretch;
+}
+.ohm-process__pane-label {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ohm-muted);
+    margin-bottom: var(--ohm-s2);
+}
+.ohm-process__graph-pane {
+    min-width: 0;
+    background: var(--ohm-panel-2);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: var(--ohm-radius);
+    padding: var(--ohm-s3);
+    display: flex;
+    flex-direction: column;
+}
+.ohm-process__graph-pane c-ohm-call-graph {
+    flex: 1 1 auto;
+    min-height: 400px;
+    display: block;
+}
+.ohm-process__inspector-pane {
+    min-width: 0;
+    background: var(--ohm-panel-2);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: var(--ohm-radius);
+    padding: var(--ohm-s3);
+    display: flex;
+    flex-direction: column;
+}
+.ohm-process__inspector-pane c-ohm-node-inspector {
+    flex: 1 1 auto;
+    display: block;
+}
+
+/* ---- Ask Ohm assistant strip (Wave 6 seam) ------------------------------- */
+.ohm-process__assistant {
+    display: flex;
+    align-items: center;
+    gap: var(--ohm-s3);
+    padding: var(--ohm-s3);
+    border: 1px dashed var(--ohm-hairline);
+    border-radius: var(--ohm-radius);
+    background: rgba(0, 0, 0, 0.14);
+}
+.ohm-process__assistant-badge {
+    flex: none;
+    font-family: var(--ohm-font-data);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ohm-filament);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: 999px;
+    padding: 4px 12px;
+}
+.ohm-process__assistant-body {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+.ohm-process__assistant-title {
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--ohm-ink);
+}
+.ohm-process__assistant-hint {
+    font-size: 13px;
+    color: var(--ohm-muted);
+    line-height: 1.5;
+}
+
+/* ---- loading / error ------------------------------------------------------ */
+.ohm-process__loading {
+    display: flex;
+    align-items: center;
+    gap: var(--ohm-s2);
+    padding: var(--ohm-s3);
+    color: var(--ohm-muted);
+    font-family: var(--ohm-font-data);
+    font-size: 14px;
+}
+.ohm-process__error {
+    padding: var(--ohm-s3);
+    border: 1px solid var(--ohm-hairline);
+    border-left: 3px solid var(--ohm-filament-hot);
+    border-radius: var(--ohm-radius);
+    background: var(--ohm-panel-2);
+}
+.ohm-process__error p {
+    margin: 0 0 var(--ohm-s2);
+    color: var(--ohm-filament);
+    font-family: var(--ohm-font-data);
+}
+
+/* ---- spinner -------------------------------------------------------------- */
+.ohm-process__spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--ohm-hairline);
+    border-top-color: var(--ohm-filament);
+    border-radius: 50%;
+    animation: ohm-process-spin 0.7s linear infinite;
+}
+.ohm-process__spinner--sm {
+    width: 13px;
+    height: 13px;
+    border-top-color: #0e1518;
+}
+@keyframes ohm-process-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================================================
+   CALM MODE — light, quiet, colour-independent. Tokens flip on the root and
+   propagate into the composed graph + inspector.
+   ========================================================================== */
+.ohm-process--calm {
+    --ohm-panel: #f7f9f9;
+    --ohm-panel-2: #ffffff;
+    --ohm-panel-3: #eef3f3;
+    --ohm-ink: #14242a;
+    --ohm-muted: #4c5f65;
+    --ohm-filament: #14242a;
+    --ohm-filament-hot: #14242a;
+    --ohm-cool: #14242a;
+    --ohm-hairline: #d3dede;
+}
+.ohm-process--calm .ohm-process__chip--hot,
+.ohm-process--calm .ohm-process__chip--warm,
+.ohm-process--calm .ohm-process__chip--cool,
+.ohm-process--calm .ohm-process__chip--muted {
+    background: transparent;
+    border-color: #b7c6c6;
+    color: var(--ohm-ink);
+}
+.ohm-process--calm .ohm-process__btn--audit,
+.ohm-process--calm .ohm-process__btn--reaudit {
+    color: #ffffff;
+}
+.ohm-process--calm .ohm-process__spinner--sm {
+    border-top-color: #ffffff;
+}
+
+/* ---- responsive ----------------------------------------------------------- */
+@media (max-width: 860px) {
+    .ohm-process__grid {
+        grid-template-columns: 1fr;
+    }
+    .ohm-process__graph-pane c-ohm-call-graph {
+        min-height: 320px;
+    }
+}
