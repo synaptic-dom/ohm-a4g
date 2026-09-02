@@ -1,0 +1,410 @@
+/* ============================================================================
+   OHM v2 — Fleet table. Inherits the Instrument tokens from ohmApp, but also
+   declares its own so it renders correctly standalone. Calm Mode flips the
+   tokens on the root element (so the flip propagates whether the parent or this
+   component drives it). No meaning rides on colour alone: the grade chip always
+   carries its letter + word.
+   ========================================================================== */
+:host {
+    --ohm-panel: #0e1518;
+    --ohm-panel-2: #16232a;
+    --ohm-panel-3: #1d2f37;
+    --ohm-ink: #eaf2f0;
+    --ohm-muted: #7e9aa0;
+    --ohm-filament: #ffb24c;
+    --ohm-filament-hot: #ff6b4a;
+    --ohm-cool: #4fd1c5;
+    --ohm-hairline: #2a3b42;
+    --ohm-radius: 10px;
+    --ohm-s1: 8px;
+    --ohm-s2: 12px;
+    --ohm-s3: 20px;
+    --ohm-font-data: ui-monospace, "SF Mono", "Cascadia Mono", Consolas,
+        "Liberation Mono", monospace;
+    --ohm-font-head: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: block;
+}
+
+.ohm-fleet {
+    font-family: var(--ohm-font-head);
+    color: var(--ohm-ink);
+}
+.ohm-fleet * {
+    box-sizing: border-box;
+}
+
+/* ---- summary strip -------------------------------------------------------- */
+.ohm-fleet__summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ohm-s3);
+    padding: var(--ohm-s3);
+    margin-bottom: var(--ohm-s3);
+    background: var(--ohm-panel-2);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: var(--ohm-radius);
+}
+.ohm-fleet__stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 120px;
+}
+.ohm-fleet__stat-value {
+    font-family: var(--ohm-font-data);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--ohm-ink);
+    letter-spacing: 0.01em;
+}
+.ohm-fleet__stat-value--energy {
+    color: var(--ohm-filament);
+}
+.ohm-fleet__stat-of {
+    color: var(--ohm-muted);
+    font-size: 16px;
+}
+.ohm-fleet__stat-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ohm-muted);
+}
+
+/* ---- controls ------------------------------------------------------------- */
+.ohm-fleet__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--ohm-s2);
+    margin-bottom: var(--ohm-s3);
+}
+.ohm-fleet__control {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.ohm-fleet__control--search {
+    flex: 1 1 200px;
+    min-width: 160px;
+}
+.ohm-fleet__control-label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ohm-muted);
+}
+.ohm-fleet__select,
+.ohm-fleet__search {
+    appearance: none;
+    background: var(--ohm-panel-2);
+    color: var(--ohm-ink);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-family: var(--ohm-font-head);
+    font-size: 13px;
+    line-height: 1.2;
+}
+.ohm-fleet__search {
+    width: 100%;
+}
+.ohm-fleet__select:focus-visible,
+.ohm-fleet__search:focus-visible {
+    outline: 2px solid var(--ohm-cool);
+    outline-offset: 2px;
+}
+.ohm-fleet__sort {
+    appearance: none;
+    background: var(--ohm-panel-2);
+    color: var(--ohm-ink);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-family: var(--ohm-font-data);
+    font-size: 13px;
+    cursor: pointer;
+    align-self: flex-end;
+}
+.ohm-fleet__sort:hover {
+    background: var(--ohm-panel-3);
+}
+.ohm-fleet__sort:focus-visible {
+    outline: 2px solid var(--ohm-cool);
+    outline-offset: 2px;
+}
+
+/* ---- table ---------------------------------------------------------------- */
+.ohm-fleet__table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--ohm-hairline);
+    border-radius: var(--ohm-radius);
+}
+.ohm-fleet__table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 640px;
+}
+.ohm-fleet__th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ohm-muted);
+    padding: 12px 16px;
+    background: var(--ohm-panel-2);
+    border-bottom: 1px solid var(--ohm-hairline);
+    white-space: nowrap;
+}
+.ohm-fleet__th--num,
+.ohm-fleet__td--num {
+    text-align: right;
+    font-family: var(--ohm-font-data);
+}
+.ohm-fleet__th--status {
+    text-align: left;
+}
+.ohm-fleet__tr {
+    border-bottom: 1px solid var(--ohm-hairline);
+    transition: background-color 120ms ease;
+}
+.ohm-fleet__tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+.ohm-fleet__td {
+    padding: 14px 16px;
+    font-size: 14px;
+    color: var(--ohm-ink);
+    vertical-align: middle;
+}
+.ohm-fleet__td--name {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.ohm-fleet__name {
+    font-weight: 600;
+}
+.ohm-fleet__api {
+    font-family: var(--ohm-font-data);
+    font-size: 11px;
+    color: var(--ohm-muted);
+}
+
+/* ---- status cell ---------------------------------------------------------- */
+.ohm-fleet__status-audited,
+.ohm-fleet__status-pending {
+    display: flex;
+    align-items: center;
+    gap: var(--ohm-s2);
+    flex-wrap: wrap;
+}
+
+/* grade chip: letter + word so meaning never rides on colour alone */
+.ohm-fleet__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px 3px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--ohm-hairline);
+    font-family: var(--ohm-font-data);
+    line-height: 1.2;
+}
+.ohm-fleet__chip-letter {
+    font-weight: 800;
+    font-size: 14px;
+}
+.ohm-fleet__chip-word {
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--ohm-muted);
+}
+.ohm-fleet__chip--hot {
+    border-color: var(--ohm-filament-hot);
+    color: var(--ohm-filament-hot);
+    background: rgba(255, 107, 74, 0.1);
+}
+.ohm-fleet__chip--warm {
+    border-color: var(--ohm-filament);
+    color: var(--ohm-filament);
+    background: rgba(255, 178, 76, 0.1);
+}
+.ohm-fleet__chip--muted {
+    border-color: var(--ohm-muted);
+    color: var(--ohm-ink);
+}
+.ohm-fleet__chip--cool {
+    border-color: var(--ohm-cool);
+    color: var(--ohm-cool);
+    background: rgba(79, 209, 197, 0.1);
+}
+
+.ohm-fleet__energy {
+    font-family: var(--ohm-font-data);
+    font-size: 13px;
+    color: var(--ohm-filament);
+    white-space: nowrap;
+}
+.ohm-fleet__open {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    color: var(--ohm-cool);
+    font-family: var(--ohm-font-head);
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 6px;
+}
+.ohm-fleet__open:hover {
+    text-decoration: underline;
+}
+.ohm-fleet__open:focus-visible {
+    outline: 2px solid var(--ohm-cool);
+    outline-offset: 2px;
+}
+
+.ohm-fleet__notaudited {
+    color: var(--ohm-muted);
+    font-size: 13px;
+    font-style: italic;
+}
+
+/* ---- buttons -------------------------------------------------------------- */
+.ohm-fleet__btn {
+    appearance: none;
+    background: var(--ohm-panel-2);
+    color: var(--ohm-ink);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: 8px;
+    padding: 6px 16px;
+    font-family: var(--ohm-font-head);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.ohm-fleet__btn:hover:not([disabled]) {
+    background: var(--ohm-panel-3);
+}
+.ohm-fleet__btn:focus-visible {
+    outline: 2px solid var(--ohm-cool);
+    outline-offset: 2px;
+}
+.ohm-fleet__btn[disabled] {
+    opacity: 0.7;
+    cursor: default;
+}
+.ohm-fleet__btn--audit {
+    background: var(--ohm-filament);
+    color: #0e1518;
+    border-color: var(--ohm-filament);
+}
+.ohm-fleet__btn--audit:hover:not([disabled]) {
+    background: var(--ohm-filament-hot);
+    border-color: var(--ohm-filament-hot);
+}
+
+/* ---- spinners ------------------------------------------------------------- */
+.ohm-fleet__spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--ohm-hairline);
+    border-top-color: var(--ohm-filament);
+    border-radius: 50%;
+    animation: ohm-fleet-spin 0.7s linear infinite;
+}
+.ohm-fleet__spinner--sm {
+    width: 13px;
+    height: 13px;
+    border-top-color: #0e1518;
+}
+@keyframes ohm-fleet-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ---- states --------------------------------------------------------------- */
+.ohm-fleet__loading {
+    display: flex;
+    align-items: center;
+    gap: var(--ohm-s2);
+    padding: var(--ohm-s3);
+    color: var(--ohm-muted);
+    font-family: var(--ohm-font-data);
+    font-size: 14px;
+}
+.ohm-fleet__error {
+    padding: var(--ohm-s3);
+    border: 1px solid var(--ohm-hairline);
+    border-left: 3px solid var(--ohm-filament-hot);
+    border-radius: var(--ohm-radius);
+    background: var(--ohm-panel-2);
+}
+.ohm-fleet__error p {
+    margin: 0 0 var(--ohm-s2);
+    color: var(--ohm-filament);
+    font-family: var(--ohm-font-data);
+}
+.ohm-fleet__row-error {
+    margin: 8px 0 0;
+    color: var(--ohm-filament-hot);
+    font-family: var(--ohm-font-data);
+    font-size: 12px;
+    flex-basis: 100%;
+}
+.ohm-fleet__empty {
+    padding: var(--ohm-s3);
+    text-align: center;
+    color: var(--ohm-muted);
+    font-style: italic;
+    border: 1px dashed var(--ohm-hairline);
+    border-radius: var(--ohm-radius);
+}
+
+/* ============================================================================
+   CALM MODE — light, quiet, colour-independent. Flipped on the root element so
+   the change propagates whether ohmApp or this component drives it.
+   ========================================================================== */
+.ohm-fleet--calm {
+    --ohm-panel: #f7f9f9;
+    --ohm-panel-2: #ffffff;
+    --ohm-panel-3: #eef3f3;
+    --ohm-ink: #14242a;
+    --ohm-muted: #4c5f65;
+    --ohm-filament: #14242a;
+    --ohm-filament-hot: #14242a;
+    --ohm-cool: #14242a;
+    --ohm-hairline: #d3dede;
+}
+.ohm-fleet--calm .ohm-fleet__chip--hot,
+.ohm-fleet--calm .ohm-fleet__chip--warm,
+.ohm-fleet--calm .ohm-fleet__chip--cool,
+.ohm-fleet--calm .ohm-fleet__chip--muted {
+    background: transparent;
+    border-color: #b7c6c6;
+    color: var(--ohm-ink);
+}
+.ohm-fleet--calm .ohm-fleet__btn--audit {
+    color: #ffffff;
+}
+.ohm-fleet--calm .ohm-fleet__spinner--sm {
+    border-top-color: #ffffff;
+}
+
+/* ---- responsive ----------------------------------------------------------- */
+@media (max-width: 640px) {
+    .ohm-fleet__stat-value {
+        font-size: 20px;
+    }
+    .ohm-fleet__control--search {
+        flex-basis: 100%;
+    }
+}

@@ -1,0 +1,75 @@
+<template>
+    <template lwc:if={isReady}>
+        <div class={shellClass} data-id="shell">
+            <!-- Top bar: wordmark + tab strip + Calm toggle ---------------- -->
+            <header class="ohm-app__topbar">
+                <div class="ohm-app__brand">
+                    <span class="ohm-app__wordmark">Ohm</span>
+                    <span class="ohm-app__tagline">Fleet Workbench</span>
+                </div>
+
+                <div
+                    class="ohm-app__tabs"
+                    role="tablist"
+                    aria-label="Workbench sections"
+                    onkeydown={handleTabKeydown}
+                >
+                    <template for:each={tabs} for:item="tab">
+                        <button
+                            key={tab.id}
+                            type="button"
+                            role="tab"
+                            class={tab.cssClass}
+                            data-tab={tab.id}
+                            data-id="tab"
+                            aria-selected={tab.selected}
+                            tabindex={tab.tabindex}
+                            onclick={handleTabClick}
+                        >
+                            {tab.label}
+                        </button>
+                    </template>
+                </div>
+
+                <div class="ohm-app__calm">
+                    <c-ohm-calm-mode-toggle
+                        calm-mode={calmMode}
+                        oncalmtoggle={handleCalmToggle}
+                    ></c-ohm-calm-mode-toggle>
+                </div>
+            </header>
+
+            <!-- Breadcrumb / context line -------------------------------- -->
+            <div class="ohm-app__breadcrumb" data-id="breadcrumb">
+                {breadcrumb}
+            </div>
+
+            <!-- Tab body ------------------------------------------------- -->
+            <main class="ohm-app__body">
+                <template lwc:if={isFleet}>
+                    <c-ohm-fleet-table
+                        calm-mode={calmMode}
+                        onopenprocess={handleOpenProcess}
+                        data-id="fleet"
+                    ></c-ohm-fleet-table>
+                </template>
+
+                <template lwc:if={isPlaceholder}>
+                    <section
+                        class="ohm-app__placeholder"
+                        data-id="placeholder"
+                        role="status"
+                    >
+                        <div class="ohm-app__placeholder-badge">Coming in this build</div>
+                        <h2 class="ohm-app__placeholder-title">
+                            {placeholderTitle}
+                        </h2>
+                        <p class="ohm-app__placeholder-body">
+                            {placeholderBody}
+                        </p>
+                    </section>
+                </template>
+            </main>
+        </div>
+    </template>
+</template>

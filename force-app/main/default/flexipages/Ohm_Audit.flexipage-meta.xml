@@ -3,8 +3,8 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>ohmAuditExperience</componentName>
-                <identifier>ohmAuditExperienceRegionMain</identifier>
+                <componentName>ohmApp</componentName>
+                <identifier>ohmAppRegionMain</identifier>
             </componentInstance>
         </itemInstances>
         <name>main</name>

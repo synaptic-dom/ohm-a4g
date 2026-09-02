@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>67.0</apiVersion>
+    <isExposed>false</isExposed>
+    <masterLabel>Ohm Fleet Table</masterLabel>
+    <description>Ohm v2 — the Fleet home: discovered processes, per-row deep audit, filter/sort/search.</description>
+</LightningComponentBundle>

@@ -1,0 +1,193 @@
+<template>
+    <div class={hostClass} data-id="fleet-root">
+        <!-- Summary strip -------------------------------------------------- -->
+        <div class="ohm-fleet__summary" data-id="summary">
+            <div class="ohm-fleet__stat">
+                <span class="ohm-fleet__stat-value" data-id="stat-audited">
+                    {auditedCount}<span class="ohm-fleet__stat-of">/{discoveredCount}</span>
+                </span>
+                <span class="ohm-fleet__stat-label">Audited / discovered</span>
+            </div>
+            <div class="ohm-fleet__stat">
+                <span class="ohm-fleet__stat-value ohm-fleet__stat-value--energy" data-id="stat-energy">
+                    {totalEnergyText}
+                </span>
+                <span class="ohm-fleet__stat-label">Fleet energy (audited)</span>
+            </div>
+            <div class="ohm-fleet__stat">
+                <span class="ohm-fleet__stat-value" data-id="stat-worst">
+                    {worstGradeText}
+                </span>
+                <span class="ohm-fleet__stat-label">Worst grade</span>
+            </div>
+        </div>
+
+        <!-- Controls ------------------------------------------------------- -->
+        <div class="ohm-fleet__controls" role="group" aria-label="Fleet filters">
+            <label class="ohm-fleet__control">
+                <span class="ohm-fleet__control-label">Domain</span>
+                <select
+                    class="ohm-fleet__select"
+                    data-id="filter-domain"
+                    onchange={handleDomainChange}
+                >
+                    <template for:each={domainOptions} for:item="opt">
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    </template>
+                </select>
+            </label>
+
+            <label class="ohm-fleet__control">
+                <span class="ohm-fleet__control-label">Grade</span>
+                <select
+                    class="ohm-fleet__select"
+                    data-id="filter-grade"
+                    onchange={handleGradeChange}
+                >
+                    <template for:each={gradeOptions} for:item="opt">
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    </template>
+                </select>
+            </label>
+
+            <button
+                type="button"
+                class="ohm-fleet__sort"
+                data-id="sort-energy"
+                onclick={handleSortToggle}
+                aria-label="Sort by energy"
+            >
+                Sort: {sortLabel}
+            </button>
+
+            <label class="ohm-fleet__control ohm-fleet__control--search">
+                <span class="ohm-fleet__control-label">Search</span>
+                <input
+                    type="search"
+                    class="ohm-fleet__search"
+                    data-id="search"
+                    placeholder="Search processes…"
+                    value={searchTerm}
+                    oninput={handleSearch}
+                />
+            </label>
+        </div>
+
+        <!-- Loading -------------------------------------------------------- -->
+        <template lwc:if={isLoading}>
+            <div class="ohm-fleet__loading" data-id="loading" role="status">
+                <span class="ohm-fleet__spinner" aria-hidden="true"></span>
+                Discovering the fleet…
+            </div>
+        </template>
+
+        <!-- Load error ----------------------------------------------------- -->
+        <template lwc:if={loadError}>
+            <div class="ohm-fleet__error" data-id="load-error" role="alert">
+                <p>{loadError}</p>
+                <button type="button" class="ohm-fleet__btn" onclick={handleRetry}>
+                    Retry
+                </button>
+            </div>
+        </template>
+
+        <!-- Table ---------------------------------------------------------- -->
+        <template lwc:if={hasRows}>
+            <div class="ohm-fleet__table-wrap">
+                <table class="ohm-fleet__table" data-id="table">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="ohm-fleet__th">Process</th>
+                            <th scope="col" class="ohm-fleet__th">Domain</th>
+                            <th scope="col" class="ohm-fleet__th ohm-fleet__th--num">Topics</th>
+                            <th scope="col" class="ohm-fleet__th ohm-fleet__th--num">Actions</th>
+                            <th scope="col" class="ohm-fleet__th ohm-fleet__th--status">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={visibleRows} for:item="row">
+                            <tr key={row.plannerId} class="ohm-fleet__tr" data-id="row">
+                                <td class="ohm-fleet__td ohm-fleet__td--name">
+                                    <span class="ohm-fleet__name">{row.label}</span>
+                                    <span class="ohm-fleet__api">{row.plannerApiName}</span>
+                                </td>
+                                <td class="ohm-fleet__td">{row.domain}</td>
+                                <td class="ohm-fleet__td ohm-fleet__td--num">{row.topicText}</td>
+                                <td class="ohm-fleet__td ohm-fleet__td--num">{row.actionText}</td>
+                                <td class="ohm-fleet__td ohm-fleet__td--status">
+                                    <!-- Audited row -->
+                                    <template lwc:if={row.audited}>
+                                        <div class="ohm-fleet__status-audited">
+                                            <span
+                                                class={row.chipClass}
+                                                title={row.gradeWord}
+                                            >
+                                                <span class="ohm-fleet__chip-letter">{row.grade}</span>
+                                                <span class="ohm-fleet__chip-word">{row.gradeWord}</span>
+                                            </span>
+                                            <span class="ohm-fleet__energy" data-id="energy">
+                                                {row.energyText}
+                                            </span>
+                                            <button
+                                                type="button"
+                                                class="ohm-fleet__open"
+                                                data-id="open"
+                                                data-planner={row.plannerId}
+                                                onclick={handleOpen}
+                                            >
+                                                Open ▸
+                                            </button>
+                                        </div>
+                                    </template>
+
+                                    <!-- Un-audited row -->
+                                    <template lwc:if={row.audited}>
+                                    </template>
+                                    <template lwc:else>
+                                        <div class="ohm-fleet__status-pending">
+                                            <span class="ohm-fleet__notaudited">
+                                                Not audited yet
+                                            </span>
+                                            <button
+                                                type="button"
+                                                class="ohm-fleet__btn ohm-fleet__btn--audit"
+                                                data-id="audit"
+                                                data-planner={row.plannerId}
+                                                onclick={handleAudit}
+                                                disabled={row.isAuditing}
+                                            >
+                                                <template lwc:if={row.isAuditing}>
+                                                    <span class="ohm-fleet__spinner ohm-fleet__spinner--sm" aria-hidden="true"></span>
+                                                    Auditing…
+                                                </template>
+                                                <template lwc:else>Audit</template>
+                                            </button>
+                                        </div>
+                                    </template>
+
+                                    <template lwc:if={row.rowError}>
+                                        <p class="ohm-fleet__row-error" data-id="row-error" role="alert">
+                                            {row.rowError}
+                                        </p>
+                                    </template>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </template>
+
+        <!-- Empty states --------------------------------------------------- -->
+        <template lwc:if={isEmptyAfterLoad}>
+            <div class="ohm-fleet__empty" data-id="empty">
+                No processes discovered yet.
+            </div>
+        </template>
+        <template lwc:if={isFilteredEmpty}>
+            <div class="ohm-fleet__empty" data-id="empty-filtered">
+                No processes match these filters.
+            </div>
+        </template>
+    </div>
+</template>
