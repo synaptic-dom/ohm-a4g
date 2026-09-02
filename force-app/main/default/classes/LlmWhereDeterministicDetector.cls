@@ -15,6 +15,14 @@ public with sharing class LlmWhereDeterministicDetector implements SignalDetecto
         'yes-no', 'yes/no', 'yes or no'
     };
 
+    // Invocation-target types that invoke an LLM/prompt (deterministic-replaceable).
+    // This platform (API v67) emits 'generatePromptResponse' for prompt-backed actions;
+    // GenAiFunctionDefinition.InvocationTargetType has NO 'prompt' value. 'prompt' is
+    // retained for forward/other-org compatibility so the detector fires on either.
+    private static final Set<String> LLM_INVOKING_TYPES = new Set<String>{
+        'prompt', 'generatepromptresponse'
+    };
+
     public List<OhmDTO.Finding> detect(OhmDTO.AgentModel g) {
         List<OhmDTO.Finding> out = new List<OhmDTO.Finding>();
         if (g == null || g.actions == null) {
@@ -25,8 +33,8 @@ public with sharing class LlmWhereDeterministicDetector implements SignalDetecto
                 continue;
             }
             String targetType = (a.invocationTargetType == null) ? '' : a.invocationTargetType.toLowerCase();
-            if (targetType != 'prompt') {
-                continue; // flow/apex never flagged
+            if (!LLM_INVOKING_TYPES.contains(targetType)) {
+                continue; // flow/apex/standardInvocableAction/etc. never flagged
             }
             Integer hits = countHits(a);
             if (hits < 1) {

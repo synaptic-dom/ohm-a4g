@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPlannerBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Lead Concierge agent (unoptimized). Seeded fixture for the Ohm audit demo: an inbound-lead concierge whose triage topic carries grossly bloated instructions and whose lead-tier classifier calls an LLM for deterministic work.</description>
+    <masterLabel>Lead Concierge (unoptimized)</masterLabel>
+    <plannerType>AiCopilot__ReAct</plannerType>
+    <genAiPlugins>
+        <genAiPluginName>Ohm_Waste_LeadTriage</genAiPluginName>
+    </genAiPlugins>
+</GenAiPlannerBundle>

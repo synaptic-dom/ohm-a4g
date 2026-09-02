@@ -60,6 +60,17 @@ private class OhmSignalDetectorTest {
     }
 
     @IsTest
+    static void test_a_generatePromptResponse_fires() {
+        // API v67 emits 'generatePromptResponse' (not 'prompt') for prompt-backed actions.
+        OhmDTO.AgentModel g = withActions(new List<OhmDTO.ActionNode>{
+            action('ClassifyLeadTier', 'Classify Lead Tier', 'Route the lead into a tier', 'generatePromptResponse', null)
+        });
+        List<OhmDTO.Finding> f = new LlmWhereDeterministicDetector().detect(g);
+        System.assertEquals(1, f.size(), 'generatePromptResponse action must fire signal (a)');
+        System.assertEquals('LLM_WHERE_DETERMINISTIC', f[0].signalType);
+    }
+
+    @IsTest
     static void test_a_positive_twoHits_high() {
         OhmDTO.AgentModel g = withActions(new List<OhmDTO.ActionNode>{
             action('ClassifyAndRoute', 'Classify and route the case', '', 'prompt', null)

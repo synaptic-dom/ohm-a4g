@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiFunction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Classifies an inbound lead into a tier (Enterprise, Mid-Market, or Small Business) and routes it to the matching sales queue, based on employee count and annual revenue. NOTE: seeded as apex-typed because InvocationTargetType=prompt is not a deployable value in this org.</description>
+    <invocationTarget>OhmSpikeAction</invocationTarget>
+    <invocationTargetType>apex</invocationTargetType>
+    <isConfirmationRequired>false</isConfirmationRequired>
+    <masterLabel>Classify Lead Tier</masterLabel>
+</GenAiFunction>
