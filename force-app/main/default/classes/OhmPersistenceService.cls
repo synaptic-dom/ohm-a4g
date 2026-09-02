@@ -21,6 +21,26 @@ public with sharing class OhmPersistenceService {
         return report.Id;
     }
 
+    /**
+     * v2 — insert a PROCESS-scoped Agent_Audit_Report__c (Target_Type__c='Process') tagged with
+     * the planner it targets, and return its Id (== runId). Existing org-wide fields still apply;
+     * persistFindings() later stamps grade/score/Complete without touching the Target_* tags.
+     */
+    public Id createProcessReport(Id plannerId, String plannerApiName) {
+        Agent_Audit_Report__c report = new Agent_Audit_Report__c(
+            Run_Status__c = 'Queued',
+            Run_Stage_Message__c = 'Queued',
+            Percent_Complete__c = 0,
+            Run_Timestamp__c = System.now(),
+            Org_Id__c = UserInfo.getOrganizationId(),
+            Target_Type__c = 'Process',
+            Target_Planner_Id__c = (plannerId == null) ? null : String.valueOf(plannerId),
+            Target_Planner_Api_Name__c = (plannerApiName == null) ? null : plannerApiName.abbreviate(255)
+        );
+        insert report;
+        return report.Id;
+    }
+
     /** One status/stage/pct update for the polling spine (§2.5). */
     public void updateProgress(Id reportId, String status, String stageMessage, Integer pct) {
         Agent_Audit_Report__c report = new Agent_Audit_Report__c(Id = reportId);

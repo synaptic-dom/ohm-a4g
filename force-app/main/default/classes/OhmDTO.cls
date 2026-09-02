@@ -227,4 +227,51 @@ public with sharing class OhmDTO {
         @AuraEnabled public String narrative;
         @AuraEnabled public Integer rank;
     }
+
+    // ----- v2 Workbench (SPEC-ohm-v2-workbench §4) — Fleet + per-process views -----
+
+    /** Fleet-table row: cheap discovery counts, joined with the latest process report (if any). */
+    public class ProcessSummaryDTO {
+        @AuraEnabled public Id plannerId;
+        @AuraEnabled public String plannerApiName;
+        @AuraEnabled public String label;
+        @AuraEnabled public String domain;
+        @AuraEnabled public Integer topicCount;
+        @AuraEnabled public Integer actionCount;
+        @AuraEnabled public Boolean audited;
+        @AuraEnabled public String grade;
+        @AuraEnabled public Integer score;
+        @AuraEnabled public Decimal energyWhCentral;
+        @AuraEnabled public Id latestReportId;
+        @AuraEnabled public Datetime lastAudited;
+    }
+
+    /** Process page payload: latest report findings + the agent/topic/action node list. */
+    public class ProcessDetailDTO {
+        @AuraEnabled public Id plannerId;
+        @AuraEnabled public String plannerApiName;
+        @AuraEnabled public String label;
+        @AuraEnabled public String domain;
+        @AuraEnabled public String grade;
+        @AuraEnabled public Integer score;
+        @AuraEnabled public Decimal energyWhCentral;
+        @AuraEnabled public Id reportId;
+        @AuraEnabled public List<FindingDTO> findings;   // reuse existing FindingDTO
+        @AuraEnabled public List<NodeDTO> nodes;         // graph nodes (agent/topic/action)
+    }
+
+    /** One graph node in a process subtree (agent, topic, or action). */
+    public class NodeDTO {
+        @AuraEnabled public String id;
+        @AuraEnabled public String nodeType;             // 'Agent' | 'Topic' | 'Action'
+        @AuraEnabled public String apiName;
+        @AuraEnabled public String label;
+        @AuraEnabled public String parentId;
+        @AuraEnabled public String invocationTargetType; // for actions
+        @AuraEnabled public String instructions;         // topic Scope / agent instructions (raw)
+        @AuraEnabled public Integer tokenCount;
+        @AuraEnabled public Boolean wasteful;
+        @AuraEnabled public String signalType;
+        @AuraEnabled public String severity;
+    }
 }

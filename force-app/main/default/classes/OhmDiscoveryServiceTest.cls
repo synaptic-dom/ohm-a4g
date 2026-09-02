@@ -142,4 +142,127 @@ private class OhmDiscoveryServiceTest {
         List<OhmDTO.Finding> findings = new OhmSignalService().analyze(g);
         System.assertNotEquals(null, findings, 'analyze(discover()) must return a list, not throw');
     }
+
+    // ===================== v2 Workbench — listFleet / discoverProcess / deriveDomain =====================
+
+    /**
+     * listFleet() returns one ProcessSummaryDTO per live planner (org has 4), each with a
+     * derived domain and topic/action counts, and NO grade/score/energy (the controller joins
+     * those from reports). Fleet listing must never carry audit results.
+     */
+    @IsTest(SeeAllData=true)
+    static void test_listFleetReturnsProcessesWithCountsAndDomainsNoGrade() {
+        Test.startTest();
+        List<OhmDTO.ProcessSummaryDTO> fleet = new OhmDiscoveryService().listFleet();
+        Test.stopTest();
+
+        System.assertNotEquals(null, fleet, 'listFleet() must return a list');
+        System.assert(fleet.size() >= 4,
+            'Org has 4 live planners — expected >= 4 fleet rows, got ' + fleet.size());
+
+        Boolean sawWasteDemo = false;
+        Set<String> domainsSeen = new Set<String>();
+        for (OhmDTO.ProcessSummaryDTO row : fleet) {
+            System.assertNotEquals(null, row.plannerId, 'each row must carry a plannerId');
+            System.assertNotEquals(null, row.plannerApiName, 'each row must carry a plannerApiName');
+            System.assert(String.isNotBlank(row.label), 'each row must carry a label');
+            System.assert(String.isNotBlank(row.domain), 'each row must carry a derived domain');
+            System.assertNotEquals(null, row.topicCount, 'topicCount must be non-null');
+            System.assertNotEquals(null, row.actionCount, 'actionCount must be non-null');
+            System.assert(row.topicCount >= 0 && row.actionCount >= 0, 'counts must be >= 0');
+
+            // Fleet listing carries NO audit result — the controller joins those in.
+            System.assertEquals(null, row.grade, 'listFleet() must not set grade');
+            System.assertEquals(null, row.score, 'listFleet() must not set score');
+            System.assertEquals(null, row.energyWhCentral, 'listFleet() must not set energy');
+
+            domainsSeen.add(row.domain);
+            if (row.plannerApiName == 'Ohm_Waste_Demo') {
+                sawWasteDemo = true;
+                System.assertEquals('Sales', row.domain,
+                    'Ohm_Waste_Demo (Lead Concierge) must derive domain Sales');
+                System.assert(row.topicCount >= 1,
+                    'Ohm_Waste_Demo must count its Lead Triage topic, got ' + row.topicCount);
+                System.assert(row.actionCount >= 1,
+                    'Ohm_Waste_Demo must count its lead-tier action, got ' + row.actionCount);
+            }
+        }
+        System.assert(sawWasteDemo, 'Ohm_Waste_Demo must appear in the fleet');
+        System.assert(domainsSeen.size() >= 2,
+            'The four live agents span multiple derived domains, got ' + domainsSeen);
+    }
+
+    /**
+     * discoverProcess(Ohm_Waste_Demo) returns an AgentModel scoped to that one planner and
+     * containing its bloated "Lead Triage" topic (Scope ~5400 chars). Other planners' nodes
+     * (Order/Service/Spike) must NOT leak into the subtree.
+     */
+    @IsTest(SeeAllData=true)
+    static void test_discoverProcessScopedToWasteDemoHasBloatedLeadTriage() {
+        GenAiPlannerDefinition waste = [
+            SELECT Id FROM GenAiPlannerDefinition WHERE DeveloperName = 'Ohm_Waste_Demo' LIMIT 1
+        ];
+
+        Test.startTest();
+        OhmDTO.AgentModel g = new OhmDiscoveryService().discoverProcess(waste.Id);
+        Test.stopTest();
+
+        System.assertNotEquals(null, g, 'discoverProcess() must return an AgentModel');
+        System.assertEquals(1, g.agentsById.size(),
+            'scoped model must contain exactly the target planner');
+        System.assert(g.agentsById.containsKey(String.valueOf(waste.Id)),
+            'scoped model must contain the Waste Demo planner');
+
+        // the bloated Lead Triage topic is present, with its oversized Scope
+        OhmDTO.TopicNode leadTriage = null;
+        for (OhmDTO.TopicNode t : g.topics) {
+            if (t.developerName != null && t.developerName.contains('LeadTriage')) {
+                leadTriage = t;
+            }
+            // no foreign topics leaked in
+            System.assert(
+                t.developerName == null ||
+                (!t.developerName.contains('Sample') && !t.developerName.contains('Spike')),
+                'scoped topics must not include other planners: ' + t.developerName);
+        }
+        System.assertNotEquals(null, leadTriage,
+            'Ohm_Waste_Demo subtree must contain the Lead Triage topic');
+        System.assert(leadTriage.scope != null && leadTriage.scope.length() >= 5000,
+            'Lead Triage Scope must be the bloated ~5400-char instruction, got '
+            + (leadTriage.scope == null ? 0 : leadTriage.scope.length()));
+
+        // scoped actions belong to the Waste Demo family only
+        for (OhmDTO.ActionNode a : g.actions) {
+            System.assert(
+                a.developerName == null ||
+                (!a.developerName.contains('Sample') && !a.developerName.contains('Spike')),
+                'scoped actions must not include other planners: ' + a.developerName);
+        }
+
+        // consumable by the detectors (Wave-A handoff) without throwing
+        List<OhmDTO.Finding> findings = new OhmSignalService().analyze(g);
+        System.assertNotEquals(null, findings, 'analyze(discoverProcess()) must return a list');
+    }
+
+    /** deriveDomain keyword map: first match wins in the documented priority order. */
+    @IsTest
+    static void test_deriveDomainKeywordMap() {
+        OhmDiscoveryService svc = new OhmDiscoveryService();
+        System.assertEquals('Sales', svc.deriveDomain('Ohm_Waste_Demo', 'Lead Concierge'),
+            'Lead -> Sales');
+        System.assertEquals('Commerce', svc.deriveDomain('Ohm_Sample_Order', 'Order Support'),
+            'Order -> Commerce');
+        System.assertEquals('Customer Service', svc.deriveDomain('Ohm_Sample_Service', 'Service Concierge'),
+            'Service -> Customer Service');
+        System.assertEquals('Customer Service', svc.deriveDomain('Case_Router', 'Case Router'),
+            'Case -> Customer Service');
+        System.assertEquals('Finance', svc.deriveDomain('Billing_Bot', 'Bill Pay'),
+            'Bill -> Finance');
+        System.assertEquals('Internal', svc.deriveDomain('Ohm_Spike_Agent', 'Ohm Spike Agent'),
+            'Ohm/Spike -> Internal');
+        System.assertEquals('General', svc.deriveDomain('Widget_Helper', 'Widget Helper'),
+            'no keyword -> General');
+        System.assertEquals('General', svc.deriveDomain(null, null),
+            'null-safe -> General');
+    }
 }

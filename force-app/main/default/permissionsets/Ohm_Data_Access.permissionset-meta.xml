@@ -26,6 +26,26 @@
         <editable>true</editable>
     </fieldPermissions>
     <fieldPermissions>
+        <field>Agent_Audit_Report__c.Target_Type__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Agent_Audit_Report__c.Target_Planner_Id__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Agent_Audit_Report__c.Target_Planner_Api_Name__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Finding__c.Finding_Status__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
         <field>Agent_Audit_Report__c.Agents_Discovered__c</field>
         <readable>true</readable>
         <editable>true</editable>
