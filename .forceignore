@@ -1,0 +1,8 @@
+# LWC Jest tests and tooling — never deploy to the org
+**/__tests__/**
+**/jest.config.js
+**/*.test.js
+
+# Local/editor cruft
+**/.eslintrc.json
+**/*.log

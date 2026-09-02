@@ -1,32 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
     <flexiPageRegions>
-        <name>header</name>
-        <type>Region</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <componentInstances>
-            <componentName>ohmAuditExperience</componentName>
-            <identifier>ohmAuditExperienceRegionA</identifier>
-        </componentInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>ohmAuditExperience</componentName>
+                <identifier>ohmAuditExperienceRegionMain</identifier>
+            </componentInstance>
+        </itemInstances>
         <name>main</name>
-        <type>Region</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <componentInstances>
-            <componentInstanceProperties>
-                <name>richTextValue</name>
-                <value>&lt;p&gt;&lt;strong&gt;Agent panel&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;The embedded Ohm_Auditor Agentforce panel renders here (wave 2). Until then, use the standalone Agent Builder Preview.&lt;/p&gt;</value>
-            </componentInstanceProperties>
-            <componentName>flexipage:richText</componentName>
-            <identifier>ohmAgentPanelRegionB</identifier>
-        </componentInstances>
-        <name>right</name>
         <type>Region</type>
     </flexiPageRegions>
     <masterLabel>Ohm Audit</masterLabel>
     <template>
-        <name>flexipage:sldsTwoEqualHeaderRegion</name>
+        <name>flexipage:defaultAppHomeTemplate</name>
     </template>
     <type>AppPage</type>
 </FlexiPage>
