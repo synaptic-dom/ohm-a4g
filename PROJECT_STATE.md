@@ -39,7 +39,9 @@ Task 0 auth gate (BLOCKING) → **0.5 agent-surface spike (W1)** → 1 smoke dep
 
 **UI POLISH ✅ (verified)** — adversarial vision QA (8 screens desktop/tablet/mobile + both modes) → fixed savings triple-range, calm-toggle reskin (custom role=switch to mute blue), full-width accent stripe, scrubber, hero-range caption, calm chip contrast. Mobile (390px) renders clean, no overflow (DOM-measured). Confirm-review: all defects resolved, zero remaining. Commit bdec4f7.
 
-**Phase 2 (in progress)** — seeding sample AI fleet (Service Concierge=clean/A, Order Support=medium/C) alongside Lead Concierge (F) + spike (clean) → E2E audit → present per-agent spectrum.
+**Phase 2 (DONE)** — sample AI fleet seeded + audited E2E + captured. 4 agents discovered (Lead Concierge F/High, Order Support Medium, Service Concierge clean, Spike clean). Org grade F score 23, 128,135 Wh/yr, 2 findings. Fleet readout captured live (fleet-impact.png). Report AUDIT-00014 (a00aj00003SM8DNAA1).
+
+**DEMO ENTRY POINT:** open the **"Ohm" app** (App Launcher → Ohm), NOT the Ohm Audit tab from within Sales — the app URL (/lightning/app/c__Ohm) reliably lands on the Ohm Audit page; the tab-from-another-app path can redirect to the Labels home. Then click "Start the audit".
 
 **DEMO-READY.** Remaining for the win (not code-blocking): quality-gate skills (security-audit/code-review/optimize/deploy-check) as submission artifacts; submission writeups (300-500 word desc naming Headless Hero, RAI Self Check, methodology doc, a11y writeup); video shot-list (W8) + hook (W2) — recording is the user's. Optional stretch: W6 dogfood (build full clean Ohm_Auditor agent), signal (a) live 2nd finding (generatePromptResponse fixture).
 
