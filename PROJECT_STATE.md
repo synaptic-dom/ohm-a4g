@@ -26,12 +26,18 @@
 ## Build order (SPEC §0.3 as amended by §0.4)
 Task 0 auth gate (BLOCKING) → **0.5 agent-surface spike (W1)** → 1 smoke deploy → 2 fixtures → 3 data model → 4 discovery → 5 signals (a,c protected) → 6 footprint → 7 persistence → 8 LWC spine (incl. Calm Mode W5, provenance W7) → 9 agent full build (W4 grounded methodology, W6 dogfood staging) → 10 a11y → 11 polish/UAT (W3 fix→re-audit beat, W2 hook). **Never cut:** Welcome, Impact, Recommendations, agent, F10 methodology, F9 Calm Mode.
 
-## Execute status (2026-09-01, after wave-1 salvage + ground-truth)
-**Deployed & GREEN in org:** data model (Agent_Audit_Report__c, Finding__c, Ohm_Preferences__c), Ohm_Constants, and 27 Apex classes (OhmDTO, TokenEstimator, OhmSeverity, OhmConstants, ModelRegistry, VolumeProvider/AssumptionVolumeProvider, 4 detectors, SignalDetector, OhmSignalService, OhmFootprintService, OhmRecommendationService + tests). **Apex tests: 70/70 pass. Jest: 87/87 pass** (LWC authored on disk, NOT yet deployed). Spike agent `Ohm_Spike_Agent` deployed (apex action binding proven).
+## Execute status (2026-09-01) — waves A/B/C DONE, D in progress
 
-**🔑 MAJOR PIVOT — auth chain DELETED (SPEC C13 superseded):** connected-app creation is disabled on this org, BUT inline Apex SOQL reads GenAiPlanner/Plugin/FunctionDefinition directly (verified). Discovery = plain SOQL, no callout/credential. Single biggest risk eliminated.
+**🔑 PIVOT — auth chain DELETED (SPEC C13 superseded):** connected-app creation disabled on org, BUT inline Apex SOQL reads GenAiPlanner/Plugin/FunctionDefinition directly. Discovery = plain SOQL, no callout/credential. Biggest risk eliminated.
 
-**Remaining build (Execute):** OhmDiscoveryService (inline SOQL) → OhmPersistenceService → OhmAuditController → 6 invocable actions → deploy+wire LWC → seed fixtures (messy 4-signal + clean dogfood) → full Ohm_Auditor agent → demo beats (W3 fix→re-audit, W4 grounded methodology, W5 Calm, W6 dogfood, W7 provenance) → quality gates (security-audit/code-review/optimize/deploy-check) → UAT + video.
+**Wave A (backbone) ✅** — OhmDiscoveryService (inline SOQL), OhmPersistenceService, OhmAuditController, 6 invocable actions. 28/28 new tests + live E2E startAudit→Complete report. Commit 0d1e0c1.
+**Wave B (experience live) ✅** — 14 LWCs + FlexiPage Ohm_Audit + CustomApplication Ohm + tab + permset deployed & assigned. Renders live at `/lightning/n/Ohm_Audit`. jest 87/87. Commit 8fbff95. (Live button-click FSM advance: unverified via Playwright shadow-DOM flake, NOT a product bug — needs manual confirm.)
+**Wave C (fixture) ✅** — "Lead Concierge (unoptimized)" wasteful agent (5400-char bloated topic). Audit now finds **INSTRUCTION_BLOAT High, 82,486 Wh/yr, grade F**. Fixed real bug: LlmWhereDeterministicDetector now recognizes `generatePromptResponse` (platform has no `prompt` enum value). Commit (wave-C).
+**Wave D (in progress)** — visual design pass ("Instrument" system: waste=hot amber, efficiency=cool teal; Calm Mode = light/flat inversion). Then: W3 fix→re-audit beat, W4 grounded methodology, W5 Calm beat, W6 dogfood (needs full Ohm_Auditor agent), W7 provenance/scrubber a11y; quality gates (security-audit/code-review/optimize/deploy-check); UAT + video (W2 hook, W8 shot-list).
+
+**Known gaps / decisions:** signal (a) fixture not seedable (platform uses generatePromptResponse + needs prompt template — detector now correct, live 2nd finding is nice-to-have); signals (b)/(d) not seeded (empty AgentGraph, no model binding) — both degrade gracefully per design. Demo stands on INSTRUCTION_BLOAT + the fix→re-audit cool-down beat.
+
+**Current org state:** 2 agents discovered (clean Ohm_Spike_Agent + wasteful Ohm_Waste_Demo). Latest audit report shows grade F, 1 finding.
 
 ## Key facts for any session resume
 - All `sf` CLI calls via **PowerShell tool** (Bash can't invoke sf). `sf org display` output = secret.

@@ -1,0 +1,71 @@
+.ohm-scrubber {
+    display: block;
+    margin-top: var(--ohm-s3);
+    padding: var(--ohm-s3);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: var(--ohm-radius);
+    background: var(--ohm-card-bg);
+}
+
+.ohm-scrubber__label {
+    display: block;
+    margin-bottom: var(--ohm-s2);
+    font-family: var(--ohm-font-head);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    color: var(--ohm-muted);
+}
+
+/* The scrubber reads like a dial: a rail with a big tabular readout. */
+.ohm-scrubber__slider {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 var(--ohm-s3);
+    border-radius: 999px;
+    background: linear-gradient(
+        90deg,
+        var(--ohm-panel),
+        var(--ohm-hairline)
+    );
+    border: 1px solid var(--ohm-hairline);
+    cursor: ew-resize;
+}
+.ohm-scrubber__slider:focus-visible {
+    outline: 2px solid var(--ohm-cool);
+    outline-offset: 3px;
+}
+.ohm-scrubber__value {
+    font-family: var(--ohm-font-data);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    font-size: clamp(16px, 2vw, 20px);
+    color: var(--ohm-filament);
+    letter-spacing: 0.01em;
+}
+.ohm-scrubber__slider::after {
+    content: "◄ ►";
+    margin-left: auto;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--ohm-muted);
+}
+
+.ohm-scrubber__announce {
+    margin-top: var(--ohm-s1);
+    font-family: var(--ohm-font-data);
+    font-size: 12px;
+    color: var(--ohm-muted);
+    min-height: 1em;
+}
+
+/* Calm: a plain numeric input; give its label/value readable colours. */
+.ohm-scrubber lightning-input {
+    --slds-c-input-color-background: var(--ohm-card-bg);
+    --slds-c-input-color-border: var(--ohm-hairline);
+    --slds-c-input-text-color: var(--ohm-ink);
+    --slds-c-input-radius-border: 8px;
+}

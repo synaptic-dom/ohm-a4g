@@ -1,0 +1,98 @@
+.ohm-impact {
+    display: block;
+    padding: var(--ohm-s2) 0;
+}
+
+.ohm-impact__heading {
+    margin: 0 0 var(--ohm-s3);
+    font-family: var(--ohm-font-head);
+    font-weight: 800;
+    font-size: clamp(24px, 4vw, 36px);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: var(--ohm-ink);
+}
+.ohm-impact__heading:focus-visible {
+    outline: 2px solid var(--ohm-cool);
+    outline-offset: 4px;
+    border-radius: 4px;
+}
+
+.ohm-impact__subheading {
+    margin: var(--ohm-s4) 0 var(--ohm-s2);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    color: var(--ohm-muted);
+}
+
+/* Per-artifact rows: a compact ledger under the hero readout. */
+.ohm-impact__artifacts {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: 1px solid var(--ohm-hairline);
+    border-radius: var(--ohm-radius);
+    background: var(--ohm-card-bg);
+    overflow: hidden;
+}
+.ohm-impact__artifact {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+        "label energy"
+        "prov  savings";
+    gap: 2px var(--ohm-s3);
+    padding: var(--ohm-s2) var(--ohm-s3);
+    border-top: 1px solid var(--ohm-hairline);
+}
+.ohm-impact__artifact:first-child {
+    border-top: 0;
+}
+.ohm-impact__artifact-label {
+    grid-area: label;
+    font-weight: 600;
+    color: var(--ohm-ink);
+}
+.ohm-impact__artifact-energy {
+    grid-area: energy;
+    text-align: right;
+    font-family: var(--ohm-font-data);
+    font-variant-numeric: tabular-nums;
+    color: var(--ohm-filament);
+    font-weight: 600;
+}
+.ohm-impact__artifact-savings {
+    grid-area: savings;
+    text-align: right;
+    font-family: var(--ohm-font-data);
+    font-variant-numeric: tabular-nums;
+    font-size: 12px;
+    color: var(--ohm-cool);
+}
+.ohm-impact__artifact-provenance {
+    grid-area: prov;
+    font-size: 11px;
+    color: var(--ohm-muted);
+}
+
+.ohm-impact__cta {
+    display: inline-block;
+    margin-top: var(--ohm-s4);
+}
+
+@media (max-width: 520px) {
+    .ohm-impact__artifact {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "label"
+            "energy"
+            "savings"
+            "prov";
+    }
+    .ohm-impact__artifact-energy,
+    .ohm-impact__artifact-savings {
+        text-align: left;
+    }
+}

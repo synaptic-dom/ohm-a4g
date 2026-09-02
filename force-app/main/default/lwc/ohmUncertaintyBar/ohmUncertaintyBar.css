@@ -1,0 +1,39 @@
+.ohm-bar {
+    display: block;
+    width: 100%;
+    max-width: 420px;
+    padding: 6px 0 2px;
+}
+
+/* The rail spans low -> high; the marker rides at the central estimate. */
+.ohm-bar__track {
+    position: relative;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--ohm-hairline);
+    overflow: visible;
+}
+
+.ohm-bar__span {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: linear-gradient(
+        90deg,
+        var(--ohm-cool),
+        var(--ohm-filament) 60%,
+        var(--ohm-filament-hot)
+    );
+    opacity: 0.55;
+}
+
+.ohm-bar__marker {
+    position: absolute;
+    top: 50%;
+    width: 3px;
+    height: 16px;
+    transform: translate(-50%, -50%);
+    border-radius: 2px;
+    background: var(--ohm-ink);
+    box-shadow: 0 0 10px -2px var(--ohm-filament);
+}

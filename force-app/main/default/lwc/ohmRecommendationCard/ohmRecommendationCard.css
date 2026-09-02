@@ -1,0 +1,90 @@
+.ohm-rec-card {
+    display: block;
+    padding: var(--ohm-s3);
+    border: 1px solid var(--ohm-hairline);
+    border-left: 3px solid var(--ohm-filament);
+    border-radius: var(--ohm-radius);
+    background: var(--ohm-card-bg);
+}
+
+.ohm-rec-card__signal {
+    margin: 0 0 var(--ohm-s2);
+    font-family: var(--ohm-font-head);
+    font-weight: 700;
+    font-size: clamp(16px, 2.2vw, 19px);
+    line-height: 1.25;
+    color: var(--ohm-ink);
+}
+
+/* Severity + effort read as compact meta chips. */
+.ohm-rec-card__severity,
+.ohm-rec-card__effort {
+    display: inline-block;
+    margin: 0 var(--ohm-s1) var(--ohm-s2) 0;
+    padding: 2px 8px;
+    border: 1px solid var(--ohm-hairline);
+    border-radius: 999px;
+    font-family: var(--ohm-font-data);
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    color: var(--ohm-muted);
+}
+.ohm-rec-card__severity {
+    color: var(--ohm-filament);
+    border-color: var(--ohm-filament);
+}
+
+.ohm-rec-card__generated-by {
+    display: inline-block;
+    margin: 0 0 var(--ohm-s2);
+    padding: 2px 8px;
+    border: 1px solid var(--ohm-cool);
+    border-radius: 999px;
+    font-family: var(--ohm-font-data);
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    color: var(--ohm-cool);
+}
+
+.ohm-rec-card__recommendation {
+    margin: var(--ohm-s1) 0 var(--ohm-s3);
+    font-size: 15px;
+    line-height: var(--ohm-line);
+    color: var(--ohm-ink);
+}
+
+.ohm-rec-card__savings {
+    margin: 0 0 4px;
+    font-family: var(--ohm-font-data);
+    font-variant-numeric: tabular-nums;
+    font-size: 14px;
+    color: var(--ohm-cool);
+    font-weight: 600;
+}
+
+.ohm-rec-card__provenance {
+    margin: 0 0 var(--ohm-s3);
+    font-size: 11px;
+    line-height: 1.4;
+    color: var(--ohm-muted);
+}
+
+.ohm-rec-card__done {
+    margin: var(--ohm-s1) 0 0;
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: rgba(79, 209, 197, 0.12);
+    border: 1px solid var(--ohm-cool);
+    color: var(--ohm-cool);
+    font-family: var(--ohm-font-data);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.ohm-rec-card__error {
+    margin: var(--ohm-s2) 0 0;
+    color: var(--ohm-filament-hot);
+    font-family: var(--ohm-font-data);
+    font-size: 13px;
+}

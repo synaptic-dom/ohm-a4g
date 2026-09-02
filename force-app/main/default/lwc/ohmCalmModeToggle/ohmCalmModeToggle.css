@@ -1,0 +1,28 @@
+/* A labelled "switch plate" — a physical control on the instrument face.
+   It carries its own light surface so the toggle's built-in label stays legible
+   in both the dark (loud) and light (calm) panels, and text never relies on
+   colour alone. */
+.ohm-calm-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ohm-s2);
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: #eef2f2;
+    border: 1px solid #c4d1d1;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+
+    /* Keep the base toggle's text/controls dark on this pale plate. */
+    --slds-c-input-text-color: #14242a;
+    --slds-c-checkbox-toggle-color-background-checked: #0e1518;
+    color: #14242a;
+}
+
+.ohm-calm-toggle__state {
+    font-family: var(--ohm-font-data);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #14242a;
+    white-space: nowrap;
+}

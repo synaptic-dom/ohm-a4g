@@ -1,0 +1,80 @@
+.ohm-welcome {
+    display: block;
+    padding: var(--ohm-s2) 0 var(--ohm-s1);
+}
+
+/* Decorative "filament" — a warm coil of energy, dropped entirely in Calm. */
+.ohm-welcome__hero {
+    position: relative;
+    height: 132px;
+    margin: var(--ohm-s1) 0 var(--ohm-s4);
+    border-radius: var(--ohm-radius);
+    background:
+        radial-gradient(120px 80px at 22% 40%, rgba(255, 107, 74, 0.35), transparent 70%),
+        radial-gradient(160px 110px at 68% 60%, rgba(255, 178, 76, 0.32), transparent 70%),
+        radial-gradient(140px 90px at 90% 30%, rgba(79, 209, 197, 0.22), transparent 72%),
+        var(--ohm-panel-2);
+    border: 1px solid var(--ohm-hairline);
+    overflow: hidden;
+}
+.ohm-welcome__hero::after {
+    /* the current line running through the coil */
+    content: "";
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    top: 50%;
+    height: 2px;
+    transform: translateY(-50%);
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--ohm-filament-hot),
+        var(--ohm-filament) 55%,
+        var(--ohm-cool),
+        transparent
+    );
+    box-shadow: var(--ohm-glow);
+    opacity: 0.85;
+}
+
+.ohm-welcome__heading {
+    margin: 0 0 var(--ohm-s3);
+    font-family: var(--ohm-font-head);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    font-size: clamp(28px, 5vw, 46px);
+    color: var(--ohm-ink);
+    max-width: 20ch;
+}
+.ohm-welcome__heading:focus-visible {
+    outline: 2px solid var(--ohm-cool);
+    outline-offset: 4px;
+    border-radius: 4px;
+}
+
+.ohm-welcome__copy {
+    margin: 0 0 var(--ohm-s3);
+    max-width: 62ch;
+    font-size: clamp(15px, 1.6vw, 17px);
+    line-height: var(--ohm-line);
+    color: var(--ohm-ink);
+}
+
+.ohm-welcome__disclosure {
+    margin: 0 0 var(--ohm-s4);
+    padding: var(--ohm-s2) var(--ohm-s3);
+    max-width: 62ch;
+    border-left: 3px solid var(--ohm-filament);
+    border-radius: 4px;
+    background: var(--ohm-card-bg);
+    color: var(--ohm-muted);
+    font-family: var(--ohm-font-data);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.ohm-welcome__cta {
+    display: inline-block;
+}

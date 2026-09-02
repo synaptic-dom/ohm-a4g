@@ -1,0 +1,198 @@
+/* ============================================================================
+   OHM — "INSTRUMENT" design system.
+   Ohm is a precision energy meter embedded in Salesforce. WASTE reads HOT
+   (amber -> red filament); EFFICIENCY reads COOL (teal). Tokens are declared
+   once here and inherit through the composed shadow tree to every child.
+   ========================================================================== */
+:host {
+    /* palette --------------------------------------------------------------- */
+    --ohm-panel: #0e1518; /* instrument face (dark petrol) */
+    --ohm-panel-2: #16232a; /* raised card */
+    --ohm-ink: #eaf2f0; /* primary text on panel */
+    --ohm-muted: #7e9aa0; /* labels / secondary */
+    --ohm-filament: #ffb24c; /* energy / waste signal (warm amber) */
+    --ohm-filament-hot: #ff6b4a; /* high severity */
+    --ohm-cool: #4fd1c5; /* efficiency / good / cooled state */
+    --ohm-hairline: #2a3b42; /* dividers */
+
+    /* behavioural tokens (Calm flips these off) ----------------------------- */
+    --ohm-glow: 0 0 18px rgba(255, 178, 76, 0.45), 0 0 4px rgba(255, 178, 76, 0.6);
+    --ohm-glow-cool: 0 0 14px rgba(79, 209, 197, 0.4);
+    --ohm-ring-width: 3px;
+    --ohm-ring-radius: 50%;
+    --ohm-ring-glow-blur: 24px;
+    --ohm-ring-track: var(--ohm-hairline);
+    --ohm-line: 1.55;
+    --ohm-hero-anim: ohm-pulse 3.6s ease-in-out infinite; /* the ONE ambient effect */
+    --ohm-card-bg: var(--ohm-panel-2);
+    --ohm-device-accent: linear-gradient(
+        90deg,
+        var(--ohm-filament-hot),
+        var(--ohm-filament) 45%,
+        var(--ohm-cool)
+    );
+
+    /* scale ----------------------------------------------------------------- */
+    --ohm-radius: 10px;
+    --ohm-s1: 8px;
+    --ohm-s2: 12px;
+    --ohm-s3: 20px;
+    --ohm-s4: 32px;
+
+    /* type stacks ----------------------------------------------------------- */
+    --ohm-font-data: ui-monospace, "SF Mono", "Cascadia Mono", "Cascadia Code",
+        Consolas, "Liberation Mono", monospace;
+    --ohm-font-head: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+    display: block;
+}
+
+/* The device: a deliberate rounded instrument that sits inside the white
+   Lightning page frame (never broken full-bleed). */
+.ohm-experience {
+    box-sizing: border-box;
+    max-width: 880px;
+    margin: 20px auto;
+    padding: clamp(20px, 4vw, 32px);
+    position: relative;
+    background: var(--ohm-panel);
+    color: var(--ohm-ink);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: 16px;
+    box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.7),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    font-family: var(--ohm-font-head);
+    line-height: var(--ohm-line);
+    overflow: hidden;
+}
+
+/* Signature: a thin "current path" accent along the top edge of the device. */
+.ohm-experience::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--ohm-device-accent);
+    opacity: 0.9;
+}
+
+.ohm-experience * {
+    box-sizing: border-box;
+}
+
+.ohm-experience__toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: var(--ohm-s3);
+}
+
+.ohm-experience__recs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ohm-s3);
+}
+
+/* Error screen -------------------------------------------------------------- */
+.ohm-experience__error {
+    padding: var(--ohm-s3);
+    border: 1px solid var(--ohm-hairline);
+    border-left: 3px solid var(--ohm-filament-hot);
+    border-radius: var(--ohm-radius);
+    background: var(--ohm-card-bg);
+}
+.ohm-experience__error h2 {
+    margin: 0 0 var(--ohm-s1);
+    font-family: var(--ohm-font-head);
+    font-weight: 800;
+    color: var(--ohm-ink);
+}
+.ohm-experience__error p {
+    margin: 0 0 var(--ohm-s3);
+    color: var(--ohm-filament);
+    font-family: var(--ohm-font-data);
+}
+.ohm-experience__error [data-focus-heading]:focus-visible {
+    outline: 2px solid var(--ohm-cool);
+    outline-offset: 3px;
+}
+
+/* Base component -> lightning-button skinning (brand = "energize").
+   Set on the wrapper so the hooks inherit ACROSS shadow boundaries into every
+   child component's lightning-button. */
+.ohm-experience {
+    --slds-c-button-brand-color-background: var(--ohm-filament);
+    --slds-c-button-brand-color-background-hover: var(--ohm-filament-hot);
+    --slds-c-button-brand-color-background-active: var(--ohm-filament-hot);
+    --slds-c-button-brand-color-border: var(--ohm-filament);
+    --slds-c-button-brand-color-border-hover: var(--ohm-filament-hot);
+    --slds-c-button-brand-text-color: #0e1518;
+    --slds-c-button-brand-text-color-hover: #0e1518;
+    --slds-c-button-brand-text-color-active: #0e1518;
+
+    --slds-c-button-neutral-color-background: var(--ohm-panel-2);
+    --slds-c-button-neutral-color-background-hover: #1d2f37;
+    --slds-c-button-neutral-color-border: var(--ohm-hairline);
+    --slds-c-button-text-color: var(--ohm-ink);
+    --slds-c-button-text-color-hover: var(--ohm-ink);
+    --slds-c-button-color-border: var(--ohm-hairline);
+    --slds-c-button-radius-border: 8px;
+}
+
+/* Progress bar skinning (the "current path" rail in Discover/Analyze).
+   Inherited across the shadow boundary into ohmDiscoverAnalyze. */
+.ohm-experience {
+    --slds-c-progress-bar-color-background: var(--ohm-hairline);
+    --slds-c-progress-bar-color-background-fill: var(--ohm-filament);
+    --slds-c-progress-bar-sizing-height: 6px;
+    --slds-c-progress-bar-radius-border: 999px;
+}
+
+/* ============================================================================
+   CALM MODE — the accessibility beat. Panel inverts to LIGHT + quiet. All
+   meaning-bearing colours collapse to ink so NO meaning rides on colour alone;
+   glow / pulse / gauge-ring are switched off. Structure is untouched.
+   ========================================================================== */
+.ohm-experience--calm {
+    --ohm-panel: #f7f9f9;
+    --ohm-panel-2: #ffffff;
+    --ohm-ink: #14242a;
+    --ohm-muted: #4c5f65;
+    --ohm-filament: #14242a; /* meaning stripped -> ink */
+    --ohm-filament-hot: #14242a;
+    --ohm-cool: #14242a;
+    --ohm-hairline: #d3dede;
+
+    --ohm-glow: none;
+    --ohm-glow-cool: none;
+    --ohm-ring-width: 0px;
+    --ohm-ring-radius: 0px;
+    --ohm-ring-glow-blur: 0px;
+    --ohm-ring-track: transparent;
+    --ohm-line: 1.7;
+    --ohm-hero-anim: none;
+    --ohm-card-bg: #ffffff;
+    --ohm-device-accent: var(--ohm-hairline);
+
+    background: var(--ohm-panel);
+    color: var(--ohm-ink);
+    border-color: var(--ohm-hairline);
+    box-shadow: 0 1px 3px rgba(20, 36, 42, 0.12);
+}
+.ohm-experience--calm::before {
+    opacity: 0.35;
+}
+/* Calm keeps a readable focus ring using the ink colour (cool == ink here). */
+.ohm-experience--calm {
+    --slds-c-button-brand-color-background: #14242a;
+    --slds-c-button-brand-color-background-hover: #29414a;
+    --slds-c-button-brand-color-border: #14242a;
+    --slds-c-button-brand-text-color: #ffffff;
+    --slds-c-button-brand-text-color-hover: #ffffff;
+    --slds-c-button-neutral-color-background: #ffffff;
+    --slds-c-button-neutral-color-border: #b7c6c6;
+    --slds-c-button-text-color: #14242a;
+    --slds-c-progress-bar-color-background-fill: #14242a;
+    --slds-c-progress-bar-color-background: #d3dede;
+}

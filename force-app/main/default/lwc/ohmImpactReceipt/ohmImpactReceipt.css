@@ -1,0 +1,94 @@
+.ohm-receipt {
+    margin: 0;
+    padding: var(--ohm-s3);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: var(--ohm-radius);
+    background: var(--ohm-card-bg);
+}
+
+.ohm-receipt__row {
+    padding: var(--ohm-s3) 0;
+    border-top: 1px solid var(--ohm-hairline);
+}
+.ohm-receipt__row:first-child {
+    padding-top: var(--ohm-s1);
+    border-top: 0;
+}
+
+/* Term = eyebrow label. */
+.ohm-receipt__term {
+    margin: 0 0 var(--ohm-s1);
+    font-family: var(--ohm-font-head);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    color: var(--ohm-muted);
+}
+
+.ohm-receipt__desc {
+    margin: 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    column-gap: var(--ohm-s3);
+    row-gap: 4px;
+}
+
+/* The readout number — tabular mono, the hero of the whole screen. */
+.ohm-receipt__central {
+    grid-column: 1;
+    font-family: var(--ohm-font-data);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    font-size: clamp(22px, 3vw, 30px);
+    line-height: 1;
+    color: var(--ohm-filament);
+    white-space: nowrap;
+}
+.ohm-receipt__range {
+    grid-column: 2;
+    justify-self: start;
+    font-family: var(--ohm-font-data);
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
+    color: var(--ohm-muted);
+}
+.ohm-receipt__provenance {
+    grid-column: 1 / -1;
+    font-size: 11px;
+    line-height: 1.4;
+    color: var(--ohm-muted);
+}
+.ohm-receipt__desc c-ohm-uncertainty-bar {
+    grid-column: 1 / -1;
+    display: block;
+    margin-top: var(--ohm-s1);
+}
+
+/* ---- HERO: the first metric (Energy) reads huge, warm, and softly glowing. */
+.ohm-receipt__row:first-child .ohm-receipt__central {
+    font-size: clamp(40px, 8vw, 64px);
+    letter-spacing: -0.02em;
+    color: var(--ohm-filament);
+    text-shadow: var(--ohm-glow);
+    animation: var(--ohm-hero-anim);
+}
+
+@keyframes ohm-pulse {
+    0%,
+    100% {
+        text-shadow: var(--ohm-glow);
+        opacity: 1;
+    }
+    50% {
+        text-shadow: 0 0 26px rgba(255, 178, 76, 0.7),
+            0 0 6px rgba(255, 178, 76, 0.75);
+        opacity: 0.96;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .ohm-receipt__row:first-child .ohm-receipt__central {
+        animation: none;
+    }
+}

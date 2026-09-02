@@ -39,6 +39,18 @@ export default class OhmMethodologyPanel extends LightningElement {
                 value = '—';
             } else if (typeof value === 'boolean') {
                 value = value ? 'Yes' : 'No';
+            } else if (typeof value === 'object') {
+                // Uncertainty band {low, central, high} -> "central (low–high)"
+                const { low, central, high } = value;
+                if (central !== undefined || low !== undefined || high !== undefined) {
+                    const mid = central !== undefined ? central : '';
+                    value =
+                        low !== undefined && high !== undefined
+                            ? `${mid} (${low}–${high})`
+                            : String(mid);
+                } else {
+                    value = JSON.stringify(value);
+                }
             } else {
                 value = String(value);
             }

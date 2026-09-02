@@ -1,0 +1,80 @@
+.ohm-rating {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--ohm-s2);
+    margin: var(--ohm-s2) 0 var(--ohm-s4);
+    text-align: center;
+}
+
+/* Badge = the gauge. Grade colour is a redundant layer; the word is always
+   present as text (never colour-only meaning). */
+.ohm-rating__badge {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--ohm-s2);
+    --grade: var(--ohm-muted);
+}
+.ohm-rating__badge--f {
+    --grade: var(--ohm-filament-hot);
+}
+.ohm-rating__badge--d {
+    --grade: var(--ohm-filament);
+}
+.ohm-rating__badge--c {
+    --grade: var(--ohm-muted);
+}
+.ohm-rating__badge--b {
+    --grade: var(--ohm-cool);
+}
+.ohm-rating__badge--a {
+    --grade: var(--ohm-cool);
+}
+
+/* The letter sits inside the ring/gauge. */
+.ohm-rating__letter {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: clamp(96px, 20vw, 128px);
+    height: clamp(96px, 20vw, 128px);
+    border: var(--ohm-ring-width) solid var(--grade);
+    border-radius: var(--ohm-ring-radius);
+    background: var(--ohm-card-bg);
+    box-shadow: 0 0 var(--ohm-ring-glow-blur) -8px var(--grade);
+    font-family: var(--ohm-font-head);
+    font-weight: 800;
+    font-size: clamp(48px, 10vw, 68px);
+    line-height: 1;
+    color: var(--grade);
+}
+/* A soft gauge tick sweeping the top of the ring (decoration only). */
+.ohm-rating__letter::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: var(--ohm-ring-radius);
+    border: var(--ohm-ring-width) solid transparent;
+    border-top-color: var(--grade);
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+.ohm-rating__word {
+    font-family: var(--ohm-font-head);
+    font-weight: 700;
+    font-size: clamp(16px, 2.4vw, 20px);
+    letter-spacing: 0.02em;
+    color: var(--grade);
+}
+
+.ohm-rating__score {
+    margin: 0;
+    font-family: var(--ohm-font-data);
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    color: var(--ohm-muted);
+}

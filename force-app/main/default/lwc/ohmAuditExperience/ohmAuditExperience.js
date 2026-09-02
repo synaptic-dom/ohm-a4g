@@ -68,6 +68,15 @@ export default class OhmAuditExperience extends LightningElement {
         }
     }
 
+    // ---- presentation -------------------------------------------------------
+    // Class binding on the panel wrapper is the ONLY CSS hook the root exposes
+    // for Calm Mode: it flips the design tokens for the whole composed tree.
+    get experienceClass() {
+        return this.calmMode
+            ? 'ohm-experience ohm-experience--calm'
+            : 'ohm-experience';
+    }
+
     // ---- state getters ------------------------------------------------------
     get isWelcome() {
         return this.state === STATES.WELCOME;

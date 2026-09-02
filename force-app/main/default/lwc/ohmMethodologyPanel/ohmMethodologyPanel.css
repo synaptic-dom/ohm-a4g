@@ -1,0 +1,53 @@
+.ohm-methodology {
+    display: block;
+    margin-top: var(--ohm-s4);
+    padding: var(--ohm-s3);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: var(--ohm-radius);
+    background: var(--ohm-card-bg);
+}
+
+.ohm-methodology__heading {
+    margin: 0 0 var(--ohm-s2);
+    font-family: var(--ohm-font-head);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--ohm-ink);
+}
+
+.ohm-methodology__telemetry {
+    margin: 0 0 var(--ohm-s3);
+    font-family: var(--ohm-font-data);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ohm-muted);
+}
+
+.ohm-methodology__list {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+}
+.ohm-methodology__row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: var(--ohm-s3);
+    padding: 7px 0;
+    border-top: 1px solid var(--ohm-hairline);
+}
+.ohm-methodology__row:first-child {
+    border-top: 0;
+}
+.ohm-methodology__term {
+    font-size: 12px;
+    color: var(--ohm-muted);
+}
+.ohm-methodology__value {
+    font-family: var(--ohm-font-data);
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
+    color: var(--ohm-ink);
+    text-align: right;
+}

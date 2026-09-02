@@ -1,0 +1,38 @@
+.ohm-recs {
+    display: block;
+    padding: var(--ohm-s2) 0;
+}
+
+.ohm-recs__heading {
+    margin: 0 0 var(--ohm-s3);
+    font-family: var(--ohm-font-head);
+    font-weight: 800;
+    font-size: clamp(22px, 3.5vw, 32px);
+    line-height: 1.15;
+    color: var(--ohm-ink);
+}
+.ohm-recs__heading:focus-visible {
+    outline: 2px solid var(--ohm-cool);
+    outline-offset: 4px;
+    border-radius: 4px;
+}
+
+.ohm-recs__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--ohm-s3);
+}
+
+.ohm-recs__empty {
+    margin: 0;
+    padding: var(--ohm-s3);
+    border: 1px solid var(--ohm-hairline);
+    border-left: 3px solid var(--ohm-cool);
+    border-radius: var(--ohm-radius);
+    background: var(--ohm-card-bg);
+    color: var(--ohm-ink);
+    font-family: var(--ohm-font-data);
+    font-size: 14px;
+}
