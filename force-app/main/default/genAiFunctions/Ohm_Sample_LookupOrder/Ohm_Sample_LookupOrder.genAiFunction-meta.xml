@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiFunction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Looks up an order or account record by number and returns its current service status so the concierge can triage and route the case. Deterministic record lookup; seeded as apex-typed because InvocationTargetType=prompt is not a deployable value in this org.</description>
+    <invocationTarget>OhmSpikeAction</invocationTarget>
+    <invocationTargetType>apex</invocationTargetType>
+    <isConfirmationRequired>false</isConfirmationRequired>
+    <masterLabel>Look Up Order</masterLabel>
+</GenAiFunction>

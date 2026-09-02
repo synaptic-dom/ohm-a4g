@@ -35,7 +35,11 @@ Task 0 auth gate (BLOCKING) → **0.5 agent-surface spike (W1)** → 1 smoke dep
 **Wave C (fixture) ✅** — "Lead Concierge (unoptimized)" wasteful agent (5400-char bloated topic). Audit now finds **INSTRUCTION_BLOAT High, 82,486 Wh/yr, grade F**. Fixed real bug: LlmWhereDeterministicDetector now recognizes `generatePromptResponse` (platform has no `prompt` enum value). Commit (wave-C).
 **Wave D (design + beats) ✅** — "Instrument" visual system deployed across all 14 LWCs (waste=hot amber gauge/hero, efficiency=cool teal; Calm Mode = genuine light/flat a11y inversion). Fixed methodology panel [object Object] → shows real constant bands (W4/F10). W7 provenance + scrubber dial live. **W3 fix→re-audit cool-down PROVEN LIVE**: bloated scope = F/82,486 Wh → trimmed scope = A/0 Wh → restored to F for demo. Commit 1009618 + W3 verify.
 
-**TEST STATUS: 99 Apex tests 100% pass, 90% org-wide coverage; 87 Jest 100%.** Experience live + beautiful at /lightning/n/Ohm_Audit with real findings.
+**TEST STATUS: 99 Apex tests 100% pass, 90% org-wide coverage; 88 Jest 100%.** Experience live + beautiful at /lightning/n/Ohm_Audit with real findings.
+
+**UI POLISH ✅ (verified)** — adversarial vision QA (8 screens desktop/tablet/mobile + both modes) → fixed savings triple-range, calm-toggle reskin (custom role=switch to mute blue), full-width accent stripe, scrubber, hero-range caption, calm chip contrast. Mobile (390px) renders clean, no overflow (DOM-measured). Confirm-review: all defects resolved, zero remaining. Commit bdec4f7.
+
+**Phase 2 (in progress)** — seeding sample AI fleet (Service Concierge=clean/A, Order Support=medium/C) alongside Lead Concierge (F) + spike (clean) → E2E audit → present per-agent spectrum.
 
 **DEMO-READY.** Remaining for the win (not code-blocking): quality-gate skills (security-audit/code-review/optimize/deploy-check) as submission artifacts; submission writeups (300-500 word desc naming Headless Hero, RAI Self Check, methodology doc, a11y writeup); video shot-list (W8) + hook (W2) — recording is the user's. Optional stretch: W6 dogfood (build full clean Ohm_Auditor agent), signal (a) live 2nd finding (generatePromptResponse fixture).
 

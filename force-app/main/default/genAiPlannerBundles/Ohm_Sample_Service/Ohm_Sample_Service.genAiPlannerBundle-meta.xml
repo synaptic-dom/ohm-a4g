@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPlannerBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Service Concierge agent (Customer Service domain). A lean, well-optimized customer service concierge whose case triage topic carries a concise, on-budget instruction scope. Seeded fixture for the Ohm audit demo representing a CLEAN agent that should surface no efficiency findings.</description>
+    <masterLabel>Service Concierge</masterLabel>
+    <plannerType>AiCopilot__ReAct</plannerType>
+    <genAiPlugins>
+        <genAiPluginName>Ohm_Sample_ServiceTriage</genAiPluginName>
+    </genAiPlugins>
+</GenAiPlannerBundle>

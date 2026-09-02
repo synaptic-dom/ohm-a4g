@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPlannerBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Order Support agent (Commerce domain). An order-support concierge whose order-help topic carries a moderately verbose, somewhat repetitive instruction scope that runs over the token budget. Seeded fixture for the Ohm audit demo representing a MODERATELY inefficient agent expected to surface a Medium instruction-bloat finding.</description>
+    <masterLabel>Order Support</masterLabel>
+    <plannerType>AiCopilot__ReAct</plannerType>
+    <genAiPlugins>
+        <genAiPluginName>Ohm_Sample_OrderHelp</genAiPluginName>
+    </genAiPlugins>
+</GenAiPlannerBundle>

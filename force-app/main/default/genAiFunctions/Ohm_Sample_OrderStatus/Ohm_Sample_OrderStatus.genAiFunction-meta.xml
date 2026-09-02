@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiFunction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Retrieves the current status, tracking number, and carrier for an order given its order number, so the agent can answer status and tracking questions. Deterministic record lookup; seeded as apex-typed because InvocationTargetType=prompt is not a deployable value in this org.</description>
+    <invocationTarget>OhmSpikeAction</invocationTarget>
+    <invocationTargetType>apex</invocationTargetType>
+    <isConfirmationRequired>false</isConfirmationRequired>
+    <masterLabel>Get Order Status</masterLabel>
+</GenAiFunction>
