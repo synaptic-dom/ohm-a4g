@@ -82,9 +82,9 @@ export default class OhmApp extends LightningElement {
     get isTrends() {
         return this.activeTab === 'TRENDS';
     }
-    // Only Trends is still a placeholder; Findings + Recommendations are live.
+    // Every tab is live now (Fleet, Findings, Recommendations, Trends).
     get isPlaceholder() {
-        return this.isTrends;
+        return false;
     }
 
     // Breadcrumb: "Fleet" or "Fleet › <process>" once a row is opened.

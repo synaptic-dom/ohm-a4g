@@ -241,6 +241,11 @@
         <editable>true</editable>
     </fieldPermissions>
     <fieldPermissions>
+        <field>Finding__c.Instructions_Snapshot__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
         <field>Finding__c.Fix_Type__c</field>
         <readable>true</readable>
         <editable>true</editable>

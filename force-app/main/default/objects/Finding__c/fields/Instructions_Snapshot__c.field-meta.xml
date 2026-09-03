@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Instructions_Snapshot__c</fullName>
+    <label>Instructions Snapshot</label>
+    <type>LongTextArea</type>
+    <length>131072</length>
+    <visibleLines>10</visibleLines>
+    <description>Raw instructions (topic Scope / agent or action instructions) captured at audit time for INSTRUCTION_BLOAT findings, so the before/after diff (Wave 5) can show the pre-trim text.</description>
+    <inlineHelpText>Snapshot of the audited artifact's raw instructions at the time the bloat finding was recorded.</inlineHelpText>
+    <trackTrending>false</trackTrending>
+</CustomField>

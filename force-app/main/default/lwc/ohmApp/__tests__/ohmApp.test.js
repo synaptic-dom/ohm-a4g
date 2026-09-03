@@ -74,6 +74,24 @@ jest.mock(
     { virtual: true }
 );
 
+// ohmTrends (TRENDS tab) pulls in getTrends; stub it so the tab mounts cleanly.
+jest.mock(
+    '@salesforce/apex/OhmAuditController.getTrends',
+    () =>
+        ({
+            default: jest.fn(() =>
+                Promise.resolve({
+                    scope: 'Org',
+                    plannerId: null,
+                    points: [],
+                    realizedSavingsWh: 0,
+                    perAgent: []
+                })
+            )
+        }),
+    { virtual: true }
+);
+
 async function flush(times = 6) {
     for (let i = 0; i < times; i += 1) {
         // eslint-disable-next-line no-await-in-loop
@@ -124,7 +142,7 @@ describe('c-ohm-app', () => {
         ).toBeNull();
     });
 
-    it('switches to Trends on click and shows the on-brand placeholder', async () => {
+    it('switches to Trends on click and mounts the live Trends tab', async () => {
         const el = create();
         await flush();
 
@@ -133,13 +151,13 @@ describe('c-ohm-app', () => {
         await flush();
 
         expect(trendsTab.getAttribute('aria-selected')).toBe('true');
-        const placeholder = el.shadowRoot.querySelector(
-            '[data-id="placeholder"]'
-        );
-        expect(placeholder).not.toBeNull();
-        expect(placeholder.textContent).toContain('Coming in this build');
-        expect(placeholder.textContent).toContain('Trends');
-        // Fleet table unmounted while on another tab
+        const trends = el.shadowRoot.querySelector('[data-id="trends"]');
+        expect(trends).not.toBeNull();
+        expect(trends.calmMode).toBe(false);
+        // no placeholder any more; fleet table unmounted while on another tab
+        expect(
+            el.shadowRoot.querySelector('[data-id="placeholder"]')
+        ).toBeNull();
         expect(el.shadowRoot.querySelector('[data-id="fleet"]')).toBeNull();
     });
 

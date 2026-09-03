@@ -1,0 +1,373 @@
+/* ============================================================================
+   OHM v2 — before/after diff view. Two columns (BEFORE | AFTER), a prominent
+   DELTA row, and an optional instructions comparison. Inherits Instrument tokens;
+   declares its own for standalone render. Calm Mode flips the tokens on root.
+   ========================================================================== */
+:host {
+    --ohm-panel: #0e1518;
+    --ohm-panel-2: #16232a;
+    --ohm-panel-3: #1d2f37;
+    --ohm-ink: #eaf2f0;
+    --ohm-muted: #7e9aa0;
+    --ohm-filament: #ffb24c;
+    --ohm-filament-hot: #ff6b4a;
+    --ohm-cool: #4fd1c5;
+    --ohm-hairline: #2a3b42;
+    --ohm-radius: 10px;
+    --ohm-s1: 8px;
+    --ohm-s2: 12px;
+    --ohm-s3: 20px;
+    --ohm-font-data: ui-monospace, "SF Mono", "Cascadia Mono", Consolas,
+        "Liberation Mono", monospace;
+    --ohm-font-head: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: block;
+}
+
+.ohm-diff {
+    color: var(--ohm-ink);
+    font-family: var(--ohm-font-head);
+    display: flex;
+    flex-direction: column;
+    gap: var(--ohm-s2);
+}
+.ohm-diff * {
+    box-sizing: border-box;
+}
+
+/* ---- before/after columns ------------------------------------------------- */
+.ohm-diff__cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--ohm-s2);
+}
+.ohm-diff__col {
+    background: var(--ohm-panel-2);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: var(--ohm-radius);
+    padding: var(--ohm-s3);
+}
+.ohm-diff__col--after {
+    border-left: 3px solid var(--ohm-cool);
+}
+.ohm-diff__col--before {
+    border-left: 3px solid var(--ohm-filament);
+}
+.ohm-diff__col-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--ohm-s2);
+    margin-bottom: var(--ohm-s2);
+}
+.ohm-diff__col-tag {
+    font-family: var(--ohm-font-data);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ohm-muted);
+    font-weight: 700;
+}
+.ohm-diff__col-date {
+    font-family: var(--ohm-font-data);
+    font-size: 11px;
+    color: var(--ohm-muted);
+}
+
+.ohm-diff__metrics {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ohm-s1);
+}
+.ohm-diff__metric {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ohm-s2);
+    padding: 4px 0;
+    border-bottom: 1px solid var(--ohm-hairline);
+}
+.ohm-diff__metric:last-child {
+    border-bottom: 0;
+}
+.ohm-diff__metric-k {
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ohm-muted);
+}
+.ohm-diff__metric-v {
+    font-family: var(--ohm-font-data);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ohm-ink);
+}
+.ohm-diff__metric-v--energy {
+    color: var(--ohm-filament);
+}
+
+/* grade chip (letter + word) */
+.ohm-diff__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px 3px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--ohm-hairline);
+    font-family: var(--ohm-font-data);
+    line-height: 1.2;
+}
+.ohm-diff__chip-letter {
+    font-weight: 800;
+    font-size: 14px;
+}
+.ohm-diff__chip-word {
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--ohm-muted);
+}
+.ohm-diff__chip--hot {
+    border-color: var(--ohm-filament-hot);
+    color: var(--ohm-filament-hot);
+    background: rgba(255, 107, 74, 0.1);
+}
+.ohm-diff__chip--warm {
+    border-color: var(--ohm-filament);
+    color: var(--ohm-filament);
+    background: rgba(255, 178, 76, 0.1);
+}
+.ohm-diff__chip--muted {
+    border-color: var(--ohm-muted);
+    color: var(--ohm-ink);
+}
+.ohm-diff__chip--cool {
+    border-color: var(--ohm-cool);
+    color: var(--ohm-cool);
+    background: rgba(79, 209, 197, 0.1);
+}
+
+/* ---- delta row ------------------------------------------------------------ */
+.ohm-diff__delta {
+    display: flex;
+    align-items: center;
+    gap: var(--ohm-s3);
+    flex-wrap: wrap;
+    padding: var(--ohm-s2) var(--ohm-s3);
+    border-radius: var(--ohm-radius);
+    border: 1px solid var(--ohm-hairline);
+}
+.ohm-diff__delta--improved {
+    border-color: var(--ohm-cool);
+    background: rgba(79, 209, 197, 0.1);
+}
+.ohm-diff__delta--worse {
+    border-color: var(--ohm-filament);
+    background: rgba(255, 178, 76, 0.1);
+}
+.ohm-diff__delta-summary {
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+.ohm-diff__delta--improved .ohm-diff__delta-summary {
+    color: var(--ohm-cool);
+}
+.ohm-diff__delta--worse .ohm-diff__delta-summary {
+    color: var(--ohm-filament);
+}
+.ohm-diff__delta-items {
+    display: flex;
+    align-items: center;
+    gap: var(--ohm-s3);
+    flex-wrap: wrap;
+}
+.ohm-diff__delta-item {
+    font-family: var(--ohm-font-data);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ohm-ink);
+}
+
+/* ---- instructions comparison ---------------------------------------------- */
+.ohm-diff__instr {
+    background: var(--ohm-panel-2);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: var(--ohm-radius);
+    padding: var(--ohm-s3);
+}
+.ohm-diff__instr-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ohm-s2);
+    margin-bottom: var(--ohm-s2);
+}
+.ohm-diff__card-label {
+    font-family: var(--ohm-font-data);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ohm-muted);
+}
+.ohm-diff__instr-delta {
+    font-family: var(--ohm-font-data);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ohm-cool);
+}
+.ohm-diff__instr-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--ohm-s2);
+}
+.ohm-diff__instr-col {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.ohm-diff__instr-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--ohm-s1);
+}
+.ohm-diff__instr-count {
+    font-family: var(--ohm-font-data);
+    font-size: 11px;
+    color: var(--ohm-muted);
+}
+.ohm-diff__instr-text {
+    margin: 0;
+    max-height: 220px;
+    overflow: auto;
+    padding: var(--ohm-s2);
+    background: var(--ohm-panel);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: 8px;
+    font-family: var(--ohm-font-data);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ohm-ink);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* ---- single-audit empty state --------------------------------------------- */
+.ohm-diff__single {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--ohm-s1);
+    padding: var(--ohm-s3);
+    border: 1px dashed var(--ohm-hairline);
+    border-radius: var(--ohm-radius);
+    background: rgba(0, 0, 0, 0.14);
+}
+.ohm-diff__single-badge {
+    font-family: var(--ohm-font-data);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ohm-muted);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: 999px;
+    padding: 4px 12px;
+}
+.ohm-diff__single-body {
+    margin: 0;
+    max-width: 60ch;
+    color: var(--ohm-muted);
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+/* ---- loading / error ------------------------------------------------------ */
+.ohm-diff__loading {
+    display: flex;
+    align-items: center;
+    gap: var(--ohm-s2);
+    padding: var(--ohm-s3);
+    color: var(--ohm-muted);
+    font-family: var(--ohm-font-data);
+    font-size: 14px;
+}
+.ohm-diff__error {
+    padding: var(--ohm-s3);
+    border: 1px solid var(--ohm-hairline);
+    border-left: 3px solid var(--ohm-filament-hot);
+    border-radius: var(--ohm-radius);
+    background: var(--ohm-panel-2);
+}
+.ohm-diff__error p {
+    margin: 0 0 var(--ohm-s2);
+    color: var(--ohm-filament);
+    font-family: var(--ohm-font-data);
+}
+.ohm-diff__btn {
+    appearance: none;
+    background: var(--ohm-panel-2);
+    color: var(--ohm-ink);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-family: var(--ohm-font-head);
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+}
+.ohm-diff__spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--ohm-hairline);
+    border-top-color: var(--ohm-filament);
+    border-radius: 50%;
+    animation: ohm-diff-spin 0.7s linear infinite;
+}
+@keyframes ohm-diff-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================================================
+   CALM MODE — light, quiet, colour-independent. Meaning collapses to ink; the
+   grade letters and the "Improved / No improvement" word carry the meaning.
+   ========================================================================== */
+.ohm-diff--calm {
+    --ohm-panel: #f7f9f9;
+    --ohm-panel-2: #ffffff;
+    --ohm-panel-3: #eef3f3;
+    --ohm-ink: #14242a;
+    --ohm-muted: #4c5f65;
+    --ohm-filament: #14242a;
+    --ohm-filament-hot: #14242a;
+    --ohm-cool: #14242a;
+    --ohm-hairline: #d3dede;
+}
+.ohm-diff--calm .ohm-diff__col--before,
+.ohm-diff--calm .ohm-diff__col--after {
+    border-left-color: #b7c6c6;
+}
+.ohm-diff--calm .ohm-diff__delta--improved,
+.ohm-diff--calm .ohm-diff__delta--worse {
+    background: rgba(20, 36, 42, 0.04);
+    border-color: #b7c6c6;
+}
+.ohm-diff--calm .ohm-diff__chip--hot,
+.ohm-diff--calm .ohm-diff__chip--warm,
+.ohm-diff--calm .ohm-diff__chip--cool,
+.ohm-diff--calm .ohm-diff__chip--muted {
+    background: transparent;
+    border-color: #b7c6c6;
+    color: var(--ohm-ink);
+}
+
+/* ---- responsive ----------------------------------------------------------- */
+@media (max-width: 720px) {
+    .ohm-diff__cols,
+    .ohm-diff__instr-cols {
+        grid-template-columns: 1fr;
+    }
+}

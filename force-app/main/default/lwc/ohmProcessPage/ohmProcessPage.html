@@ -145,6 +145,34 @@
                 </aside>
             </div>
 
+            <!-- Before/after diff (revealed on demand or after a re-audit) - -->
+            <template lwc:if={canCompare}>
+                <section class="ohm-process__diff" data-id="diff-section">
+                    <div class="ohm-process__diff-head">
+                        <button
+                            type="button"
+                            class="ohm-process__btn ohm-process__btn--compare"
+                            data-id="compare-toggle"
+                            onclick={handleToggleDiff}
+                            aria-expanded={showDiff}
+                        >
+                            {compareToggleLabel}
+                        </button>
+                        <span class="ohm-process__diff-hint">
+                            Before / after — the two most recent audits of this
+                            process.
+                        </span>
+                    </div>
+                    <template lwc:if={showDiff}>
+                        <c-ohm-diff-view
+                            planner-id={plannerId}
+                            calm-mode={calmMode}
+                            data-id="diff-view"
+                        ></c-ohm-diff-view>
+                    </template>
+                </section>
+            </template>
+
             <!-- Ask Ohm assistant strip (Wave 6 seam) --------------------- -->
             <section class="ohm-process__assistant" data-id="assistant-strip">
                 <span class="ohm-process__assistant-badge"

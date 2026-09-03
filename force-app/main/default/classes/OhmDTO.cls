@@ -299,4 +299,59 @@ public with sharing class OhmDTO {
         @AuraEnabled public Date dueDate;
         @AuraEnabled public String effort;
     }
+
+    // ----- Wave 5 Trends + before/after diff (SPEC §2.5 / §2.6) -----
+
+    /** One audit report reduced to a plottable point (chronological in a TrendDTO). */
+    public class TrendPointDTO {
+        @AuraEnabled public Datetime auditedAt;
+        @AuraEnabled public String grade;
+        @AuraEnabled public Integer score;
+        @AuraEnabled public Decimal energyWhCentral;
+        @AuraEnabled public Integer findingsCount;
+        @AuraEnabled public Id reportId;
+    }
+
+    /** A time series of audits for one scope (org-wide or one process). */
+    public class TrendDTO {
+        @AuraEnabled public String scope;                 // 'Org' or a process label
+        @AuraEnabled public Id plannerId;                 // null for org-wide
+        @AuraEnabled public List<TrendPointDTO> points;   // chronological (oldest->newest)
+        @AuraEnabled public Decimal firstEnergyWhCentral;
+        @AuraEnabled public Decimal lastEnergyWhCentral;
+        @AuraEnabled public Decimal realizedSavingsWh;    // max(0, first - last)
+        @AuraEnabled public List<AgentGradeHistoryDTO> perAgent; // org scope only
+    }
+
+    /** Per-planner grade timeline for the org-wide Trends view. */
+    public class AgentGradeHistoryDTO {
+        @AuraEnabled public Id plannerId;
+        @AuraEnabled public String label;
+        @AuraEnabled public List<String> gradeHistory;    // chronological (oldest->newest)
+        @AuraEnabled public String currentGrade;
+    }
+
+    /** Before/after comparison of the two most recent process reports for a planner. */
+    public class DiffDTO {
+        @AuraEnabled public Id plannerId;
+        @AuraEnabled public String label;
+        @AuraEnabled public Id beforeReportId;
+        @AuraEnabled public Datetime beforeAt;
+        @AuraEnabled public String beforeGrade;
+        @AuraEnabled public Integer beforeScore;
+        @AuraEnabled public Decimal beforeEnergyWhCentral;
+        @AuraEnabled public Integer beforeFindings;
+        @AuraEnabled public Id afterReportId;
+        @AuraEnabled public Datetime afterAt;
+        @AuraEnabled public String afterGrade;
+        @AuraEnabled public Integer afterScore;
+        @AuraEnabled public Decimal afterEnergyWhCentral;
+        @AuraEnabled public Integer afterFindings;
+        @AuraEnabled public Decimal energyDeltaWh;        // before - after (positive = improvement)
+        @AuraEnabled public Integer scoreDelta;
+        @AuraEnabled public Integer findingsDelta;
+        @AuraEnabled public String beforeInstructions;    // topic Scope snapshot (may be null)
+        @AuraEnabled public String afterInstructions;     // topic Scope snapshot (may be null)
+        @AuraEnabled public Boolean improved;             // afterScore > beforeScore
+    }
 }

@@ -1,0 +1,212 @@
+<template>
+    <div class={hostClass} data-id="diff-root">
+        <!-- Loading -------------------------------------------------------- -->
+        <template lwc:if={isLoading}>
+            <div class="ohm-diff__loading" data-id="loading" role="status">
+                <span class="ohm-diff__spinner" aria-hidden="true"></span>
+                Loading comparison…
+            </div>
+        </template>
+
+        <!-- Error ---------------------------------------------------------- -->
+        <template lwc:if={loadError}>
+            <div class="ohm-diff__error" data-id="load-error" role="alert">
+                <p>{loadError}</p>
+                <button
+                    type="button"
+                    class="ohm-diff__btn"
+                    onclick={handleRetry}
+                >
+                    Retry
+                </button>
+            </div>
+        </template>
+
+        <template lwc:if={hasDiff}>
+            <!-- Single-audit empty state ------------------------------------ -->
+            <template lwc:if={isSingle}>
+                <div class="ohm-diff__single" data-id="single-note" role="status">
+                    <div class="ohm-diff__single-badge">One audit so far</div>
+                    <p class="ohm-diff__single-body">
+                        Re-audit this process after a change to see the
+                        before/after — the two most recent audits are compared
+                        here.
+                    </p>
+                </div>
+            </template>
+
+            <!-- Before / after comparison ---------------------------------- -->
+            <template lwc:if={hasComparison}>
+                <div class="ohm-diff__cols" data-id="compare">
+                    <!-- BEFORE ------------------------------------------- -->
+                    <section
+                        class="ohm-diff__col ohm-diff__col--before"
+                        aria-label="Before"
+                    >
+                        <div class="ohm-diff__col-head">
+                            <span class="ohm-diff__col-tag">Before</span>
+                            <template lwc:if={beforeAtText}>
+                                <span class="ohm-diff__col-date"
+                                    >{beforeAtText}</span
+                                >
+                            </template>
+                        </div>
+                        <div class="ohm-diff__metrics">
+                            <div class="ohm-diff__metric">
+                                <span class="ohm-diff__metric-k">Grade</span>
+                                <span
+                                    class={beforeChipClass}
+                                    data-id="before-grade"
+                                    title={beforeGradeWord}
+                                >
+                                    <span class="ohm-diff__chip-letter"
+                                        >{beforeGrade}</span
+                                    >
+                                    <span class="ohm-diff__chip-word"
+                                        >{beforeGradeWord}</span
+                                    >
+                                </span>
+                            </div>
+                            <div class="ohm-diff__metric">
+                                <span class="ohm-diff__metric-k">Score</span>
+                                <span class="ohm-diff__metric-v"
+                                    >{beforeScoreText}</span
+                                >
+                            </div>
+                            <div class="ohm-diff__metric">
+                                <span class="ohm-diff__metric-k">Energy</span>
+                                <span
+                                    class="ohm-diff__metric-v ohm-diff__metric-v--energy"
+                                    data-id="before-energy"
+                                    >{beforeEnergyText}</span
+                                >
+                            </div>
+                            <div class="ohm-diff__metric">
+                                <span class="ohm-diff__metric-k">Findings</span>
+                                <span class="ohm-diff__metric-v"
+                                    >{beforeFindingsText}</span
+                                >
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- AFTER -------------------------------------------- -->
+                    <section
+                        class="ohm-diff__col ohm-diff__col--after"
+                        aria-label="After"
+                    >
+                        <div class="ohm-diff__col-head">
+                            <span class="ohm-diff__col-tag">After</span>
+                            <template lwc:if={afterAtText}>
+                                <span class="ohm-diff__col-date"
+                                    >{afterAtText}</span
+                                >
+                            </template>
+                        </div>
+                        <div class="ohm-diff__metrics">
+                            <div class="ohm-diff__metric">
+                                <span class="ohm-diff__metric-k">Grade</span>
+                                <span
+                                    class={afterChipClass}
+                                    data-id="after-grade"
+                                    title={afterGradeWord}
+                                >
+                                    <span class="ohm-diff__chip-letter"
+                                        >{afterGrade}</span
+                                    >
+                                    <span class="ohm-diff__chip-word"
+                                        >{afterGradeWord}</span
+                                    >
+                                </span>
+                            </div>
+                            <div class="ohm-diff__metric">
+                                <span class="ohm-diff__metric-k">Score</span>
+                                <span class="ohm-diff__metric-v"
+                                    >{afterScoreText}</span
+                                >
+                            </div>
+                            <div class="ohm-diff__metric">
+                                <span class="ohm-diff__metric-k">Energy</span>
+                                <span
+                                    class="ohm-diff__metric-v ohm-diff__metric-v--energy"
+                                    data-id="after-energy"
+                                    >{afterEnergyText}</span
+                                >
+                            </div>
+                            <div class="ohm-diff__metric">
+                                <span class="ohm-diff__metric-k">Findings</span>
+                                <span class="ohm-diff__metric-v"
+                                    >{afterFindingsText}</span
+                                >
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- DELTA row ------------------------------------------- -->
+                <div class={deltaClass} data-id="delta" role="status">
+                    <span class="ohm-diff__delta-summary">{deltaSummary}</span>
+                    <span class="ohm-diff__delta-items">
+                        <span class="ohm-diff__delta-item" data-id="delta-grade"
+                            >{gradeTransition}</span
+                        >
+                        <span class="ohm-diff__delta-item" data-id="delta-energy"
+                            >{energyDeltaText}</span
+                        >
+                        <span
+                            class="ohm-diff__delta-item"
+                            data-id="delta-findings"
+                            >{findingsTransition}</span
+                        >
+                    </span>
+                </div>
+
+                <!-- Instructions comparison (optional) ------------------ -->
+                <template lwc:if={hasInstructions}>
+                    <section
+                        class="ohm-diff__instr"
+                        data-id="instructions"
+                        aria-label="Instructions comparison"
+                    >
+                        <div class="ohm-diff__instr-head">
+                            <span class="ohm-diff__card-label"
+                                >Instructions (topic scope)</span
+                            >
+                            <span class="ohm-diff__instr-delta"
+                                >{charDeltaText}</span
+                            >
+                        </div>
+                        <div class="ohm-diff__instr-cols">
+                            <div class="ohm-diff__instr-col">
+                                <div class="ohm-diff__instr-meta">
+                                    <span class="ohm-diff__col-tag">Before</span>
+                                    <span class="ohm-diff__instr-count"
+                                        >{beforeCharCount} chars ·
+                                        ~{beforeTokenCount} tok</span
+                                    >
+                                </div>
+                                <pre
+                                    class="ohm-diff__instr-text"
+                                    data-id="before-instr"
+                                >{beforeInstructions}</pre>
+                            </div>
+                            <div class="ohm-diff__instr-col">
+                                <div class="ohm-diff__instr-meta">
+                                    <span class="ohm-diff__col-tag">After</span>
+                                    <span class="ohm-diff__instr-count"
+                                        >{afterCharCount} chars ·
+                                        ~{afterTokenCount} tok</span
+                                    >
+                                </div>
+                                <pre
+                                    class="ohm-diff__instr-text"
+                                    data-id="after-instr"
+                                >{afterInstructions}</pre>
+                            </div>
+                        </div>
+                    </section>
+                </template>
+            </template>
+        </template>
+    </div>
+</template>

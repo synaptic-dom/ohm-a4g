@@ -1,0 +1,405 @@
+/* ============================================================================
+   OHM v2 — TRENDS tab. Org / per-process footprint + grade over time, drawn with
+   inline SVG (no libs — CSP). Inherits the Instrument tokens from the app shell;
+   declares its own so it renders standalone. Calm Mode flips the tokens on root.
+   ========================================================================== */
+:host {
+    --ohm-panel: #0e1518;
+    --ohm-panel-2: #16232a;
+    --ohm-panel-3: #1d2f37;
+    --ohm-ink: #eaf2f0;
+    --ohm-muted: #7e9aa0;
+    --ohm-filament: #ffb24c;
+    --ohm-filament-hot: #ff6b4a;
+    --ohm-cool: #4fd1c5;
+    --ohm-hairline: #2a3b42;
+    --ohm-radius: 10px;
+    --ohm-s1: 8px;
+    --ohm-s2: 12px;
+    --ohm-s3: 20px;
+    --ohm-font-data: ui-monospace, "SF Mono", "Cascadia Mono", Consolas,
+        "Liberation Mono", monospace;
+    --ohm-font-head: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: block;
+}
+
+.ohm-trends {
+    color: var(--ohm-ink);
+    font-family: var(--ohm-font-head);
+    display: flex;
+    flex-direction: column;
+    gap: var(--ohm-s3);
+}
+.ohm-trends * {
+    box-sizing: border-box;
+}
+
+/* ---- header + scope toggle ------------------------------------------------ */
+.ohm-trends__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--ohm-s3);
+    flex-wrap: wrap;
+}
+.ohm-trends__title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--ohm-ink);
+}
+.ohm-trends__sub {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: var(--ohm-muted);
+}
+.ohm-trends__scope {
+    display: flex;
+    align-items: center;
+    gap: var(--ohm-s2);
+    flex-wrap: wrap;
+}
+.ohm-trends__scope-btn {
+    appearance: none;
+    background: var(--ohm-panel-2);
+    color: var(--ohm-muted);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-family: var(--ohm-font-head);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+}
+.ohm-trends__scope-btn:hover {
+    color: var(--ohm-ink);
+    background: var(--ohm-panel-3);
+}
+.ohm-trends__scope-btn--active {
+    color: #0e1518;
+    background: var(--ohm-filament);
+    border-color: var(--ohm-filament);
+}
+.ohm-trends__scope-btn:focus-visible {
+    outline: 2px solid var(--ohm-cool);
+    outline-offset: 2px;
+}
+.ohm-trends__scope-label {
+    font-family: var(--ohm-font-data);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ohm-muted);
+}
+.ohm-trends__select {
+    appearance: none;
+    background: var(--ohm-panel-2);
+    color: var(--ohm-ink);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: 8px;
+    padding: 6px 28px 6px 12px;
+    font-family: var(--ohm-font-head);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    background-image: linear-gradient(45deg, transparent 50%, var(--ohm-muted) 50%),
+        linear-gradient(135deg, var(--ohm-muted) 50%, transparent 50%);
+    background-position: calc(100% - 15px) 55%, calc(100% - 10px) 55%;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+}
+.ohm-trends__select:focus-visible {
+    outline: 2px solid var(--ohm-cool);
+    outline-offset: 2px;
+}
+
+/* ---- cards ---------------------------------------------------------------- */
+.ohm-trends__card {
+    background: var(--ohm-panel-2);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: var(--ohm-radius);
+    padding: var(--ohm-s3);
+}
+.ohm-trends__card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--ohm-s2);
+}
+.ohm-trends__card-label {
+    font-family: var(--ohm-font-data);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ohm-muted);
+}
+
+/* ---- SVG chart ------------------------------------------------------------ */
+.ohm-trends__chart-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+.ohm-trends__chart {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-width: 280px;
+}
+.ohm-trends__area {
+    fill: var(--ohm-filament);
+    opacity: 0.14;
+}
+.ohm-trends__line {
+    stroke: var(--ohm-filament);
+    stroke-width: 2.25;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+}
+.ohm-trends__dot {
+    fill: var(--ohm-filament);
+    stroke: var(--ohm-panel);
+    stroke-width: 1.5;
+}
+
+.ohm-trends__sparse {
+    margin: var(--ohm-s2) 0 0;
+    font-size: 12px;
+    color: var(--ohm-muted);
+    font-style: italic;
+}
+
+/* ---- realized savings callout --------------------------------------------- */
+.ohm-trends__savings {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: var(--ohm-s3);
+    border: 1px solid var(--ohm-cool);
+    border-left-width: 3px;
+    border-radius: var(--ohm-radius);
+    background: rgba(79, 209, 197, 0.08);
+}
+.ohm-trends__savings-figure {
+    font-family: var(--ohm-font-data);
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--ohm-cool);
+    line-height: 1.05;
+}
+.ohm-trends__savings-caption {
+    font-size: 13px;
+    color: var(--ohm-muted);
+    font-family: var(--ohm-font-data);
+}
+
+/* ---- per-agent grade history strip ---------------------------------------- */
+.ohm-trends__agents {
+    background: var(--ohm-panel-2);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: var(--ohm-radius);
+    padding: var(--ohm-s3);
+}
+.ohm-trends__agent-list {
+    list-style: none;
+    margin: var(--ohm-s2) 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ohm-s2);
+}
+.ohm-trends__agent {
+    display: grid;
+    grid-template-columns: minmax(120px, 220px) 1fr;
+    align-items: center;
+    gap: var(--ohm-s3);
+    padding-bottom: var(--ohm-s2);
+    border-bottom: 1px solid var(--ohm-hairline);
+}
+.ohm-trends__agent:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+.ohm-trends__agent-label {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ohm-ink);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.ohm-trends__chips {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+.ohm-trends__gchip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 1px solid var(--ohm-hairline);
+    font-family: var(--ohm-font-data);
+    font-weight: 800;
+    font-size: 12px;
+    color: var(--ohm-ink);
+}
+.ohm-trends__gchip--hot {
+    border-color: var(--ohm-filament-hot);
+    color: var(--ohm-filament-hot);
+    background: rgba(255, 107, 74, 0.12);
+}
+.ohm-trends__gchip--warm {
+    border-color: var(--ohm-filament);
+    color: var(--ohm-filament);
+    background: rgba(255, 178, 76, 0.12);
+}
+.ohm-trends__gchip--muted {
+    border-color: var(--ohm-muted);
+    color: var(--ohm-ink);
+}
+.ohm-trends__gchip--cool {
+    border-color: var(--ohm-cool);
+    color: var(--ohm-cool);
+    background: rgba(79, 209, 197, 0.12);
+}
+.ohm-trends__gchip--current {
+    width: 26px;
+    height: 26px;
+    font-size: 14px;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.06);
+}
+.ohm-trends__no-history {
+    font-size: 12px;
+    color: var(--ohm-muted);
+    font-style: italic;
+}
+
+/* ---- empty / loading / error ---------------------------------------------- */
+.ohm-trends__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--ohm-s2);
+    padding: var(--ohm-s3);
+    border: 1px dashed var(--ohm-hairline);
+    border-radius: var(--ohm-radius);
+    background: var(--ohm-panel-2);
+    min-height: 160px;
+    justify-content: center;
+}
+.ohm-trends__empty-badge {
+    font-family: var(--ohm-font-data);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ohm-filament);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: 999px;
+    padding: 4px 12px;
+}
+.ohm-trends__empty-body {
+    margin: 0;
+    max-width: 56ch;
+    color: var(--ohm-muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+.ohm-trends__loading {
+    display: flex;
+    align-items: center;
+    gap: var(--ohm-s2);
+    padding: var(--ohm-s3);
+    color: var(--ohm-muted);
+    font-family: var(--ohm-font-data);
+    font-size: 14px;
+}
+.ohm-trends__error {
+    padding: var(--ohm-s3);
+    border: 1px solid var(--ohm-hairline);
+    border-left: 3px solid var(--ohm-filament-hot);
+    border-radius: var(--ohm-radius);
+    background: var(--ohm-panel-2);
+}
+.ohm-trends__error p {
+    margin: 0 0 var(--ohm-s2);
+    color: var(--ohm-filament);
+    font-family: var(--ohm-font-data);
+}
+.ohm-trends__btn {
+    appearance: none;
+    background: var(--ohm-panel-2);
+    color: var(--ohm-ink);
+    border: 1px solid var(--ohm-hairline);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-family: var(--ohm-font-head);
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+}
+.ohm-trends__btn:hover {
+    background: var(--ohm-panel-3);
+}
+.ohm-trends__spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--ohm-hairline);
+    border-top-color: var(--ohm-filament);
+    border-radius: 50%;
+    animation: ohm-trends-spin 0.7s linear infinite;
+}
+@keyframes ohm-trends-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================================================
+   CALM MODE — light, quiet, colour-independent. Meaning-bearing colours collapse
+   to ink so nothing rides on colour alone; grade chips keep their letters.
+   ========================================================================== */
+.ohm-trends--calm {
+    --ohm-panel: #f7f9f9;
+    --ohm-panel-2: #ffffff;
+    --ohm-panel-3: #eef3f3;
+    --ohm-ink: #14242a;
+    --ohm-muted: #4c5f65;
+    --ohm-filament: #14242a;
+    --ohm-filament-hot: #14242a;
+    --ohm-cool: #14242a;
+    --ohm-hairline: #d3dede;
+}
+.ohm-trends--calm .ohm-trends__area {
+    fill: #14242a;
+    opacity: 0.08;
+}
+.ohm-trends--calm .ohm-trends__savings {
+    background: rgba(20, 36, 42, 0.04);
+    border-color: #b7c6c6;
+}
+.ohm-trends--calm .ohm-trends__gchip--hot,
+.ohm-trends--calm .ohm-trends__gchip--warm,
+.ohm-trends--calm .ohm-trends__gchip--cool,
+.ohm-trends--calm .ohm-trends__gchip--muted {
+    background: transparent;
+    border-color: #b7c6c6;
+    color: var(--ohm-ink);
+}
+.ohm-trends--calm .ohm-trends__scope-btn--active {
+    color: #ffffff;
+}
+
+/* ---- responsive ----------------------------------------------------------- */
+@media (max-width: 640px) {
+    .ohm-trends__agent {
+        grid-template-columns: 1fr;
+        gap: var(--ohm-s1);
+    }
+}

@@ -78,6 +78,13 @@
                     ></c-ohm-recommendations>
                 </template>
 
+                <template lwc:if={isTrends}>
+                    <c-ohm-trends
+                        calm-mode={calmMode}
+                        data-id="trends"
+                    ></c-ohm-trends>
+                </template>
+
                 <template lwc:if={isPlaceholder}>
                     <section
                         class="ohm-app__placeholder"

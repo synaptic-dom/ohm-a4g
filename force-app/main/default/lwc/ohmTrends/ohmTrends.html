@@ -1,0 +1,208 @@
+<template>
+    <div class={hostClass} data-id="trends-root">
+        <!-- Header: title + scope toggle ------------------------------------ -->
+        <header class="ohm-trends__header">
+            <div class="ohm-trends__heading">
+                <h2 class="ohm-trends__title" data-id="trends-title">Trends</h2>
+                <p class="ohm-trends__sub">
+                    Footprint and grade over time — each audit is a datapoint.
+                </p>
+            </div>
+
+            <div class="ohm-trends__scope" data-id="scope">
+                <button
+                    type="button"
+                    class={orgBtnClass}
+                    data-id="scope-org"
+                    onclick={handleOrgClick}
+                    aria-pressed={isOrgScope}
+                >
+                    Org-wide
+                </button>
+                <template lwc:if={hasProcessOptions}>
+                    <label class="ohm-trends__scope-label" for="scope-select"
+                        >Process</label
+                    >
+                    <select
+                        id="scope-select"
+                        class="ohm-trends__select"
+                        data-id="scope-select"
+                        onchange={handleScopeChange}
+                    >
+                        <template for:each={scopeOptions} for:item="opt">
+                            <option
+                                key={opt.value}
+                                value={opt.value}
+                                selected={opt.selected}
+                            >
+                                {opt.label}
+                            </option>
+                        </template>
+                    </select>
+                </template>
+            </div>
+        </header>
+
+        <!-- Loading -------------------------------------------------------- -->
+        <template lwc:if={isLoading}>
+            <div class="ohm-trends__loading" data-id="loading" role="status">
+                <span class="ohm-trends__spinner" aria-hidden="true"></span>
+                Loading trends…
+            </div>
+        </template>
+
+        <!-- Error ---------------------------------------------------------- -->
+        <template lwc:if={loadError}>
+            <div class="ohm-trends__error" data-id="load-error" role="alert">
+                <p>{loadError}</p>
+                <button
+                    type="button"
+                    class="ohm-trends__btn"
+                    onclick={handleRetry}
+                >
+                    Retry
+                </button>
+            </div>
+        </template>
+
+        <!-- Content -------------------------------------------------------- -->
+        <template lwc:if={hasTrend}>
+            <!-- No audits yet ---------------------------------------------- -->
+            <template lwc:if={hasNoPoints}>
+                <div class="ohm-trends__empty" data-id="empty" role="status">
+                    <div class="ohm-trends__empty-badge">No datapoints yet</div>
+                    <p class="ohm-trends__empty-body">
+                        No audits recorded for this scope yet. Audit a process
+                        from the Fleet, then re-audit after a change — each run
+                        drops a point here.
+                    </p>
+                </div>
+            </template>
+
+            <template lwc:else>
+                <!-- Energy trendline card --------------------------------- -->
+                <section class="ohm-trends__card" data-id="chart-card">
+                    <div class="ohm-trends__card-head">
+                        <span class="ohm-trends__card-label"
+                            >{scopeLabel} energy (Wh/yr)</span
+                        >
+                    </div>
+
+                    <div class="ohm-trends__chart-wrap">
+                        <svg
+                            class="ohm-trends__chart"
+                            data-id="chart"
+                            viewBox={viewBox}
+                            preserveAspectRatio="xMidYMid meet"
+                            role="img"
+                            aria-label={chartAriaLabel}
+                        >
+                            <!-- area fill (2+ points) ---------------------- -->
+                            <template lwc:if={hasLine}>
+                                <path
+                                    class="ohm-trends__area"
+                                    d={areaPath}
+                                ></path>
+                                <polyline
+                                    class="ohm-trends__line"
+                                    points={linePoints}
+                                    fill="none"
+                                ></polyline>
+                            </template>
+
+                            <!-- points (dots) ------------------------------ -->
+                            <template for:each={plotted} for:item="p">
+                                <circle
+                                    key={p.key}
+                                    class="ohm-trends__dot"
+                                    cx={p.cx}
+                                    cy={p.cy}
+                                    r="4.5"
+                                >
+                                    <title>{p.title}</title>
+                                </circle>
+                            </template>
+                        </svg>
+                    </div>
+
+                    <!-- sparse-data caption ------------------------------- -->
+                    <template lwc:if={isSparse}>
+                        <p
+                            class="ohm-trends__sparse"
+                            data-id="sparse-caption"
+                        >
+                            {sparseCaption}
+                        </p>
+                    </template>
+                </section>
+
+                <!-- Realized savings callout ------------------------------ -->
+                <template lwc:if={hasRealizedSavings}>
+                    <section
+                        class="ohm-trends__savings"
+                        data-id="realized-savings"
+                    >
+                        <div class="ohm-trends__savings-figure">
+                            {realizedSavingsText}
+                        </div>
+                        <div class="ohm-trends__savings-caption">
+                            realized savings · {firstEnergyText} →
+                            {lastEnergyText} Wh/yr since the first audit
+                        </div>
+                    </section>
+                </template>
+
+                <!-- Per-agent grade history strip (org scope only) -------- -->
+                <template lwc:if={showGradeHistory}>
+                    <section
+                        class="ohm-trends__agents"
+                        data-id="grade-history"
+                        aria-label="Per-agent grade history"
+                    >
+                        <div class="ohm-trends__card-label">
+                            Per-agent grade history
+                        </div>
+                        <ul class="ohm-trends__agent-list">
+                            <template for:each={agentRows} for:item="agent">
+                                <li
+                                    key={agent.key}
+                                    class="ohm-trends__agent"
+                                    data-id="agent-row"
+                                >
+                                    <span class="ohm-trends__agent-label"
+                                        >{agent.label}</span
+                                    >
+                                    <span
+                                        class="ohm-trends__chips"
+                                        role="list"
+                                        aria-label="grade history, oldest to newest"
+                                    >
+                                        <template lwc:if={agent.hasChips}>
+                                            <template
+                                                for:each={agent.chips}
+                                                for:item="chip"
+                                            >
+                                                <span
+                                                    key={chip.key}
+                                                    class={chip.cssClass}
+                                                    role="listitem"
+                                                    aria-label={chip.ariaLabel}
+                                                    >{chip.grade}</span
+                                                >
+                                            </template>
+                                        </template>
+                                        <template lwc:else>
+                                            <span class="ohm-trends__no-history"
+                                                >no audits yet</span
+                                            >
+                                        </template>
+                                    </span>
+                                </li>
+                            </template>
+                        </ul>
+                    </section>
+                </template>
+            </template>
+        </template>
+    </div>
+</template>

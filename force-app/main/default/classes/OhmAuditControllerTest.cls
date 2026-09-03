@@ -479,4 +479,163 @@ private class OhmAuditControllerTest {
         System.assert(quickWinPos < heavyPos,
             'low-effort win ranks ahead of high-effort item by savings/effort');
     }
+
+    // ========================= Wave 5 Trends + before/after diff (SPEC §2.5 / §2.6) =========================
+
+    private static OhmDTO.AgentGradeHistoryDTO perAgentFor(List<OhmDTO.AgentGradeHistoryDTO> hist, Id plannerId) {
+        String key = String.valueOf(plannerId);
+        for (OhmDTO.AgentGradeHistoryDTO h : hist) {
+            if (h != null && h.plannerId != null && String.valueOf(h.plannerId) == key) { return h; }
+        }
+        return null;
+    }
+
+    // ---------- getTrends(plannerId): that planner's process reports, chronological ----------
+
+    @IsTest(SeeAllData=true)
+    static void testGetTrendsPerProcessReturnsChronologicalPoints() {
+        Id wasteId = wastePlannerId();
+        System.assertNotEquals(null, wasteId, 'Ohm_Waste_Demo planner must exist in the org');
+
+        Test.startTest();
+        OhmAuditController.auditProcess(wasteId);   // point 1
+        OhmAuditController.auditProcess(wasteId);   // point 2 (re-audit accumulates a trend point)
+        OhmDTO.TrendDTO trend = OhmAuditController.getTrends(wasteId);
+        Test.stopTest();
+
+        System.assertNotEquals(null, trend, 'getTrends must never return null');
+        System.assertEquals(String.valueOf(wasteId), String.valueOf(trend.plannerId), 'scoped to the planner');
+        System.assertNotEquals(null, trend.points, 'points list always present');
+        System.assert(trend.points.size() >= 2,
+            'two process audits produce at least two trend points; got ' + trend.points.size());
+        for (OhmDTO.TrendPointDTO p : trend.points) {
+            System.assertNotEquals(null, p.reportId, 'each point carries its report id');
+            System.assertNotEquals(null, p.auditedAt, 'each point carries a timestamp');
+            System.assertEquals('F', p.grade, 'the bloated Lead Triage process grades F each run');
+        }
+        System.assertNotEquals(null, trend.firstEnergyWhCentral, 'first energy stamped');
+        System.assertNotEquals(null, trend.lastEnergyWhCentral, 'last energy stamped');
+        System.assertNotEquals(null, trend.realizedSavingsWh, 'realizedSavings stamped');
+        System.assert(trend.realizedSavingsWh >= 0, 'realizedSavings is clamped at 0');
+    }
+
+    // ---------- getTrends(null): org points + per-agent grade history ----------
+
+    @IsTest(SeeAllData=true)
+    static void testGetTrendsOrgReturnsPointsAndPerAgentHistory() {
+        Id wasteId = wastePlannerId();
+        System.assertNotEquals(null, wasteId, 'Ohm_Waste_Demo planner must exist in the org');
+
+        Test.startTest();
+        OhmAuditController.auditProcess(wasteId);
+        OhmDTO.TrendDTO trend = OhmAuditController.getTrends(null);
+        Test.stopTest();
+
+        System.assertNotEquals(null, trend, 'getTrends(null) must never return null');
+        System.assertEquals('Org', trend.scope, 'null planner → org scope');
+        System.assertEquals(null, trend.plannerId, 'org scope has no plannerId');
+        System.assertNotEquals(null, trend.points, 'org points list present');
+        System.assert(!trend.points.isEmpty(), 'org points populated after at least one audit');
+
+        System.assertNotEquals(null, trend.perAgent, 'perAgent history present for org scope');
+        OhmDTO.AgentGradeHistoryDTO waste = perAgentFor(trend.perAgent, wasteId);
+        System.assertNotEquals(null, waste, 'the audited waste planner appears in perAgent history');
+        System.assertNotEquals(null, waste.label, 'perAgent label derived');
+        System.assert(waste.gradeHistory != null && !waste.gradeHistory.isEmpty(),
+            'grade history populated for the audited planner');
+        System.assertEquals('F', waste.currentGrade, 'current grade is the newest process grade (F)');
+    }
+
+    // ---------- getDiff: two process audits → before/after with deltas + improved flag ----------
+
+    @IsTest(SeeAllData=true)
+    static void testGetDiffAfterTwoAuditsReturnsBeforeAfterWithDeltas() {
+        Id wasteId = wastePlannerId();
+        System.assertNotEquals(null, wasteId, 'Ohm_Waste_Demo planner must exist in the org');
+
+        Test.startTest();
+        OhmAuditController.auditProcess(wasteId);   // before
+        OhmAuditController.auditProcess(wasteId);   // after
+        OhmDTO.DiffDTO diff = OhmAuditController.getDiff(wasteId);
+        Test.stopTest();
+
+        System.assertNotEquals(null, diff, 'getDiff must never return null');
+        System.assertEquals(String.valueOf(wasteId), String.valueOf(diff.plannerId), 'diff scoped to planner');
+        System.assertNotEquals(null, diff.beforeReportId, 'before report set (2nd-newest)');
+        System.assertNotEquals(null, diff.afterReportId, 'after report set (newest)');
+        System.assertNotEquals(diff.beforeReportId, diff.afterReportId, 'before and after are distinct reports');
+        System.assertEquals('F', diff.afterGrade, 'after grade F');
+        System.assertEquals('F', diff.beforeGrade, 'before grade F');
+
+        // deltas present; two identical audits of an unchanged process → zero deltas, not improved
+        System.assertNotEquals(null, diff.scoreDelta, 'scoreDelta computed when both scores present');
+        System.assertEquals(0, diff.scoreDelta, 'no change → scoreDelta 0');
+        System.assertEquals(false, diff.improved, 'unchanged process is not "improved"');
+        System.assertNotEquals(null, diff.energyDeltaWh, 'energyDelta computed');
+        System.assertEquals(0, diff.energyDeltaWh, 'unchanged process → zero energy delta');
+        System.assertNotEquals(null, diff.findingsDelta, 'findingsDelta computed');
+
+        // instructions snapshot captured on the bloat finding of each report → diff shows before/after text
+        System.assert(String.isNotBlank(diff.afterInstructions),
+            'after instructions snapshot present (bloat finding scope)');
+        System.assert(String.isNotBlank(diff.beforeInstructions),
+            'before instructions snapshot present (bloat finding scope)');
+    }
+
+    // ---------- getDiff: single audit → after only, before null ("re-audit to compare") ----------
+
+    @IsTest(SeeAllData=true)
+    static void testGetDiffSingleAuditReturnsAfterOnly() {
+        Id wasteId = wastePlannerId();
+        System.assertNotEquals(null, wasteId, 'Ohm_Waste_Demo planner must exist in the org');
+
+        // guard: this test relies on exactly one report existing; skip if prior process reports linger
+        Integer existing = [
+            SELECT COUNT() FROM Agent_Audit_Report__c
+            WHERE Target_Type__c = 'Process' AND Target_Planner_Id__c = :String.valueOf(wasteId)
+        ];
+
+        Test.startTest();
+        Id reportId = OhmAuditController.auditProcess(wasteId);
+        OhmDTO.DiffDTO diff = OhmAuditController.getDiff(wasteId);
+        Test.stopTest();
+
+        System.assertNotEquals(null, diff, 'getDiff must never return null');
+        System.assertNotEquals(null, diff.afterReportId, 'after (newest) report always set when any report exists');
+        if (existing == 0) {
+            System.assertEquals(reportId, diff.afterReportId, 'after points at the only report');
+            System.assertEquals(null, diff.beforeReportId, 'fewer than two reports → before is null');
+            System.assertEquals(null, diff.scoreDelta, 'no delta without a before report');
+        }
+    }
+
+    // ---------- snapshot: INSTRUCTION_BLOAT finding captures the topic Scope at audit time ----------
+
+    @IsTest(SeeAllData=true)
+    static void testAuditProcessCapturesInstructionSnapshotForBloatFinding() {
+        Id wasteId = wastePlannerId();
+        System.assertNotEquals(null, wasteId, 'Ohm_Waste_Demo planner must exist in the org');
+
+        Test.startTest();
+        Id reportId = OhmAuditController.auditProcess(wasteId);
+        Test.stopTest();
+
+        List<Finding__c> bloat = [
+            SELECT Id, Instructions_Snapshot__c, Artifact_Type__c
+            FROM Finding__c
+            WHERE Agent_Audit_Report__c = :reportId
+              AND Signal_Type__c = :InstructionBloatDetector.SIGNAL
+        ];
+        System.assert(!bloat.isEmpty(), 'the bloated Lead Triage scope produces an INSTRUCTION_BLOAT finding');
+        Boolean sawSnapshot = false;
+        for (Finding__c f : bloat) {
+            if (String.isNotBlank(f.Instructions_Snapshot__c)) {
+                sawSnapshot = true;
+                System.assert(f.Instructions_Snapshot__c.length() > 100,
+                    'the captured raw instructions are substantial (the 5400-char bloated scope)');
+                break;
+            }
+        }
+        System.assert(sawSnapshot, 'at least one bloat finding captured its raw instructions snapshot');
+    }
 }

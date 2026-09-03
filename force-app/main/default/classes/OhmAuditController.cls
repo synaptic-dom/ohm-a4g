@@ -198,6 +198,11 @@ public with sharing class OhmAuditController {
 
             OhmDTO.EfficiencyResult rating = signals.rate(graph, findings);
             persistence.persistFindings(reportId, graph, findings, rating);
+
+            // Wave 5 — capture the raw instructions (topic Scope / agent+action instructions)
+            // behind each INSTRUCTION_BLOAT finding so the before/after diff can show pre-trim
+            // text. Bulk-safe: build the map in memory, one DML update, no SOQL/DML in loop.
+            captureInstructionSnapshots(graph, findings);
             return reportId;
         } catch (Exception e) {
             if (reportId != null) {
@@ -547,6 +552,299 @@ public with sharing class OhmAuditController {
             return quickWins;
         } catch (Exception e) {
             throw new AuraHandledException('Could not load recommendations: ' + e.getMessage());
+        }
+    }
+
+    // ===================== Wave 5 Trends + before/after diff (SPEC §2.5 / §2.6) =====================
+
+    /**
+     * Wave 5 — the Trends time series.
+     * plannerId null  → ORG scope: every Fleet-scoped report as a point if any exist, else the
+     *   latest-per-planner PROCESS reports as points; plus perAgent grade history (every process
+     *   report per planner, chronological).
+     * plannerId set   → that planner's PROCESS reports, chronological (oldest→newest).
+     * realizedSavingsWh = max(0, firstEnergy - lastEnergy). Bulk-safe: at most two SOQL, mapped
+     * in memory. Never returns null; points is always present (possibly empty).
+     */
+    @AuraEnabled(cacheable=false)
+    public static OhmDTO.TrendDTO getTrends(Id plannerId) {
+        try {
+            OhmDTO.TrendDTO dto = new OhmDTO.TrendDTO();
+            dto.plannerId = plannerId;
+            dto.points = new List<OhmDTO.TrendPointDTO>();
+            dto.perAgent = new List<OhmDTO.AgentGradeHistoryDTO>();
+
+            if (plannerId != null) {
+                // per-process scope: this planner's process reports oldest→newest
+                dto.scope = prettyProcessLabel(processApiNameFor(plannerId));
+                for (Agent_Audit_Report__c r : [
+                    SELECT Id, Efficiency_Grade__c, Efficiency_Score__c, Total_Annual_Energy_Wh__c,
+                           Findings_Count__c, Run_Timestamp__c, CreatedDate, Target_Planner_Api_Name__c
+                    FROM Agent_Audit_Report__c
+                    WHERE Target_Type__c = 'Process'
+                      AND Target_Planner_Id__c = :String.valueOf(plannerId)
+                      AND Run_Status__c = 'Complete'
+                    ORDER BY CreatedDate ASC
+                ]) {
+                    if (dto.scope == null && String.isNotBlank(r.Target_Planner_Api_Name__c)) {
+                        dto.scope = prettyProcessLabel(r.Target_Planner_Api_Name__c);
+                    }
+                    dto.points.add(toTrendPoint(r));
+                }
+                stampEnergyBounds(dto);
+                return dto;
+            }
+
+            // ---- ORG scope ----
+            dto.scope = 'Org';
+            // Fleet-scoped reports (org-wide runs) as points, if any exist
+            for (Agent_Audit_Report__c r : [
+                SELECT Id, Efficiency_Grade__c, Efficiency_Score__c, Total_Annual_Energy_Wh__c,
+                       Findings_Count__c, Run_Timestamp__c, CreatedDate
+                FROM Agent_Audit_Report__c
+                WHERE Target_Type__c != 'Process' AND Run_Status__c = 'Complete'
+                ORDER BY CreatedDate ASC
+            ]) {
+                dto.points.add(toTrendPoint(r));
+            }
+
+            // Process reports (oldest→newest) power the per-agent grade history, and — when there
+            // are no Fleet reports — the org points fall back to the latest report per planner.
+            List<Agent_Audit_Report__c> proc = [
+                SELECT Id, Target_Planner_Id__c, Target_Planner_Api_Name__c, Efficiency_Grade__c,
+                       Efficiency_Score__c, Total_Annual_Energy_Wh__c, Findings_Count__c,
+                       Run_Timestamp__c, CreatedDate
+                FROM Agent_Audit_Report__c
+                WHERE Target_Type__c = 'Process' AND Run_Status__c = 'Complete'
+                ORDER BY CreatedDate ASC
+            ];
+
+            // per-agent grade history, insertion-ordered by planner first-seen
+            Map<String, OhmDTO.AgentGradeHistoryDTO> perAgentByPlanner =
+                new Map<String, OhmDTO.AgentGradeHistoryDTO>();
+            // latest process report per planner (rows ascending → last write wins)
+            Map<String, Agent_Audit_Report__c> latestByPlanner =
+                new Map<String, Agent_Audit_Report__c>();
+            for (Agent_Audit_Report__c r : proc) {
+                String pk = r.Target_Planner_Id__c;
+                if (String.isBlank(pk)) { continue; }
+                latestByPlanner.put(pk, r);
+                OhmDTO.AgentGradeHistoryDTO h = perAgentByPlanner.get(pk);
+                if (h == null) {
+                    h = new OhmDTO.AgentGradeHistoryDTO();
+                    h.plannerId = (Id) pk;
+                    h.label = prettyProcessLabel(r.Target_Planner_Api_Name__c);
+                    h.gradeHistory = new List<String>();
+                    perAgentByPlanner.put(pk, h);
+                }
+                if (r.Efficiency_Grade__c != null) {
+                    h.gradeHistory.add(r.Efficiency_Grade__c);
+                    h.currentGrade = r.Efficiency_Grade__c;
+                }
+            }
+            dto.perAgent = perAgentByPlanner.values();
+
+            // fallback org points: no Fleet reports → latest-per-planner process reports, chronological
+            if (dto.points.isEmpty() && !latestByPlanner.isEmpty()) {
+                List<Agent_Audit_Report__c> latest = latestByPlanner.values();
+                latest.sort(new ReportByCreatedAsc());
+                for (Agent_Audit_Report__c r : latest) {
+                    dto.points.add(toTrendPoint(r));
+                }
+            }
+
+            stampEnergyBounds(dto);
+            return dto;
+        } catch (Exception e) {
+            throw new AuraHandledException('Could not load trends: ' + e.getMessage());
+        }
+    }
+
+    /**
+     * Wave 5 — before/after diff of the TWO most recent PROCESS reports for a planner
+     * (before = 2nd-newest, after = newest). Fewer than two reports → afterReportId set,
+     * beforeReportId null (LWC shows "Re-audit after a change to compare"). Instructions come
+     * from Instructions_Snapshot__c on the newest INSTRUCTION_BLOAT finding of each report.
+     * Bulk-safe: one report query, one findings query, mapped in memory.
+     */
+    @AuraEnabled(cacheable=false)
+    public static OhmDTO.DiffDTO getDiff(Id plannerId) {
+        if (plannerId == null) {
+            throw new AuraHandledException('getDiff requires a plannerId.');
+        }
+        try {
+            List<Agent_Audit_Report__c> reps = [
+                SELECT Id, Efficiency_Grade__c, Efficiency_Score__c, Total_Annual_Energy_Wh__c,
+                       Findings_Count__c, Run_Timestamp__c, CreatedDate, Target_Planner_Api_Name__c
+                FROM Agent_Audit_Report__c
+                WHERE Target_Type__c = 'Process'
+                  AND Target_Planner_Id__c = :String.valueOf(plannerId)
+                  AND Run_Status__c = 'Complete'
+                ORDER BY CreatedDate DESC
+                LIMIT 2
+            ];
+
+            OhmDTO.DiffDTO dto = new OhmDTO.DiffDTO();
+            dto.plannerId = plannerId;
+            dto.label = prettyProcessLabel(processApiNameFor(plannerId));
+
+            if (reps.isEmpty()) {
+                return dto; // nothing audited yet
+            }
+
+            Agent_Audit_Report__c after = reps[0];
+            dto.afterReportId = after.Id;
+            dto.afterAt = whenOf(after);
+            dto.afterGrade = after.Efficiency_Grade__c;
+            dto.afterScore = intOrNull(after.Efficiency_Score__c);
+            dto.afterEnergyWhCentral = after.Total_Annual_Energy_Wh__c;
+            dto.afterFindings = intOrNull(after.Findings_Count__c);
+            if (String.isBlank(dto.label) && String.isNotBlank(after.Target_Planner_Api_Name__c)) {
+                dto.label = prettyProcessLabel(after.Target_Planner_Api_Name__c);
+            }
+
+            Set<Id> reportIds = new Set<Id>{ after.Id };
+            if (reps.size() >= 2) {
+                Agent_Audit_Report__c before = reps[1];
+                dto.beforeReportId = before.Id;
+                dto.beforeAt = whenOf(before);
+                dto.beforeGrade = before.Efficiency_Grade__c;
+                dto.beforeScore = intOrNull(before.Efficiency_Score__c);
+                dto.beforeEnergyWhCentral = before.Total_Annual_Energy_Wh__c;
+                dto.beforeFindings = intOrNull(before.Findings_Count__c);
+                reportIds.add(before.Id);
+
+                dto.energyDeltaWh = nz(dto.beforeEnergyWhCentral) - nz(dto.afterEnergyWhCentral);
+                if (dto.beforeScore != null && dto.afterScore != null) {
+                    dto.scoreDelta = dto.afterScore - dto.beforeScore;
+                    dto.improved = dto.afterScore > dto.beforeScore;
+                }
+                if (dto.beforeFindings != null && dto.afterFindings != null) {
+                    dto.findingsDelta = dto.afterFindings - dto.beforeFindings;
+                }
+            }
+
+            // instructions snapshot from the newest bloat finding of each report (one SOQL)
+            Map<Id, String> snapshotByReport = new Map<Id, String>();
+            // NB: Instructions_Snapshot__c is a Long Text Area (not filterable in WHERE) — take the
+            // newest non-blank snapshot per report in memory instead.
+            for (Finding__c f : [
+                SELECT Agent_Audit_Report__c, Instructions_Snapshot__c
+                FROM Finding__c
+                WHERE Agent_Audit_Report__c IN :reportIds
+                  AND Signal_Type__c = :InstructionBloatDetector.SIGNAL
+                ORDER BY CreatedDate DESC
+            ]) {
+                if (String.isBlank(f.Instructions_Snapshot__c)) { continue; }
+                if (!snapshotByReport.containsKey(f.Agent_Audit_Report__c)) {
+                    snapshotByReport.put(f.Agent_Audit_Report__c, f.Instructions_Snapshot__c);
+                }
+            }
+            dto.afterInstructions = snapshotByReport.get(dto.afterReportId);
+            if (dto.beforeReportId != null) {
+                dto.beforeInstructions = snapshotByReport.get(dto.beforeReportId);
+            }
+            return dto;
+        } catch (Exception e) {
+            throw new AuraHandledException('Could not load diff: ' + e.getMessage());
+        }
+    }
+
+    // ---------- Wave 5 private helpers ----------
+
+    /** Bulk-safe: write each INSTRUCTION_BLOAT finding's audited raw instructions to the snapshot. */
+    private static void captureInstructionSnapshots(OhmDTO.AgentModel graph, List<OhmDTO.Finding> findings) {
+        if (graph == null || findings == null || findings.isEmpty()) { return; }
+        // instructions by tooling id, across every node type the bloat detector inspects
+        Map<String, String> instructionsByToolingId = new Map<String, String>();
+        if (graph.topics != null) {
+            for (OhmDTO.TopicNode t : graph.topics) {
+                if (t != null && t.id != null) { instructionsByToolingId.put(t.id, t.scope); }
+            }
+        }
+        if (graph.agentsById != null) {
+            for (OhmDTO.AgentNode a : graph.agentsById.values()) {
+                if (a != null && a.id != null) {
+                    instructionsByToolingId.put(a.id, joinInstructions(a.description, a.capabilities));
+                }
+            }
+        }
+        if (graph.actions != null) {
+            for (OhmDTO.ActionNode a : graph.actions) {
+                if (a != null && a.id != null) { instructionsByToolingId.put(a.id, a.description); }
+            }
+        }
+
+        List<Finding__c> updates = new List<Finding__c>();
+        for (OhmDTO.Finding f : findings) {
+            if (f == null || f.findingRecordId == null) { continue; }
+            if (f.signalType != InstructionBloatDetector.SIGNAL) { continue; }
+            if (!instructionsByToolingId.containsKey(f.artifactToolingId)) { continue; }
+            String raw = instructionsByToolingId.get(f.artifactToolingId);
+            if (String.isBlank(raw)) { continue; }
+            updates.add(new Finding__c(
+                Id = f.findingRecordId,
+                Instructions_Snapshot__c = raw.abbreviate(131072)
+            ));
+        }
+        if (!updates.isEmpty()) {
+            update updates;
+        }
+    }
+
+    private static OhmDTO.TrendPointDTO toTrendPoint(Agent_Audit_Report__c r) {
+        OhmDTO.TrendPointDTO p = new OhmDTO.TrendPointDTO();
+        p.reportId = r.Id;
+        p.auditedAt = whenOf(r);
+        p.grade = r.Efficiency_Grade__c;
+        p.score = intOrNull(r.Efficiency_Score__c);
+        p.energyWhCentral = r.Total_Annual_Energy_Wh__c;
+        p.findingsCount = intOrNull(r.Findings_Count__c);
+        return p;
+    }
+
+    /** first/last central energy + realizedSavings (max(0, first - last)) from the ordered points. */
+    private static void stampEnergyBounds(OhmDTO.TrendDTO dto) {
+        if (dto.points == null || dto.points.isEmpty()) { return; }
+        dto.firstEnergyWhCentral = dto.points[0].energyWhCentral;
+        dto.lastEnergyWhCentral = dto.points[dto.points.size() - 1].energyWhCentral;
+        Decimal delta = nz(dto.firstEnergyWhCentral) - nz(dto.lastEnergyWhCentral);
+        dto.realizedSavingsWh = (delta > 0) ? delta : 0;
+    }
+
+    /** Resolve a planner's process api name from its most recent process report (null if none). */
+    private static String processApiNameFor(Id plannerId) {
+        for (Agent_Audit_Report__c r : [
+            SELECT Target_Planner_Api_Name__c
+            FROM Agent_Audit_Report__c
+            WHERE Target_Type__c = 'Process' AND Target_Planner_Id__c = :String.valueOf(plannerId)
+            ORDER BY CreatedDate DESC
+            LIMIT 1
+        ]) {
+            return r.Target_Planner_Api_Name__c;
+        }
+        return null;
+    }
+
+    private static Datetime whenOf(Agent_Audit_Report__c r) {
+        return (r.Run_Timestamp__c != null) ? r.Run_Timestamp__c : r.CreatedDate;
+    }
+
+    private static Integer intOrNull(Decimal d) {
+        return (d == null) ? null : Integer.valueOf(d);
+    }
+
+    private static Decimal nz(Decimal d) {
+        return (d == null) ? 0 : d;
+    }
+
+    /** Chronological (CreatedDate asc) report comparator for in-memory ordering. */
+    private class ReportByCreatedAsc implements System.Comparator<Agent_Audit_Report__c> {
+        public Integer compare(Agent_Audit_Report__c a, Agent_Audit_Report__c b) {
+            if (a == null || a.CreatedDate == null) { return -1; }
+            if (b == null || b.CreatedDate == null) { return 1; }
+            if (a.CreatedDate == b.CreatedDate) { return 0; }
+            return (a.CreatedDate < b.CreatedDate) ? -1 : 1;
         }
     }
 

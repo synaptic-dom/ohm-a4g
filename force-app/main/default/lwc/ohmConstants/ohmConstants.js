@@ -55,6 +55,21 @@ export const GRADE_WORDS = {
     F: 'Wasteful'
 };
 
+// Efficiency grade letter -> Instrument tone token (hot→cool). Shared by the
+// grade chips across the process page, Trends grade-history strip, and the diff.
+export const GRADE_TONE = {
+    A: 'cool',
+    B: 'cool',
+    C: 'muted',
+    D: 'warm',
+    F: 'hot'
+};
+
+/** Instrument tone name for a grade letter; unknown/blank -> 'muted'. */
+export function gradeTone(grade) {
+    return GRADE_TONE[grade] || 'muted';
+}
+
 /**
  * Round to at most `dp` decimals and group thousands. null/undefined -> '—'.
  */

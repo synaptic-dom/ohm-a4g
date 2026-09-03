@@ -231,6 +231,28 @@
     display: block;
 }
 
+/* ---- before/after diff section ------------------------------------------- */
+.ohm-process__diff {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ohm-s3);
+}
+.ohm-process__diff-head {
+    display: flex;
+    align-items: center;
+    gap: var(--ohm-s2);
+    flex-wrap: wrap;
+}
+.ohm-process__btn--compare {
+    background: var(--ohm-panel-2);
+    color: var(--ohm-ink);
+    border-color: var(--ohm-hairline);
+}
+.ohm-process__diff-hint {
+    font-size: 13px;
+    color: var(--ohm-muted);
+}
+
 /* ---- Ask Ohm assistant strip (Wave 6 seam) ------------------------------- */
 .ohm-process__assistant {
     display: flex;

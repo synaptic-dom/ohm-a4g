@@ -19,6 +19,17 @@ jest.mock(
     () => ({ default: jest.fn() }),
     { virtual: true }
 );
+// child diff-view (revealed via "Compare last two audits") imports this
+jest.mock(
+    '@salesforce/apex/OhmAuditController.getDiff',
+    () =>
+        ({
+            default: jest.fn(() =>
+                Promise.resolve({ plannerId: 'P1', beforeReportId: null, afterReportId: 'R1' })
+            )
+        }),
+    { virtual: true }
+);
 
 const NODES = [
     { id: 'AGENT1', nodeType: 'Agent', apiName: 'Lead_Concierge', label: 'Lead Concierge', parentId: null, wasteful: false },
@@ -183,6 +194,50 @@ describe('c-ohm-process-page', () => {
         cta.click();
         await flush();
         expect(auditProcess).toHaveBeenCalledWith({ plannerId: 'P2' });
+    });
+
+    it('reveals the before/after diff view from the compare toggle', async () => {
+        const el = create('P1');
+        await flush();
+
+        // toggle present for an audited process; diff hidden until clicked
+        const toggle = el.shadowRoot.querySelector('[data-id="compare-toggle"]');
+        expect(toggle).not.toBeNull();
+        expect(toggle.textContent).toContain('Compare last two audits');
+        expect(el.shadowRoot.querySelector('[data-id="diff-view"]')).toBeNull();
+
+        toggle.click();
+        await flush();
+
+        const diff = el.shadowRoot.querySelector('[data-id="diff-view"]');
+        expect(diff).not.toBeNull();
+        expect(diff.plannerId).toBe('P1');
+    });
+
+    it('auto-reveals the diff after a re-audit of an already-audited process', async () => {
+        auditProcess.mockResolvedValue('R2');
+        const el = create('P1');
+        await flush();
+
+        expect(el.shadowRoot.querySelector('[data-id="diff-view"]')).toBeNull();
+        el.shadowRoot.querySelector('[data-id="reaudit"]').click();
+        await flush();
+
+        expect(auditProcess).toHaveBeenCalledWith({ plannerId: 'P1' });
+        expect(
+            el.shadowRoot.querySelector('[data-id="diff-view"]')
+        ).not.toBeNull();
+    });
+
+    it('offers no compare affordance for an unaudited process', async () => {
+        getProcessDetail.mockReset();
+        getProcessDetail.mockResolvedValue(JSON.parse(JSON.stringify(UNAUDITED)));
+        const el = create('P2');
+        await flush();
+
+        expect(
+            el.shadowRoot.querySelector('[data-id="compare-toggle"]')
+        ).toBeNull();
     });
 
     it('fires backtofleet from the back affordance', async () => {

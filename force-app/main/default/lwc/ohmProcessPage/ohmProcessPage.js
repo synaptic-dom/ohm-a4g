@@ -23,6 +23,8 @@ export default class OhmProcessPage extends LightningElement {
     @track loadError;
     @track selectedNodeId;
     @track isReauditing;
+    // Whether the before/after diff panel is revealed under the graph.
+    @track showDiff = false;
 
     _plannerId;
     _loadedFor;
@@ -162,6 +164,18 @@ export default class OhmProcessPage extends LightningElement {
         return this.detail ? this.detail.reportId : null;
     }
 
+    // ---- before/after diff --------------------------------------------------
+    // A comparison is only meaningful once at least one audit exists; the diff
+    // component itself handles the single-report ("re-audit to compare") state.
+    get canCompare() {
+        return this.isAudited;
+    }
+    get compareToggleLabel() {
+        return this.showDiff
+            ? 'Hide comparison'
+            : 'Compare last two audits';
+    }
+
     // ---- interaction --------------------------------------------------------
     handleSelectNode(event) {
         const nodeId = event.detail && event.detail.nodeId;
@@ -176,16 +190,36 @@ export default class OhmProcessPage extends LightningElement {
         );
     }
 
+    handleToggleDiff() {
+        this.showDiff = !this.showDiff;
+    }
+
     async handleReaudit() {
         if (!this._plannerId || this.isReauditing) {
             return;
         }
+        // Was there already an audit? If so, re-auditing produces a 2nd report
+        // and we can auto-reveal the before/after diff once the reload lands.
+        const hadPriorAudit = this.isAudited;
         this.isReauditing = true;
         this.loadError = undefined;
         try {
             await auditProcess({ plannerId: this._plannerId });
             this._loadedFor = undefined; // force a fresh load
             await this.loadDetail();
+            if (hadPriorAudit) {
+                this.showDiff = true;
+                // If the diff panel was already open, refresh it imperatively so
+                // it picks up the new "after" report.
+                Promise.resolve().then(() => {
+                    const diff = this.template.querySelector(
+                        '[data-id="diff-view"]'
+                    );
+                    if (diff && typeof diff.refresh === 'function') {
+                        diff.refresh();
+                    }
+                });
+            }
         } catch (e) {
             this.loadError = this._msg(e) || 'Audit failed. Please try again.';
         } finally {
