@@ -82,8 +82,9 @@ export default class OhmApp extends LightningElement {
     get isTrends() {
         return this.activeTab === 'TRENDS';
     }
+    // Only Trends is still a placeholder; Findings + Recommendations are live.
     get isPlaceholder() {
-        return !this.isFleet;
+        return this.isTrends;
     }
 
     // Breadcrumb: "Fleet" or "Fleet › <process>" once a row is opened.
@@ -103,10 +104,6 @@ export default class OhmApp extends LightningElement {
     }
     get placeholderBody() {
         switch (this.activeTab) {
-            case 'FINDINGS':
-                return 'A cross-fleet backlog of every waste finding — owners, due dates and status — is coming in a later build.';
-            case 'RECOMMENDATIONS':
-                return 'Prioritized quick-wins ranked by savings against effort are coming in a later build.';
             case 'TRENDS':
                 return 'Footprint and grade over time, org-wide and per-agent, are coming in a later build.';
             default:

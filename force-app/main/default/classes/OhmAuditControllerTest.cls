@@ -283,4 +283,200 @@ private class OhmAuditControllerTest {
             'the wasteful topic carries the instruction-bloat signal');
         System.assert(triage.tokenCount != null && triage.tokenCount > 0, 'token count computed for the scope');
     }
+
+    // ========================= Wave 4 Worklist (Findings + Recommendations) =========================
+
+    private static OhmDTO.WorklistItemDTO worklistItemFor(List<OhmDTO.WorklistItemDTO> items, Id findingId) {
+        for (OhmDTO.WorklistItemDTO i : items) {
+            if (i != null && i.findingId == findingId) { return i; }
+        }
+        return null;
+    }
+
+    // ---------- getFindings: live re-audit twice, still one item per (planner+artifact+signal) ----------
+
+    @IsTest(SeeAllData=true)
+    static void testGetFindingsDedupsAcrossReAudits() {
+        Id wasteId = wastePlannerId();
+        System.assertNotEquals(null, wasteId, 'Ohm_Waste_Demo planner must exist in the org');
+
+        Test.startTest();
+        OhmAuditController.auditProcess(wasteId);   // first audit
+        OhmAuditController.auditProcess(wasteId);   // re-audit the SAME process
+        List<OhmDTO.WorklistItemDTO> items = OhmAuditController.getFindings(null, null);
+        Test.stopTest();
+
+        System.assertNotEquals(null, items, 'getFindings must never return null');
+        System.assert(!items.isEmpty(), 'at least one waste finding after auditing the Waste Demo process');
+
+        // dedup: no two items share (plannerApiName|artifactLabel|signal)
+        Set<String> keys = new Set<String>();
+        Decimal prevSavings = null;
+        for (OhmDTO.WorklistItemDTO i : items) {
+            String k = (i.plannerApiName == null ? '' : i.plannerApiName.toLowerCase())
+                + '|' + (i.artifactLabel == null ? '' : i.artifactLabel.toLowerCase())
+                + '|' + (i.signal == null ? '' : i.signal);
+            System.assert(!keys.contains(k), 'no duplicate (planner|artifact|signal) survives re-audit dedup: ' + k);
+            keys.add(k);
+            // ordered by savings desc
+            Decimal s = (i.savingsCentralWh == null) ? 0 : i.savingsCentralWh;
+            if (prevSavings != null) {
+                System.assert(prevSavings >= s, 'items ordered by savingsCentralWh desc');
+            }
+            prevSavings = s;
+        }
+
+        // at least one item carries savings and defaults to status Open
+        Boolean sawSavingsOpen = false;
+        for (OhmDTO.WorklistItemDTO i : items) {
+            if (i.savingsCentralWh != null && i.savingsCentralWh > 0 && i.findingStatus == 'Open') {
+                sawSavingsOpen = true;
+                System.assertNotEquals(null, i.severity, 'severity mapped');
+                System.assertNotEquals(null, i.processLabel, 'processLabel derived');
+                break;
+            }
+        }
+        System.assert(sawSavingsOpen, 'at least one finding with savings and status Open');
+    }
+
+    // ---------- getFindings: status/severity filters ----------
+
+    @IsTest
+    static void testGetFindingsAppliesStatusAndSeverityFilters() {
+        OhmPersistenceService svc = new OhmPersistenceService();
+        Id reportId = svc.createReport();
+        insert new List<Finding__c>{
+            new Finding__c(Agent_Audit_Report__c = reportId, Signal_Type__c = 'INSTRUCTION_BLOAT',
+                Severity__c = 'High', Artifact_Label__c = 'Alpha', Annual_Energy_Savings_Wh__c = 5000,
+                Finding_Status__c = 'Open', Generated_By__c = 'Deterministic'),
+            new Finding__c(Agent_Audit_Report__c = reportId, Signal_Type__c = 'INSTRUCTION_BLOAT',
+                Severity__c = 'Medium', Artifact_Label__c = 'Beta', Annual_Energy_Savings_Wh__c = 1000,
+                Finding_Status__c = 'Dismissed', Generated_By__c = 'Deterministic')
+        };
+
+        Test.startTest();
+        List<OhmDTO.WorklistItemDTO> open = OhmAuditController.getFindings('Open', 'All');
+        List<OhmDTO.WorklistItemDTO> high = OhmAuditController.getFindings(null, 'High');
+        List<OhmDTO.WorklistItemDTO> all = OhmAuditController.getFindings('All', null);
+        Test.stopTest();
+
+        for (OhmDTO.WorklistItemDTO i : open) {
+            System.assertEquals('Open', i.findingStatus, 'status filter keeps only Open');
+        }
+        for (OhmDTO.WorklistItemDTO i : high) {
+            System.assertEquals('High', i.severity, 'severity filter keeps only High');
+        }
+        System.assert(all.size() >= 2, 'no filter (All/null) returns both fixtures; got ' + all.size());
+    }
+
+    // ---------- updateFindingStatus: persists + mirrors the linked Task ----------
+
+    @IsTest
+    static void testUpdateFindingStatusPersistsAndMirrorsTask() {
+        OhmPersistenceService svc = new OhmPersistenceService();
+        Id reportId = svc.createReport();
+        Finding__c f = new Finding__c(
+            Agent_Audit_Report__c = reportId, Signal_Type__c = 'INSTRUCTION_BLOAT',
+            Severity__c = 'High', Artifact_Label__c = 'Gamma', Fix_Type__c = 'Trim_Instructions',
+            Recommendation_Text__c = 'Trim it.', Generated_By__c = 'Deterministic'
+        );
+        insert f;
+
+        // a linked task to verify mirroring
+        OhmDTO.RemediationInputDTO input = new OhmDTO.RemediationInputDTO();
+        input.findingId = f.Id;
+        input.reportId = reportId;
+        input.fixType = 'Trim_Instructions';
+        Id taskId = svc.createRemediationTask(input);
+
+        Test.startTest();
+        OhmAuditController.updateFindingStatus(f.Id, 'Accepted');
+        System.assertEquals('Accepted',
+            [SELECT Finding_Status__c FROM Finding__c WHERE Id = :f.Id].Finding_Status__c,
+            'status persisted to Accepted');
+        System.assertEquals('In Progress',
+            [SELECT Status FROM Task WHERE Id = :taskId].Status, 'Accepted mirrors Task open');
+
+        OhmAuditController.updateFindingStatus(f.Id, 'Applied');
+        Test.stopTest();
+
+        System.assertEquals('Applied',
+            [SELECT Finding_Status__c FROM Finding__c WHERE Id = :f.Id].Finding_Status__c);
+        System.assertEquals('Completed',
+            [SELECT Status FROM Task WHERE Id = :taskId].Status, 'Applied mirrors Task Completed');
+    }
+
+    // ---------- assignFinding: creates a Task, sets owner + due, writes Remediation_Task_Id__c ----------
+
+    @IsTest
+    static void testAssignFindingCreatesTaskWithOwnerAndDue() {
+        OhmPersistenceService svc = new OhmPersistenceService();
+        Id reportId = svc.createReport();
+        Finding__c f = new Finding__c(
+            Agent_Audit_Report__c = reportId, Signal_Type__c = 'INSTRUCTION_BLOAT',
+            Severity__c = 'High', Artifact_Label__c = 'Delta', Fix_Type__c = 'Trim_Instructions',
+            Recommendation_Text__c = 'Trim the scope.', Annual_Energy_Savings_Wh__c = 4200,
+            Generated_By__c = 'Deterministic'
+        );
+        insert f;
+
+        Date due = Date.today().addDays(3);
+
+        Test.startTest();
+        Id taskId = OhmAuditController.assignFinding(f.Id, UserInfo.getUserId(), due);
+        Test.stopTest();
+
+        System.assertNotEquals(null, taskId, 'assignFinding returns a Task Id');
+        Task t = [SELECT Id, OwnerId, ActivityDate FROM Task WHERE Id = :taskId];
+        System.assertEquals(UserInfo.getUserId(), t.OwnerId, 'Task owner set');
+        System.assertEquals(due, t.ActivityDate, 'Task due date set');
+        System.assertEquals((String) taskId,
+            [SELECT Remediation_Task_Id__c FROM Finding__c WHERE Id = :f.Id].Remediation_Task_Id__c,
+            'Remediation_Task_Id__c written back onto the finding');
+
+        // re-assign reuses the SAME task (no duplicate)
+        Id again = OhmAuditController.assignFinding(f.Id, UserInfo.getUserId(), due.addDays(1));
+        System.assertEquals(taskId, again, 'existing Task reused, not duplicated');
+        System.assertEquals(1, [SELECT COUNT() FROM Task WHERE WhatId = :reportId]);
+    }
+
+    // ---------- getRecommendations: quick-wins ranked by savings / effort ----------
+
+    @IsTest
+    static void testGetRecommendationsRanksQuickWinsBySavingsPerEffort() {
+        OhmPersistenceService svc = new OhmPersistenceService();
+        Id reportId = svc.createReport();
+        // A: 6000 Wh / High(3) = 2000 ; B: 5000 Wh / Low(1) = 5000 ; C: 9000 Wh Dismissed (excluded)
+        insert new List<Finding__c>{
+            new Finding__c(Agent_Audit_Report__c = reportId, Signal_Type__c = 'INSTRUCTION_BLOAT',
+                Severity__c = 'High', Artifact_Label__c = 'HeavyEffort', Effort__c = 'High',
+                Annual_Energy_Savings_Wh__c = 6000, Finding_Status__c = 'Open', Generated_By__c = 'Deterministic'),
+            new Finding__c(Agent_Audit_Report__c = reportId, Signal_Type__c = 'INSTRUCTION_BLOAT',
+                Severity__c = 'Medium', Artifact_Label__c = 'QuickWin', Effort__c = 'Low',
+                Annual_Energy_Savings_Wh__c = 5000, Finding_Status__c = 'Open', Generated_By__c = 'Deterministic'),
+            new Finding__c(Agent_Audit_Report__c = reportId, Signal_Type__c = 'INSTRUCTION_BLOAT',
+                Severity__c = 'High', Artifact_Label__c = 'AlreadyDone', Effort__c = 'Low',
+                Annual_Energy_Savings_Wh__c = 9000, Finding_Status__c = 'Applied', Generated_By__c = 'Deterministic')
+        };
+
+        Test.startTest();
+        List<OhmDTO.WorklistItemDTO> recs = OhmAuditController.getRecommendations();
+        Test.stopTest();
+
+        // Applied item excluded
+        for (OhmDTO.WorklistItemDTO i : recs) {
+            System.assertNotEquals('AlreadyDone', i.artifactLabel, 'Applied findings are excluded from quick-wins');
+            System.assert(i.findingStatus != 'Applied' && i.findingStatus != 'Dismissed');
+        }
+
+        // QuickWin (5000/1) must rank ahead of HeavyEffort (6000/3=2000) despite lower absolute savings
+        Integer quickWinPos = -1, heavyPos = -1;
+        for (Integer idx = 0; idx < recs.size(); idx++) {
+            if (recs[idx].artifactLabel == 'QuickWin') { quickWinPos = idx; }
+            if (recs[idx].artifactLabel == 'HeavyEffort') { heavyPos = idx; }
+        }
+        System.assert(quickWinPos >= 0 && heavyPos >= 0, 'both actionable items present');
+        System.assert(quickWinPos < heavyPos,
+            'low-effort win ranks ahead of high-effort item by savings/effort');
+    }
 }

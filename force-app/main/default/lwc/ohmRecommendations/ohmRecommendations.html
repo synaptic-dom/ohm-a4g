@@ -1,35 +1,113 @@
 <template>
-    <section class="ohm-recs" aria-labelledby="ohm-recs-heading">
-        <h2
-            id="ohm-recs-heading"
-            class="ohm-recs__heading"
-            data-focus-heading
-            tabindex="-1"
-        >
-            Recommended changes
-        </h2>
+    <!-- v2 standalone: the RECOMMENDATIONS tab — ranked quick-win cards ----- -->
+    <template lwc:if={standalone}>
+        <div class={hostClass} data-id="recs2-root">
+            <template lwc:if={isLoading}>
+                <div class="ohm-recs2__loading" data-id="loading" role="status">
+                    <span class="ohm-recs2__spinner" aria-hidden="true"></span>
+                    Ranking the quick wins…
+                </div>
+            </template>
 
-        <template lwc:if={hasFindings}>
-            <ul class="ohm-recs__list" data-id="rec-list">
-                <template for:each={cards} for:item="card">
-                    <li key={card.key} class="ohm-recs__item">
-                        <c-ohm-recommendation-card
-                            finding={card.finding}
-                            calm-mode={calmMode}
-                            volume-assumption={volumeAssumption}
-                            telemetry-backed={telemetryBacked}
-                            error-message={card.error}
-                            oncreatetask={handleCreateTask}
-                            data-id="rec-card"
-                        ></c-ohm-recommendation-card>
-                    </li>
-                </template>
-            </ul>
-        </template>
-        <template lwc:else>
-            <p class="ohm-recs__empty" data-id="rec-empty">
-                No findings — this org's agents are already running lean.
-            </p>
-        </template>
-    </section>
+            <template lwc:if={loadError}>
+                <div class="ohm-recs2__error" data-id="load-error" role="alert">
+                    <p>{loadError}</p>
+                    <button type="button" class="ohm-recs2__btn" onclick={handleRetry}>
+                        Retry
+                    </button>
+                </div>
+            </template>
+
+            <template lwc:if={hasQuickWins}>
+                <ul class="ohm-recs2__grid" data-id="cards">
+                    <template for:each={quickWins} for:item="card">
+                        <li key={card.key} class="ohm-recs2__card" data-id="card">
+                            <div class="ohm-recs2__rank" data-id="rank" aria-label="Rank">
+                                #{card.rank}
+                            </div>
+                            <div class="ohm-recs2__head">
+                                <span class="ohm-recs2__signal">{card.signalLabel}</span>
+                                <span class="ohm-recs2__process">{card.processText}</span>
+                            </div>
+                            <p class="ohm-recs2__change" data-id="change">{card.changeText}</p>
+                            <div class="ohm-recs2__meta">
+                                <span class="ohm-recs2__savings" data-id="savings">{card.savingsText}</span>
+                                <span class={card.effortClass} data-id="effort">{card.effortText}</span>
+                                <span class="ohm-recs2__severity">Severity: {card.severityText}</span>
+                            </div>
+
+                            <template lwc:if={card.error}>
+                                <p class="ohm-recs2__card-error" data-id="card-error" role="alert">
+                                    {card.error}
+                                </p>
+                            </template>
+
+                            <div class="ohm-recs2__actions">
+                                <template lwc:if={card.created}>
+                                    <span class="ohm-recs2__created" data-id="created">✓ Task created</span>
+                                </template>
+                                <template lwc:else>
+                                    <button
+                                        type="button"
+                                        class="ohm-recs2__btn ohm-recs2__btn--primary"
+                                        data-id="create-task"
+                                        data-finding={card.findingId}
+                                        disabled={card.isBusy}
+                                        onclick={handleCreateQuickTask}
+                                    >
+                                        <template lwc:if={card.isBusy}>Creating…</template>
+                                        <template lwc:else>Create task</template>
+                                    </button>
+                                </template>
+                            </div>
+                        </li>
+                    </template>
+                </ul>
+            </template>
+
+            <template lwc:if={isEmptyStandalone}>
+                <div class="ohm-recs2__empty" data-id="empty">
+                    No quick wins yet — audit a process from the Fleet tab to surface
+                    savings you can bank.
+                </div>
+            </template>
+        </div>
+    </template>
+
+    <!-- v1 container: fed `findings` by ohmAuditExperience ------------------ -->
+    <template lwc:else>
+        <section class="ohm-recs" aria-labelledby="ohm-recs-heading">
+            <h2
+                id="ohm-recs-heading"
+                class="ohm-recs__heading"
+                data-focus-heading
+                tabindex="-1"
+            >
+                Recommended changes
+            </h2>
+
+            <template lwc:if={hasFindings}>
+                <ul class="ohm-recs__list" data-id="rec-list">
+                    <template for:each={cards} for:item="card">
+                        <li key={card.key} class="ohm-recs__item">
+                            <c-ohm-recommendation-card
+                                finding={card.finding}
+                                calm-mode={calmMode}
+                                volume-assumption={volumeAssumption}
+                                telemetry-backed={telemetryBacked}
+                                error-message={card.error}
+                                oncreatetask={handleCreateTask}
+                                data-id="rec-card"
+                            ></c-ohm-recommendation-card>
+                        </li>
+                    </template>
+                </ul>
+            </template>
+            <template lwc:else>
+                <p class="ohm-recs__empty" data-id="rec-empty">
+                    No findings — this org's agents are already running lean.
+                </p>
+            </template>
+        </section>
+    </template>
 </template>

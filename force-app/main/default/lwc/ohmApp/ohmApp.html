@@ -63,6 +63,21 @@
                     ></c-ohm-process-page>
                 </template>
 
+                <template lwc:if={isFindings}>
+                    <c-ohm-findings-worklist
+                        calm-mode={calmMode}
+                        data-id="findings"
+                    ></c-ohm-findings-worklist>
+                </template>
+
+                <template lwc:if={isRecommendations}>
+                    <c-ohm-recommendations
+                        standalone
+                        calm-mode={calmMode}
+                        data-id="recommendations"
+                    ></c-ohm-recommendations>
+                </template>
+
                 <template lwc:if={isPlaceholder}>
                     <section
                         class="ohm-app__placeholder"

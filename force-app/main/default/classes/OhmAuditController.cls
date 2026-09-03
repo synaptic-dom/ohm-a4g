@@ -334,6 +334,222 @@ public with sharing class OhmAuditController {
         }
     }
 
+    // ===================== Wave 4 Worklist (Findings + Recommendations) =====================
+
+    /**
+     * Wave 4 — the cross-fleet Findings worklist. Returns every waste finding de-duplicated
+     * across re-audits: from PROCESS-scoped reports only the LATEST report per planner counts,
+     * plus every Fleet-scoped report's findings; the surviving rows are de-duped by
+     * (plannerApiName|artifactLabel|signal), keeping the newest. If a finding is linked to a
+     * remediation Task, the Task is joined for assignee/due. Bulk-safe: one Finding query, one
+     * Task query, mapped in memory. Ordered by savingsCentralWh desc.
+     * statusFilter/severityFilter may be null or 'All' (no filter).
+     */
+    @AuraEnabled(cacheable=false)
+    public static List<OhmDTO.WorklistItemDTO> getFindings(String statusFilter, String severityFilter) {
+        try {
+            // one bulk query. Process-scoped reports FIRST (so a process row wins over the fleet-scoped
+            // copy of the same finding — better process label), then newest report first within each.
+            List<Finding__c> rows = [
+                SELECT Id, Signal_Type__c, Severity__c, Confidence__c, Artifact_Label__c,
+                       Annual_Energy_Savings_Wh_Low__c, Annual_Energy_Savings_Wh__c, Annual_Energy_Savings_Wh_High__c,
+                       Fix_Type__c, Recommended_Target__c, Recommendation_Text__c, Effort__c,
+                       Finding_Status__c, Remediation_Task_Id__c, Parent_Agent_Api_Name__c,
+                       Agent_Audit_Report__c, Agent_Audit_Report__r.Target_Type__c,
+                       Agent_Audit_Report__r.Target_Planner_Id__c, Agent_Audit_Report__r.Target_Planner_Api_Name__c,
+                       Agent_Audit_Report__r.CreatedDate
+                FROM Finding__c
+                ORDER BY Agent_Audit_Report__r.Target_Type__c DESC NULLS LAST, Agent_Audit_Report__r.CreatedDate DESC, CreatedDate DESC
+            ];
+
+            // pass 1: latest process report id per planner (rows are newest-first, so first wins)
+            Map<String, Id> latestReportByPlanner = new Map<String, Id>();
+            for (Finding__c f : rows) {
+                Agent_Audit_Report__c rep = f.Agent_Audit_Report__r;
+                if (rep == null || rep.Target_Type__c != 'Process') { continue; }
+                String pk = rep.Target_Planner_Id__c;
+                if (String.isBlank(pk)) { continue; }
+                if (!latestReportByPlanner.containsKey(pk)) {
+                    latestReportByPlanner.put(pk, f.Agent_Audit_Report__c);
+                }
+            }
+
+            // pass 2: keep only latest-per-planner (Process) + all Fleet, then dedup newest-wins
+            List<OhmDTO.WorklistItemDTO> items = new List<OhmDTO.WorklistItemDTO>();
+            Set<String> seenKeys = new Set<String>();
+            Set<String> taskIds = new Set<String>();
+            for (Finding__c f : rows) {
+                Agent_Audit_Report__c rep = f.Agent_Audit_Report__r;
+                String plannerApiName = null;
+                if (rep != null) {
+                    if (rep.Target_Type__c == 'Process') {
+                        String pk = rep.Target_Planner_Id__c;
+                        if (String.isNotBlank(pk) && latestReportByPlanner.get(pk) != f.Agent_Audit_Report__c) {
+                            continue; // stale re-audit
+                        }
+                        plannerApiName = rep.Target_Planner_Api_Name__c;
+                    }
+                }
+                if (String.isBlank(plannerApiName)) { plannerApiName = f.Parent_Agent_Api_Name__c; }
+
+                // Dedup on the ARTIFACT identity (label + signal), independent of which report scope
+                // surfaced it — the same finding appears under both a Process report and the Fleet report.
+                // Process-scoped rows are ordered first (Target_Type DESC), so a process row wins and keeps
+                // its richer process label over the fleet-scoped copy.
+                String dedupKey = (f.Artifact_Label__c == null ? '' : f.Artifact_Label__c.toLowerCase())
+                    + '|' + (f.Signal_Type__c == null ? '' : f.Signal_Type__c);
+                if (seenKeys.contains(dedupKey)) { continue; }
+                seenKeys.add(dedupKey);
+
+                OhmDTO.WorklistItemDTO item = new OhmDTO.WorklistItemDTO();
+                item.findingId = f.Id;
+                item.signal = f.Signal_Type__c;
+                item.severity = f.Severity__c;
+                item.confidence = f.Confidence__c;
+                item.plannerApiName = plannerApiName;
+                item.processLabel = prettyProcessLabel(plannerApiName);
+                item.artifactLabel = f.Artifact_Label__c;
+                item.savingsCentralWh = f.Annual_Energy_Savings_Wh__c;
+                item.savingsLowWh = f.Annual_Energy_Savings_Wh_Low__c;
+                item.savingsHighWh = f.Annual_Energy_Savings_Wh_High__c;
+                item.fixType = f.Fix_Type__c;
+                item.recommendedTarget = f.Recommended_Target__c;
+                item.recommendationText = f.Recommendation_Text__c;
+                item.findingStatus = String.isBlank(f.Finding_Status__c) ? 'Open' : f.Finding_Status__c;
+                item.effort = f.Effort__c;
+                if (String.isNotBlank(f.Remediation_Task_Id__c)) {
+                    item.taskId = (Id) f.Remediation_Task_Id__c;
+                    taskIds.add(f.Remediation_Task_Id__c);
+                }
+                items.add(item);
+            }
+
+            // one Task query, joined in memory
+            if (!taskIds.isEmpty()) {
+                Map<Id, Task> taskById = new Map<Id, Task>([
+                    SELECT Id, OwnerId, Owner.Name, ActivityDate FROM Task WHERE Id IN :taskIds
+                ]);
+                for (OhmDTO.WorklistItemDTO item : items) {
+                    if (item.taskId == null) { continue; }
+                    Task t = taskById.get(item.taskId);
+                    if (t == null) { continue; }
+                    item.assigneeId = t.OwnerId;
+                    item.assigneeName = (t.Owner == null) ? null : t.Owner.Name;
+                    item.dueDate = t.ActivityDate;
+                }
+            }
+
+            // in-memory filters (applied post-dedup so the newest surviving row is judged)
+            Boolean filterStatus = String.isNotBlank(statusFilter) && statusFilter != 'All';
+            Boolean filterSeverity = String.isNotBlank(severityFilter) && severityFilter != 'All';
+            List<OhmDTO.WorklistItemDTO> filtered = new List<OhmDTO.WorklistItemDTO>();
+            for (OhmDTO.WorklistItemDTO item : items) {
+                if (filterStatus && item.findingStatus != statusFilter) { continue; }
+                if (filterSeverity && item.severity != severityFilter) { continue; }
+                filtered.add(item);
+            }
+
+            sortBySavingsDesc(filtered);
+            return filtered;
+        } catch (Exception e) {
+            throw new AuraHandledException('Could not load findings: ' + e.getMessage());
+        }
+    }
+
+    /**
+     * Wave 4 — set Finding_Status__c (restricted: Open/Accepted/Dismissed/Applied). If a
+     * remediation Task is linked, mirror its state: Accepted -> Task open (In Progress),
+     * Dismissed/Applied -> Task Completed. Bulk-safe: one SOQL, one DML per object.
+     */
+    @AuraEnabled
+    public static void updateFindingStatus(Id findingId, String status) {
+        if (findingId == null || String.isBlank(status)) {
+            throw new AuraHandledException('updateFindingStatus requires a findingId and status.');
+        }
+        try {
+            Finding__c f = [
+                SELECT Id, Remediation_Task_Id__c FROM Finding__c WHERE Id = :findingId LIMIT 1
+            ];
+            update new Finding__c(Id = findingId, Finding_Status__c = status);
+
+            if (String.isNotBlank(f.Remediation_Task_Id__c)) {
+                String taskStatus = null;
+                if (status == 'Accepted') {
+                    taskStatus = 'In Progress';
+                } else if (status == 'Dismissed' || status == 'Applied') {
+                    taskStatus = 'Completed';
+                }
+                if (taskStatus != null) {
+                    update new Task(Id = (Id) f.Remediation_Task_Id__c, Status = taskStatus);
+                }
+            }
+        } catch (Exception e) {
+            throw new AuraHandledException('Could not update finding status: ' + e.getMessage());
+        }
+    }
+
+    /**
+     * Wave 4 — assign a finding: ensure a remediation Task exists (creating one via the SAME
+     * OhmPersistenceService.createRemediationTask path the F8 door uses, which also writes
+     * Remediation_Task_Id__c back), then set the Task owner + due date. Returns the Task Id.
+     */
+    @AuraEnabled
+    public static Id assignFinding(Id findingId, Id userId, Date dueDate) {
+        if (findingId == null) {
+            throw new AuraHandledException('assignFinding requires a findingId.');
+        }
+        try {
+            Finding__c f = [
+                SELECT Id, Remediation_Task_Id__c, Fix_Type__c, Recommended_Target__c,
+                       Recommendation_Text__c, Annual_Energy_Savings_Wh__c, Agent_Audit_Report__c
+                FROM Finding__c WHERE Id = :findingId LIMIT 1
+            ];
+
+            Id taskId;
+            if (String.isBlank(f.Remediation_Task_Id__c)) {
+                OhmDTO.RemediationInputDTO input = new OhmDTO.RemediationInputDTO();
+                input.findingId = f.Id;
+                input.reportId = f.Agent_Audit_Report__c;
+                input.fixType = f.Fix_Type__c;
+                input.recommendedTarget = f.Recommended_Target__c;
+                input.recommendationText = f.Recommendation_Text__c;
+                input.estimatedSavingsCentralWh = f.Annual_Energy_Savings_Wh__c;
+                taskId = new OhmPersistenceService().createRemediationTask(input);
+            } else {
+                taskId = (Id) f.Remediation_Task_Id__c;
+            }
+
+            Task t = new Task(Id = taskId);
+            if (userId != null) { t.OwnerId = userId; }
+            if (dueDate != null) { t.ActivityDate = dueDate; }
+            update t;
+            return taskId;
+        } catch (Exception e) {
+            throw new AuraHandledException('Could not assign finding: ' + e.getMessage());
+        }
+    }
+
+    /**
+     * Wave 4 — the Recommendations quick-wins view: the same de-duplicated worklist as
+     * getFindings(null,null), limited to actionable items (status Open/Accepted), ranked by
+     * savingsCentralWh / effortWeight desc (Low=1, Medium=2, High=3; default Low).
+     */
+    @AuraEnabled(cacheable=false)
+    public static List<OhmDTO.WorklistItemDTO> getRecommendations() {
+        try {
+            List<OhmDTO.WorklistItemDTO> all = getFindings(null, null);
+            List<OhmDTO.WorklistItemDTO> quickWins = new List<OhmDTO.WorklistItemDTO>();
+            for (OhmDTO.WorklistItemDTO item : all) {
+                if (item.findingStatus == 'Dismissed' || item.findingStatus == 'Applied') { continue; }
+                quickWins.add(item);
+            }
+            sortByQuickWinDesc(quickWins);
+            return quickWins;
+        } catch (Exception e) {
+            throw new AuraHandledException('Could not load recommendations: ' + e.getMessage());
+        }
+    }
+
     // ---------- v2 private helpers ----------
 
     /** Mark a node wasteful (+ signalType/severity) by matching a finding on tooling id, then type|apiName. */
@@ -364,5 +580,54 @@ public with sharing class OhmAuditController {
         if (String.isNotBlank(a)) { parts.add(a); }
         if (String.isNotBlank(b)) { parts.add(b); }
         return parts.isEmpty() ? null : String.join(parts, '\n\n');
+    }
+
+    // ---------- Wave 4 private helpers ----------
+
+    /** Prettify a planner api name into a human label ("Ohm_Waste_Demo" -> "Ohm Waste Demo"). */
+    private static String prettyProcessLabel(String apiName) {
+        if (String.isBlank(apiName)) { return 'Fleet'; }
+        return apiName.replace('__c', '').replace('_', ' ').trim();
+    }
+
+    /** Effort -> quick-win divisor weight (Low=1, Medium=2, High=3; default Low). */
+    private static Decimal effortWeight(String effort) {
+        if (effort == 'High') { return 3; }
+        if (effort == 'Medium') { return 2; }
+        return 1;
+    }
+
+    private static void sortBySavingsDesc(List<OhmDTO.WorklistItemDTO> items) {
+        if (items != null && items.size() > 1) {
+            items.sort(new SavingsDescComparator());
+        }
+    }
+
+    private static void sortByQuickWinDesc(List<OhmDTO.WorklistItemDTO> items) {
+        if (items != null && items.size() > 1) {
+            items.sort(new QuickWinComparator());
+        }
+    }
+
+    /** Rank by savingsCentralWh desc (null == 0). */
+    private class SavingsDescComparator implements System.Comparator<OhmDTO.WorklistItemDTO> {
+        public Integer compare(OhmDTO.WorklistItemDTO a, OhmDTO.WorklistItemDTO b) {
+            Decimal av = (a == null || a.savingsCentralWh == null) ? 0 : a.savingsCentralWh;
+            Decimal bv = (b == null || b.savingsCentralWh == null) ? 0 : b.savingsCentralWh;
+            if (av == bv) { return 0; }
+            return (av > bv) ? -1 : 1;
+        }
+    }
+
+    /** Rank by savingsCentralWh / effortWeight desc (quick wins first). */
+    private class QuickWinComparator implements System.Comparator<OhmDTO.WorklistItemDTO> {
+        public Integer compare(OhmDTO.WorklistItemDTO a, OhmDTO.WorklistItemDTO b) {
+            Decimal av = ((a == null || a.savingsCentralWh == null) ? 0 : a.savingsCentralWh)
+                / effortWeight(a == null ? null : a.effort);
+            Decimal bv = ((b == null || b.savingsCentralWh == null) ? 0 : b.savingsCentralWh)
+                / effortWeight(b == null ? null : b.effort);
+            if (av == bv) { return 0; }
+            return (av > bv) ? -1 : 1;
+        }
     }
 }

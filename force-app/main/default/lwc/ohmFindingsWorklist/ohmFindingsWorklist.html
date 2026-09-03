@@ -1,0 +1,218 @@
+<template>
+    <div class={hostClass} data-id="worklist-root">
+        <!-- Controls ------------------------------------------------------- -->
+        <div class="ohm-work__controls" role="group" aria-label="Findings filters">
+            <label class="ohm-work__control">
+                <span class="ohm-work__control-label">Status</span>
+                <select
+                    class="ohm-work__select"
+                    data-id="filter-status"
+                    onchange={handleStatusFilter}
+                >
+                    <template for:each={statusFilterOptions} for:item="opt">
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    </template>
+                </select>
+            </label>
+
+            <label class="ohm-work__control">
+                <span class="ohm-work__control-label">Severity</span>
+                <select
+                    class="ohm-work__select"
+                    data-id="filter-severity"
+                    onchange={handleSeverityFilter}
+                >
+                    <template for:each={severityFilterOptions} for:item="opt">
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    </template>
+                </select>
+            </label>
+
+            <button
+                type="button"
+                class="ohm-work__sort"
+                data-id="sort-savings"
+                onclick={handleSortToggle}
+                aria-label="Sort by savings"
+            >
+                Sort: {sortLabel}
+            </button>
+        </div>
+
+        <!-- Loading -------------------------------------------------------- -->
+        <template lwc:if={isLoading}>
+            <div class="ohm-work__loading" data-id="loading" role="status">
+                <span class="ohm-work__spinner" aria-hidden="true"></span>
+                Loading the worklist…
+            </div>
+        </template>
+
+        <!-- Load error ----------------------------------------------------- -->
+        <template lwc:if={loadError}>
+            <div class="ohm-work__error" data-id="load-error" role="alert">
+                <p>{loadError}</p>
+                <button type="button" class="ohm-work__btn" onclick={handleRetry}>
+                    Retry
+                </button>
+            </div>
+        </template>
+
+        <!-- Table ---------------------------------------------------------- -->
+        <template lwc:if={hasRows}>
+            <div class="ohm-work__table-wrap">
+                <table class="ohm-work__table" data-id="table">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="ohm-work__th">Severity</th>
+                            <th scope="col" class="ohm-work__th">Process</th>
+                            <th scope="col" class="ohm-work__th">Signal</th>
+                            <th scope="col" class="ohm-work__th ohm-work__th--num">Savings</th>
+                            <th scope="col" class="ohm-work__th">Assignee</th>
+                            <th scope="col" class="ohm-work__th">Due</th>
+                            <th scope="col" class="ohm-work__th">Status</th>
+                            <th scope="col" class="ohm-work__th"><span class="ohm-work__sr">Actions</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={visibleRows} for:item="row">
+                            <tr key={row.findingId} class="ohm-work__tr" data-id="row">
+                                <td class="ohm-work__td">
+                                    <span class={row.severityClass}>
+                                        <span class="ohm-work__chip-text">{row.severityText}</span>
+                                    </span>
+                                </td>
+                                <td class="ohm-work__td ohm-work__td--process">
+                                    <span class="ohm-work__process">{row.processText}</span>
+                                    <template lwc:if={row.artifactText}>
+                                        <span class="ohm-work__artifact">{row.artifactText}</span>
+                                    </template>
+                                </td>
+                                <td class="ohm-work__td">{row.signalLabel}</td>
+                                <td class="ohm-work__td ohm-work__td--num" data-id="savings">
+                                    {row.savingsText}
+                                </td>
+                                <td class="ohm-work__td" data-id="assignee">{row.assigneeText}</td>
+                                <td class="ohm-work__td ohm-work__td--num" data-id="due">{row.dueText}</td>
+                                <td class="ohm-work__td">
+                                    <select
+                                        class={row.statusClass}
+                                        data-id="row-status"
+                                        data-finding={row.findingId}
+                                        disabled={row.isBusy}
+                                        aria-label="Change finding status"
+                                        onchange={handleRowStatusChange}
+                                    >
+                                        <template for:each={row.statusOptions} for:item="opt">
+                                            <option
+                                                key={opt.value}
+                                                value={opt.value}
+                                                selected={opt.selected}
+                                            >{opt.label}</option>
+                                        </template>
+                                    </select>
+                                </td>
+                                <td class="ohm-work__td ohm-work__td--actions">
+                                    <div class="ohm-work__actions">
+                                        <template lwc:if={row.assigned}>
+                                            <span class="ohm-work__assigned" title="Assigned">✓ Yours</span>
+                                        </template>
+                                        <template lwc:else>
+                                            <button
+                                                type="button"
+                                                class="ohm-work__link"
+                                                data-id="assign-toggle"
+                                                data-finding={row.findingId}
+                                                aria-expanded={row.assignOpen}
+                                                onclick={handleToggleAssign}
+                                            >
+                                                Assign
+                                            </button>
+                                        </template>
+                                        <template lwc:if={row.hasRecommendation}>
+                                            <button
+                                                type="button"
+                                                class="ohm-work__link"
+                                                data-id="expand"
+                                                data-finding={row.findingId}
+                                                aria-expanded={row.isExpanded}
+                                                onclick={handleToggleExpand}
+                                            >
+                                                {row.expandLabel}
+                                            </button>
+                                        </template>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Assign inline form ---------------------------------- -->
+                            <template lwc:if={row.assignOpen}>
+                                <tr key={row.assignKey} class="ohm-work__subrow" data-id="assign-row">
+                                    <td class="ohm-work__td ohm-work__td--sub" colspan="8">
+                                        <div class="ohm-work__assign">
+                                            <label class="ohm-work__control">
+                                                <span class="ohm-work__control-label">Due date</span>
+                                                <input
+                                                    type="date"
+                                                    class="ohm-work__date"
+                                                    data-id="assign-date"
+                                                    data-finding={row.findingId}
+                                                    value={row.assignDate}
+                                                    onchange={handleDateChange}
+                                                />
+                                            </label>
+                                            <button
+                                                type="button"
+                                                class="ohm-work__btn ohm-work__btn--primary"
+                                                data-id="assign-me"
+                                                data-finding={row.findingId}
+                                                disabled={row.isBusy}
+                                                onclick={handleAssignToMe}
+                                            >
+                                                <template lwc:if={row.isBusy}>Assigning…</template>
+                                                <template lwc:else>Assign to me</template>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </template>
+
+                            <!-- Recommendation detail ------------------------------- -->
+                            <template lwc:if={row.isExpanded}>
+                                <tr key={row.detailKey} class="ohm-work__subrow" data-id="detail-row">
+                                    <td class="ohm-work__td ohm-work__td--sub" colspan="8">
+                                        <p class="ohm-work__reco" data-id="reco">
+                                            {row.recommendationText}
+                                        </p>
+                                    </td>
+                                </tr>
+                            </template>
+
+                            <!-- Row error ------------------------------------------- -->
+                            <template lwc:if={row.rowError}>
+                                <tr key={row.errKey} class="ohm-work__subrow">
+                                    <td class="ohm-work__td ohm-work__td--sub" colspan="8">
+                                        <p class="ohm-work__row-error" data-id="row-error" role="alert">
+                                            {row.rowError}
+                                        </p>
+                                    </td>
+                                </tr>
+                            </template>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </template>
+
+        <!-- Empty states --------------------------------------------------- -->
+        <template lwc:if={isEmpty}>
+            <div class="ohm-work__empty" data-id="empty">
+                <template lwc:if={isFiltered}>
+                    No findings match these filters.
+                </template>
+                <template lwc:else>
+                    No findings yet — audit a process from the Fleet tab.
+                </template>
+            </div>
+        </template>
+    </div>
+</template>

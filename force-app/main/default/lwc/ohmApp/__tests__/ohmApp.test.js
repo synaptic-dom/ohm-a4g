@@ -51,6 +51,29 @@ jest.mock(
     { virtual: true }
 );
 
+// ohmFindingsWorklist (FINDINGS tab) + ohmRecommendations standalone (RECOMMENDATIONS
+// tab) pull in their own Apex; stub those so the tabs mount cleanly.
+jest.mock(
+    '@salesforce/apex/OhmAuditController.getFindings',
+    () => ({ default: jest.fn(() => Promise.resolve([])) }),
+    { virtual: true }
+);
+jest.mock(
+    '@salesforce/apex/OhmAuditController.updateFindingStatus',
+    () => ({ default: jest.fn() }),
+    { virtual: true }
+);
+jest.mock(
+    '@salesforce/apex/OhmAuditController.assignFinding',
+    () => ({ default: jest.fn() }),
+    { virtual: true }
+);
+jest.mock(
+    '@salesforce/apex/OhmAuditController.getRecommendations',
+    () => ({ default: jest.fn(() => Promise.resolve([])) }),
+    { virtual: true }
+);
+
 async function flush(times = 6) {
     for (let i = 0; i < times; i += 1) {
         // eslint-disable-next-line no-await-in-loop
@@ -101,23 +124,54 @@ describe('c-ohm-app', () => {
         ).toBeNull();
     });
 
-    it('switches tabs on click and shows the on-brand placeholder', async () => {
+    it('switches to Trends on click and shows the on-brand placeholder', async () => {
         const el = create();
         await flush();
 
-        const findingsTab = tabs(el)[1];
-        findingsTab.click();
+        const trendsTab = tabs(el)[3];
+        trendsTab.click();
         await flush();
 
-        expect(findingsTab.getAttribute('aria-selected')).toBe('true');
+        expect(trendsTab.getAttribute('aria-selected')).toBe('true');
         const placeholder = el.shadowRoot.querySelector(
             '[data-id="placeholder"]'
         );
         expect(placeholder).not.toBeNull();
         expect(placeholder.textContent).toContain('Coming in this build');
-        expect(placeholder.textContent).toContain('Findings');
+        expect(placeholder.textContent).toContain('Trends');
         // Fleet table unmounted while on another tab
         expect(el.shadowRoot.querySelector('[data-id="fleet"]')).toBeNull();
+    });
+
+    it('mounts the live Findings worklist on the Findings tab', async () => {
+        const el = create();
+        await flush();
+
+        tabs(el)[1].click();
+        await flush();
+
+        expect(
+            el.shadowRoot.querySelector('[data-id="findings"]')
+        ).not.toBeNull();
+        expect(
+            el.shadowRoot.querySelector('[data-id="placeholder"]')
+        ).toBeNull();
+        expect(el.shadowRoot.querySelector('[data-id="fleet"]')).toBeNull();
+    });
+
+    it('mounts the standalone Recommendations tab', async () => {
+        const el = create();
+        await flush();
+
+        tabs(el)[2].click();
+        await flush();
+
+        const recs = el.shadowRoot.querySelector('[data-id="recommendations"]');
+        expect(recs).not.toBeNull();
+        expect(recs.standalone).toBe(true);
+        expect(
+            el.shadowRoot.querySelector('[data-id="placeholder"]')
+        ).toBeNull();
     });
 
     it('reflects the loaded calm preference and passes it to children', async () => {

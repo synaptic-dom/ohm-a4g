@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>67.0</apiVersion>
+    <isExposed>false</isExposed>
+    <masterLabel>Ohm Findings Worklist</masterLabel>
+    <description>Ohm v2 — the Findings tab: a Task-backed cross-fleet backlog with status, assignment, due dates and filters.</description>
+</LightningComponentBundle>

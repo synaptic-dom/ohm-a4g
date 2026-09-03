@@ -274,4 +274,29 @@ public with sharing class OhmDTO {
         @AuraEnabled public String signalType;
         @AuraEnabled public String severity;
     }
+
+    // ----- Wave 4 Worklist (Findings backlog + Recommendations quick-wins) -----
+
+    /** One row of the cross-fleet worklist: a finding joined with its remediation Task (if any). */
+    public class WorklistItemDTO {
+        @AuraEnabled public Id findingId;
+        @AuraEnabled public String signal;
+        @AuraEnabled public String severity;
+        @AuraEnabled public String confidence;
+        @AuraEnabled public String processLabel;
+        @AuraEnabled public String plannerApiName;
+        @AuraEnabled public String artifactLabel;
+        @AuraEnabled public Decimal savingsCentralWh;
+        @AuraEnabled public Decimal savingsLowWh;
+        @AuraEnabled public Decimal savingsHighWh;
+        @AuraEnabled public String fixType;
+        @AuraEnabled public String recommendedTarget;
+        @AuraEnabled public String recommendationText;
+        @AuraEnabled public String findingStatus;   // Finding_Status__c: Open|Accepted|Dismissed|Applied
+        @AuraEnabled public Id taskId;
+        @AuraEnabled public String assigneeName;
+        @AuraEnabled public Id assigneeId;
+        @AuraEnabled public Date dueDate;
+        @AuraEnabled public String effort;
+    }
 }
