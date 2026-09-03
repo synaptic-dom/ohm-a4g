@@ -41,7 +41,18 @@ Task 0 auth gate (BLOCKING) → **0.5 agent-surface spike (W1)** → 1 smoke dep
 
 **Phase 2 (DONE)** — sample AI fleet seeded + audited E2E + captured. 4 agents discovered (Lead Concierge F/High, Order Support Medium, Service Concierge clean, Spike clean). Org grade F score 23, 128,135 Wh/yr, 2 findings. Fleet readout captured live (fleet-impact.png). Report AUDIT-00014 (a00aj00003SM8DNAA1).
 
-**DEMO ENTRY POINT:** open the **"Ohm" app** (App Launcher → Ohm), NOT the Ohm Audit tab from within Sales — the app URL (/lightning/app/c__Ohm) reliably lands on the Ohm Audit page; the tab-from-another-app path can redirect to the Labels home. Then click "Start the audit".
+**DEMO ENTRY POINT:** open the **"Ohm" app** (App Launcher → Ohm) — the app URL `/lightning/app/c__Ohm` reliably lands on the workbench; the tab-from-Sales path can misroute.
+
+## v2 — The Fleet Workbench (rebuild in progress; SPEC-ohm-v2-workbench.md)
+Reframe from single-scroll report → tabbed application. Waves committed:
+- **Wave 1 ✅ (172c104)** backend split: listFleet() cheap + auditProcess(one target) deep + process-scoped reports + fields (Target_Type__c/Target_Planner_Id__c/Target_Planner_Api_Name__c, Finding_Status__c). NOTE: org PlannerId/PluginId/AgentGraph are NULL → planner↔topic↔action join is by DeveloperName naming convention.
+- **Wave 2 ✅ (dad5ef8)** app shell (tabs FLEET/FINDINGS/RECOMMENDATIONS/TRENDS, breadcrumb, Calm) + Fleet table with per-row Audit → in-place grade refresh. ohmApp is now the FlexiPage root (ohmAuditExperience kept as fallback).
+- **Wave 3 ✅ (5b7578b)** process page: call graph (agent→topic→action, waste flagged) + node inspector showing RAW instructions with excess highlighted + Trim/Downsize/Replace CTAs.
+- **Wave 4 ✅ (9e99ea3)** Findings worklist on Salesforce Tasks (status pipeline Open/Accepted/Dismissed/Applied + assign+due) + Recommendations quick-wins (savings÷effort). Fixed cross-scope duplicate-finding dedup (key on artifact+signal, Process rows win).
+- **Wave 5 (next)** Trends (footprint/grade over time) + before/after diff on re-audit.
+- **Wave 6** per-process "Ask Ohm" assistant (seam stubbed in ohmProcessPage).
+
+**TESTS after v2 w4:** 34 Apex controller/persistence + full suite green; 139 Jest. Fleet has 4 agents; getFindings returns 2 deduped worklist items (Lead Triage High 52,921 Wh, Order Help Medium 16,083 Wh).
 
 **DEMO-READY.** Remaining for the win (not code-blocking): quality-gate skills (security-audit/code-review/optimize/deploy-check) as submission artifacts; submission writeups (300-500 word desc naming Headless Hero, RAI Self Check, methodology doc, a11y writeup); video shot-list (W8) + hook (W2) — recording is the user's. Optional stretch: W6 dogfood (build full clean Ohm_Auditor agent), signal (a) live 2nd finding (generatePromptResponse fixture).
 
