@@ -52,17 +52,39 @@ export default class OhmAskAssistant extends LightningElement {
         }
         this._loadedFor = planner;
         this.isLoadingContext = true;
+        this.isThinking = false; // a stale in-flight answer must not keep the composer disabled
         this.contextError = undefined;
         this.turns = [];
         this.sendError = undefined;
         try {
-            this.context = await getAssistantContext({ plannerId: planner });
+            const ctx = await getAssistantContext({ plannerId: planner });
+            // G10: the process may have changed while we awaited — drop this stale context.
+            if (this._plannerId !== planner) {
+                return;
+            }
+            this.context = ctx;
         } catch (e) {
+            if (this._plannerId !== planner) {
+                return;
+            }
             this.contextError = this._msg(e) || 'Ask Ohm is unavailable right now.';
             this.context = undefined;
         } finally {
-            this.isLoadingContext = false;
+            if (this._plannerId === planner) {
+                this.isLoadingContext = false;
+            }
         }
+    }
+
+    /**
+     * G4: re-ground the assistant after the process changes underneath it (e.g. a re-audit,
+     * which keeps the same plannerId so the setter guard won't fire). Called imperatively by
+     * the host; forces a fresh getAssistantContext and clears the prior transcript.
+     */
+    @api
+    refresh() {
+        this._loadedFor = undefined;
+        this.loadContext();
     }
 
     // ---- host / presentation ------------------------------------------------
@@ -117,7 +139,8 @@ export default class OhmAskAssistant extends LightningElement {
     }
 
     handleKeydown(event) {
-        if (event.key === 'Enter' && !event.shiftKey) {
+        // Enter sends, Shift+Enter is a newline; never submit mid-IME-composition (CJK candidates).
+        if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
             event.preventDefault();
             this.send(this.draftInput);
         }
@@ -149,7 +172,14 @@ export default class OhmAskAssistant extends LightningElement {
                 btn.textContent = original;
             }, 1400);
         } catch (e) {
-            // clipboard blocked — non-fatal, the text is visible to select manually
+            // clipboard blocked (non-secure context / permissions) — tell the user how to copy
+            const btn = event.currentTarget;
+            const original = btn.textContent;
+            btn.textContent = 'Press Ctrl/Cmd-C to copy';
+            // eslint-disable-next-line @lwc/lwc/no-async-operation
+            setTimeout(() => {
+                btn.textContent = original;
+            }, 2200);
         }
     }
 
@@ -160,15 +190,19 @@ export default class OhmAskAssistant extends LightningElement {
         }
         this.sendError = undefined;
         this.draftInput = '';
+        const askedFor = this._plannerId; // G10: bind the reply to the process it was asked for
         this._pushTurn({ role: 'user', text: q });
         this.isThinking = true;
         try {
-            const reply = await askAssistant({
-                plannerId: this._plannerId,
-                question: q
-            });
+            const reply = await askAssistant({ plannerId: askedFor, question: q });
+            if (this._plannerId !== askedFor) {
+                return; // process changed mid-flight — this answer belongs to a page that's gone
+            }
             this._pushTurn(this._toOhmTurn(reply));
         } catch (e) {
+            if (this._plannerId !== askedFor) {
+                return;
+            }
             this.sendError = this._msg(e) || 'Ohm could not answer just now.';
             this._pushTurn({
                 role: 'ohm',
@@ -176,8 +210,11 @@ export default class OhmAskAssistant extends LightningElement {
                 isError: true
             });
         } finally {
-            this.isThinking = false;
-            this._scrollToEnd();
+            if (this._plannerId === askedFor) {
+                this.isThinking = false;
+                this._scrollToEnd();
+                this._refocusComposer(); // G11: don't strand keyboard focus after each turn
+            }
         }
     }
 
@@ -215,20 +252,33 @@ export default class OhmAskAssistant extends LightningElement {
             t.tokenDeltaText = `${formatNumber(reply.beforeTokens)} → ${formatNumber(
                 reply.afterTokens
             )} tokens`;
+            // G5: sign the delta explicitly — a rewrite that came back LONGER must read "+N%",
+            // never "−-N%", and the badge tone flips to warn.
+            const delta = reply.beforeChars - reply.afterChars;
             const pct =
                 reply.beforeChars > 0
-                    ? Math.round(
-                          ((reply.beforeChars - reply.afterChars) /
-                              reply.beforeChars) *
-                              100
-                      )
+                    ? Math.round((Math.abs(delta) / reply.beforeChars) * 100)
                     : 0;
-            t.reductionText = `−${pct}%`;
+            t.isExpansion = delta < 0;
+            t.reductionText = `${delta < 0 ? '+' : '−'}${pct}%`;
+            t.deltaClass = delta < 0
+                ? 'ohm-ask__delta-pct ohm-ask__delta-pct--warn'
+                : 'ohm-ask__delta-pct';
         }
         if (reply.followUps && reply.followUps.length) {
             t.followUps = reply.followUps;
         }
         return t;
+    }
+
+    _refocusComposer() {
+        // eslint-disable-next-line @lwc/lwc/no-async-operation
+        Promise.resolve().then(() => {
+            const input = this.template.querySelector('[data-id="input"]');
+            if (input && !input.disabled) {
+                input.focus();
+            }
+        });
     }
 
     _scrollToEnd() {

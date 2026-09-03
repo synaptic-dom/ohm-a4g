@@ -209,19 +209,53 @@ public with sharing class OhmDiscoveryService {
     }
 
     /**
-     * Assign a node (by its DeveloperName) to the planner whose match key it contains; when a
-     * node contains more than one planner's key, the LONGEST key wins (most specific). Returns
-     * null when no key matches. keyByPlanner is precomputed once (no SOQL here) — bulk-safe.
+     * Build the planner→match-key map with COLLISION RESOLUTION (G9): if two planners reduce to
+     * the same key (e.g. Ohm_Lead_Triage and Ohm_Lead_Scoring both → "lead"), BOTH fall back to
+     * their full (unique) DeveloperName as the key — otherwise one planner would absorb every
+     * shared-key node and the other would render empty. Bulk-safe: no SOQL.
+     */
+    private Map<Id, String> buildKeyByPlanner(List<GenAiPlannerDefinition> planners) {
+        Map<Id, String> keyByPlanner = new Map<Id, String>();
+        Map<String, Integer> keyCounts = new Map<String, Integer>();
+        for (GenAiPlannerDefinition p : planners) {
+            String k = plannerMatchKey(p.DeveloperName);
+            keyByPlanner.put(p.Id, k);
+            keyCounts.put(k, (keyCounts.containsKey(k) ? keyCounts.get(k) : 0) + 1);
+        }
+        for (GenAiPlannerDefinition p : planners) {
+            if (keyCounts.get(keyByPlanner.get(p.Id)) > 1) {
+                keyByPlanner.put(p.Id, (p.DeveloperName == null ? '' : p.DeveloperName).toLowerCase());
+            }
+        }
+        return keyByPlanner;
+    }
+
+    /**
+     * Assign a node (by its DeveloperName) to the planner whose match key it best matches.
+     * G9: a WHOLE '_'-segment match (score 2) always beats a mere substring match (score 1), so
+     * a node like Ohm_Reorder_Helper goes to the "reorder" planner, not the "order" planner whose
+     * key is a substring of "reorder". Ties break on longer key, then lower Id — fully
+     * deterministic (never nondeterministic keyset order). Returns null when no key matches.
+     * keyByPlanner is precomputed once (no SOQL here) — bulk-safe.
      */
     private Id bestPlannerFor(String nodeDeveloperName, Map<Id, String> keyByPlanner) {
         if (String.isBlank(nodeDeveloperName)) { return null; }
         String hay = nodeDeveloperName.toLowerCase();
+        Set<String> segs = new Set<String>(hay.split('_'));
         Id best = null;
+        Integer bestScore = 0;
         Integer bestLen = -1;
         for (Id pid : keyByPlanner.keySet()) {
             String key = keyByPlanner.get(pid);
-            if (String.isNotBlank(key) && hay.contains(key) && key.length() > bestLen) {
+            if (String.isBlank(key)) { continue; }
+            Integer score = segs.contains(key) ? 2 : (hay.contains(key) ? 1 : 0);
+            if (score == 0) { continue; }
+            Boolean better = score > bestScore
+                || (score == bestScore && key.length() > bestLen)
+                || (score == bestScore && key.length() == bestLen && (best == null || pid < best));
+            if (better) {
                 best = pid;
+                bestScore = score;
                 bestLen = key.length();
             }
         }
@@ -248,10 +282,7 @@ public with sharing class OhmDiscoveryService {
             return new List<OhmDTO.ProcessSummaryDTO>();
         }
 
-        Map<Id, String> keyByPlanner = new Map<Id, String>();
-        for (GenAiPlannerDefinition p : planners) {
-            keyByPlanner.put(p.Id, plannerMatchKey(p.DeveloperName));
-        }
+        Map<Id, String> keyByPlanner = buildKeyByPlanner(planners);
 
         Map<Id, Integer> topicCountByPlanner = new Map<Id, Integer>();
         Map<Id, Integer> actionCountByPlanner = new Map<Id, Integer>();
@@ -296,6 +327,29 @@ public with sharing class OhmDiscoveryService {
     }
 
     /**
+     * G12: cheap single-planner identity (id/apiName/label/domain) — ONE SOQL. Replaces the
+     * former full listFleet() scan in getProcessDetail, which re-tallied every planner's counts
+     * just to read one label; that scan ran on every assistant question. Returns null if absent.
+     */
+    public OhmDTO.ProcessSummaryDTO resolveIdentity(Id plannerId) {
+        if (plannerId == null) { return null; }
+        for (GenAiPlannerDefinition p : [
+            SELECT Id, DeveloperName, MasterLabel
+            FROM GenAiPlannerDefinition
+            WHERE Id = :plannerId
+            LIMIT 1
+        ]) {
+            OhmDTO.ProcessSummaryDTO row = new OhmDTO.ProcessSummaryDTO();
+            row.plannerId = p.Id;
+            row.plannerApiName = p.DeveloperName;
+            row.label = String.isNotBlank(p.MasterLabel) ? p.MasterLabel : p.DeveloperName;
+            row.domain = deriveDomain(p.DeveloperName, p.MasterLabel);
+            return row;
+        }
+        return null;
+    }
+
+    /**
      * DEEP discovery scoped to ONE planner subtree (SPEC §4) — the same AgentModel shape the
      * detectors consume (flat g.topics / g.actions / g.agentsById). Reuses the existing per-node
      * mapping shape, but the tree contains only the given planner plus the topics and actions that
@@ -314,11 +368,12 @@ public with sharing class OhmDiscoveryService {
         // contains another planner's key (longest-key-wins disambiguation).
         Map<Id, String> keyByPlanner = new Map<Id, String>();
         try {
-            for (GenAiPlannerDefinition p : [
+            List<GenAiPlannerDefinition> planners = [
                 SELECT Id, DeveloperName, MasterLabel, Description, PlannerType, Capabilities, AgentGraph
                 FROM GenAiPlannerDefinition
-            ]) {
-                keyByPlanner.put(p.Id, plannerMatchKey(p.DeveloperName));
+            ];
+            keyByPlanner = buildKeyByPlanner(planners);  // G9: collision-resolved keys
+            for (GenAiPlannerDefinition p : planners) {
                 if (p.Id == plannerId) {
                     OhmDTO.AgentNode a = new OhmDTO.AgentNode();
                     a.id = p.Id;

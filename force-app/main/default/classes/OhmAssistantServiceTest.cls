@@ -126,6 +126,66 @@ private class OhmAssistantServiceTest {
         System.assertEquals(true, thrown, 'a blank question is rejected');
     }
 
+    // ---------- intent classification matrix (G2) ----------
+
+    @IsTest
+    static void testIntentMatrixClassifiesRealQuestions() {
+        // genuine rewrite requests → draft
+        for (String q : new List<String>{
+            'Draft the trimmed instructions for this topic.',
+            'Rewrite these instructions to be shorter.',
+            'Can you tighten the scope?',
+            'Give me a shortened version',
+            'Show me a trimmed version of the scope',
+            'Please condense the instructions.'
+        }) {
+            System.assertEquals(true, OhmAssistantService.isDraftIntent(q), 'should draft: ' + q);
+        }
+        // analytical questions that merely mention a verb → NOT draft
+        for (String q : new List<String>{
+            'Why is this process wasteful?',
+            'How much energy would trimming the scope reduce, and what grade would we get?',
+            'How do I reduce the footprint of this agent?',
+            'Is there a draft report I can see?',
+            'What could we save?',
+            'Explain why Lead Concierge (unoptimized) is flagged as wasteful.'
+        }) {
+            System.assertEquals(false, OhmAssistantService.isDraftIntent(q), 'should NOT draft: ' + q);
+        }
+    }
+
+    // ---------- grounding actually carries the audit numbers ----------
+
+    @IsTest(SeeAllData=true)
+    static void testGroundedContextCarriesAuditNumbers() {
+        Id wasteId = wastePlannerId();
+        Test.startTest();
+        OhmAuditController.auditProcess(wasteId);
+        String ctx = OhmAssistantService.groundedContextFor(wasteId);
+        Test.stopTest();
+        System.assert(ctx.contains('EFFICIENCY GRADE: F'), 'context carries the grade; got: ' + ctx.left(200));
+        System.assert(ctx.contains('Wh/yr'), 'context carries the modeled energy');
+        System.assert(ctx.contains('<ohm-data>'), 'raw instructions are fenced as untrusted data');
+    }
+
+    // ---------- blank model reply must NOT surface as a draft (G3) ----------
+
+    @IsTest(SeeAllData=true)
+    static void testBlankReplyThrowsInsteadOfEmptyDraft() {
+        Id wasteId = wastePlannerId();
+        OhmAssistantService.mockModelReply = '   '; // blank
+        Boolean threwDraft = false, threwAnswer = false;
+        Test.startTest();
+        OhmAuditController.auditProcess(wasteId);
+        try { OhmAuditController.askAssistant(wasteId, 'Draft the trimmed instructions.'); }
+        catch (AuraHandledException e) { threwDraft = true; }
+        try { OhmAuditController.askAssistant(wasteId, 'Why is this wasteful?'); }
+        catch (AuraHandledException e) { threwAnswer = true; }
+        Test.stopTest();
+        System.assertEquals(true, threwDraft, 'a blank rewrite must not become a 100% draft');
+        System.assertEquals(true, threwAnswer, 'a blank answer must not surface as empty text');
+    }
+
     @IsTest
     static void testSignalLabelMapsKnownValues() {
         System.assertEquals('Bloated instructions / scope',

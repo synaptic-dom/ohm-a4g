@@ -133,10 +133,10 @@ describe('c-ohm-process-page', () => {
         expect(
             el.shadowRoot.querySelector('[data-id="node-inspector"]')
         ).not.toBeNull();
-        // assistant seam present
-        expect(
-            el.shadowRoot.querySelector('[data-id="assistant-strip"]')
-        ).not.toBeNull();
+        // Ask Ohm assistant mounted and wired to this planner
+        const assistant = el.shadowRoot.querySelector('[data-id="ask-assistant"]');
+        expect(assistant).not.toBeNull();
+        expect(assistant.plannerId).toBe('P1');
     });
 
     it('passes the selected node + matching finding to the inspector on selectnode', async () => {

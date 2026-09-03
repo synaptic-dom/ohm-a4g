@@ -207,6 +207,16 @@ export default class OhmProcessPage extends LightningElement {
             await auditProcess({ plannerId: this._plannerId });
             this._loadedFor = undefined; // force a fresh load
             await this.loadDetail();
+            // G4: re-audit keeps the same plannerId, so the assistant's own setter guard won't
+            // re-ground it — tell it to refresh so it doesn't cite the pre-audit grade/findings.
+            Promise.resolve().then(() => {
+                const assistant = this.template.querySelector(
+                    '[data-id="ask-assistant"]'
+                );
+                if (assistant && typeof assistant.refresh === 'function') {
+                    assistant.refresh();
+                }
+            });
             if (hadPriorAudit) {
                 this.showDiff = true;
                 // If the diff panel was already open, refresh it imperatively so

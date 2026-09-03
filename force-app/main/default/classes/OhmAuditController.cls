@@ -131,7 +131,8 @@ public with sharing class OhmAuditController {
                     FROM Agent_Audit_Report__c
                     WHERE Target_Type__c = 'Process'
                       AND Target_Planner_Id__c IN :plannerIds
-                    ORDER BY CreatedDate DESC
+                      AND Run_Status__c = 'Complete'
+                    ORDER BY CreatedDate DESC, Id DESC
                 ]) {
                     if (!latestByPlanner.containsKey(r.Target_Planner_Id__c)) {
                         latestByPlanner.put(r.Target_Planner_Id__c, r);
@@ -238,15 +239,13 @@ public with sharing class OhmAuditController {
             detail.findings = new List<OhmDTO.FindingDTO>();
             detail.nodes = new List<OhmDTO.NodeDTO>();
 
-            // identity + domain from the cheap fleet listing (reuses the OhmDiscoveryService domain helper)
+            // identity + domain via the cheap single-planner resolver (G12: no full-fleet scan)
             String key = String.valueOf(plannerId);
-            for (OhmDTO.ProcessSummaryDTO p : discovery.listFleet()) {
-                if (p != null && p.plannerId != null && String.valueOf(p.plannerId) == key) {
-                    detail.plannerApiName = p.plannerApiName;
-                    detail.label = p.label;
-                    detail.domain = p.domain;
-                    break;
-                }
+            OhmDTO.ProcessSummaryDTO ident = discovery.resolveIdentity(plannerId);
+            if (ident != null) {
+                detail.plannerApiName = ident.plannerApiName;
+                detail.label = ident.label;
+                detail.domain = ident.domain;
             }
 
             // latest process report → grade/score/energy + findings
@@ -255,7 +254,8 @@ public with sharing class OhmAuditController {
                 SELECT Id, Efficiency_Grade__c, Efficiency_Score__c, Total_Annual_Energy_Wh__c
                 FROM Agent_Audit_Report__c
                 WHERE Target_Type__c = 'Process' AND Target_Planner_Id__c = :key
-                ORDER BY CreatedDate DESC
+                  AND Run_Status__c = 'Complete'
+                ORDER BY CreatedDate DESC, Id DESC
                 LIMIT 1
             ]) {
                 rep = r;
@@ -397,11 +397,14 @@ public with sharing class OhmAuditController {
                 }
                 if (String.isBlank(plannerApiName)) { plannerApiName = f.Parent_Agent_Api_Name__c; }
 
-                // Dedup on the ARTIFACT identity (label + signal), independent of which report scope
-                // surfaced it — the same finding appears under both a Process report and the Fleet report.
-                // Process-scoped rows are ordered first (Target_Type DESC), so a process row wins and keeps
-                // its richer process label over the fleet-scoped copy.
-                String dedupKey = (f.Artifact_Label__c == null ? '' : f.Artifact_Label__c.toLowerCase())
+                // Dedup on (planner + artifact label + signal), independent of which report scope
+                // surfaced it — the same finding appears under both a Process report and the Fleet report
+                // (same plannerApiName, so it still collapses). G6: the planner is IN the key so two
+                // DIFFERENT planners that happen to share an artifact label + signal are NOT collapsed
+                // (previously the second planner's finding vanished). Process-scoped rows are ordered first
+                // (Target_Type DESC), so a process row wins and keeps its richer process label.
+                String dedupKey = (String.isBlank(plannerApiName) ? '' : plannerApiName.toLowerCase())
+                    + '|' + (f.Artifact_Label__c == null ? '' : f.Artifact_Label__c.toLowerCase())
                     + '|' + (f.Signal_Type__c == null ? '' : f.Signal_Type__c);
                 if (seenKeys.contains(dedupKey)) { continue; }
                 seenKeys.add(dedupKey);
@@ -584,7 +587,7 @@ public with sharing class OhmAuditController {
                     WHERE Target_Type__c = 'Process'
                       AND Target_Planner_Id__c = :String.valueOf(plannerId)
                       AND Run_Status__c = 'Complete'
-                    ORDER BY CreatedDate ASC
+                    ORDER BY CreatedDate ASC, Id ASC
                 ]) {
                     if (dto.scope == null && String.isNotBlank(r.Target_Planner_Api_Name__c)) {
                         dto.scope = prettyProcessLabel(r.Target_Planner_Api_Name__c);
@@ -603,7 +606,7 @@ public with sharing class OhmAuditController {
                        Findings_Count__c, Run_Timestamp__c, CreatedDate
                 FROM Agent_Audit_Report__c
                 WHERE Target_Type__c != 'Process' AND Run_Status__c = 'Complete'
-                ORDER BY CreatedDate ASC
+                ORDER BY CreatedDate ASC, Id ASC
             ]) {
                 dto.points.add(toTrendPoint(r));
             }
@@ -616,7 +619,7 @@ public with sharing class OhmAuditController {
                        Run_Timestamp__c, CreatedDate
                 FROM Agent_Audit_Report__c
                 WHERE Target_Type__c = 'Process' AND Run_Status__c = 'Complete'
-                ORDER BY CreatedDate ASC
+                ORDER BY CreatedDate ASC, Id ASC
             ];
 
             // per-agent grade history, insertion-ordered by planner first-seen
@@ -680,7 +683,7 @@ public with sharing class OhmAuditController {
                 WHERE Target_Type__c = 'Process'
                   AND Target_Planner_Id__c = :String.valueOf(plannerId)
                   AND Run_Status__c = 'Complete'
-                ORDER BY CreatedDate DESC
+                ORDER BY CreatedDate DESC, Id DESC
                 LIMIT 2
             ];
 
@@ -838,7 +841,8 @@ public with sharing class OhmAuditController {
             SELECT Target_Planner_Api_Name__c
             FROM Agent_Audit_Report__c
             WHERE Target_Type__c = 'Process' AND Target_Planner_Id__c = :String.valueOf(plannerId)
-            ORDER BY CreatedDate DESC
+              AND Run_Status__c = 'Complete'
+            ORDER BY CreatedDate DESC, Id DESC
             LIMIT 1
         ]) {
             return r.Target_Planner_Api_Name__c;
@@ -863,8 +867,12 @@ public with sharing class OhmAuditController {
         public Integer compare(Agent_Audit_Report__c a, Agent_Audit_Report__c b) {
             if (a == null || a.CreatedDate == null) { return -1; }
             if (b == null || b.CreatedDate == null) { return 1; }
-            if (a.CreatedDate == b.CreatedDate) { return 0; }
-            return (a.CreatedDate < b.CreatedDate) ? -1 : 1;
+            if (a.CreatedDate != b.CreatedDate) {
+                return (a.CreatedDate < b.CreatedDate) ? -1 : 1;
+            }
+            // deterministic tie-break on Id so tied timestamps order identically everywhere
+            if (a.Id == b.Id) { return 0; }
+            return (a.Id < b.Id) ? -1 : 1;
         }
     }
 

@@ -131,6 +131,42 @@ describe('c-ohm-ask-assistant', () => {
         expect(el.shadowRoot.querySelector('.ohm-ask__copy')).not.toBeNull();
     });
 
+    it('signs the draft delta as +N% when the rewrite came back longer (G5)', async () => {
+        getAssistantContext.mockResolvedValue(CONTEXT);
+        askAssistant.mockResolvedValue({
+            ...DRAFT,
+            draftText: 'x'.repeat(6000),
+            beforeChars: 5400,
+            afterChars: 6000,
+            beforeTokens: 1350,
+            afterTokens: 1500
+        });
+        const el = create();
+        await flush();
+        const input = el.shadowRoot.querySelector('[data-id="input"]');
+        input.value = 'rewrite the instructions';
+        input.dispatchEvent(new Event('input'));
+        await flush(2);
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+        await flush();
+
+        const badge = el.shadowRoot.querySelector('[data-id="draft-delta"] span');
+        expect(badge.textContent).toContain('+');
+        expect(badge.textContent).not.toContain('−-');
+        expect(badge.className).toContain('warn');
+    });
+
+    it('exposes refresh() to re-ground after a re-audit (G4)', async () => {
+        getAssistantContext.mockResolvedValue(CONTEXT);
+        const el = create();
+        await flush();
+        expect(typeof el.refresh).toBe('function');
+        getAssistantContext.mockClear();
+        el.refresh();
+        await flush();
+        expect(getAssistantContext).toHaveBeenCalledWith({ plannerId: 'P1' });
+    });
+
     it('shows an unavailable state when the model is not reachable', async () => {
         getAssistantContext.mockResolvedValue({
             ...CONTEXT,

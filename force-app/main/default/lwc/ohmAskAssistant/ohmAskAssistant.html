@@ -63,7 +63,7 @@
                                 <!-- Draft rewrite block ------------------ -->
                                 <template lwc:if={turn.isDraft}>
                                     <div class="ohm-ask__delta" data-id="draft-delta">
-                                        <span class="ohm-ask__delta-pct">{turn.reductionText}</span>
+                                        <span class={turn.deltaClass}>{turn.reductionText}</span>
                                         <span class="ohm-ask__delta-metric">{turn.charDeltaText}</span>
                                         <span class="ohm-ask__delta-sep">·</span>
                                         <span class="ohm-ask__delta-metric">{turn.tokenDeltaText}</span>
@@ -108,11 +108,12 @@
 
                     <!-- Thinking indicator -------------------------------- -->
                     <template lwc:if={isThinking}>
-                        <div class="ohm-ask__row" data-id="thinking">
+                        <div class="ohm-ask__row" data-id="thinking" role="status">
                             <div class="ohm-ask__bubble ohm-ask__bubble--ohm ohm-ask__thinking">
-                                <span class="ohm-ask__dot"></span>
-                                <span class="ohm-ask__dot"></span>
-                                <span class="ohm-ask__dot"></span>
+                                <span class="ohm-ask__sr">Ohm is thinking…</span>
+                                <span class="ohm-ask__dot" aria-hidden="true"></span>
+                                <span class="ohm-ask__dot" aria-hidden="true"></span>
+                                <span class="ohm-ask__dot" aria-hidden="true"></span>
                             </div>
                         </div>
                     </template>
