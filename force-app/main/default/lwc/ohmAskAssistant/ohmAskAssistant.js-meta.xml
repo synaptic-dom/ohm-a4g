@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>67.0</apiVersion>
+    <isExposed>false</isExposed>
+    <masterLabel>Ohm Ask Assistant</masterLabel>
+    <description>Ohm v2 — grounded, headless per-process assistant: answers a process's audit questions and drafts trimmed instructions via the Einstein Trust Layer (Apex Models API).</description>
+</LightningComponentBundle>

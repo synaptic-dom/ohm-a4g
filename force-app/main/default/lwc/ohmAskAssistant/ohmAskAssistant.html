@@ -1,0 +1,171 @@
+<template>
+    <section class={hostClass} data-id="ask-root" aria-label="Ask Ohm assistant">
+        <!-- Header: identity + grounding provenance ------------------------ -->
+        <header class="ohm-ask__head">
+            <div class="ohm-ask__brand">
+                <span class="ohm-ask__spark" aria-hidden="true">◈</span>
+                <span class="ohm-ask__title">Ask Ohm</span>
+            </div>
+            <template lwc:if={modelLabel}>
+                <span class="ohm-ask__model" data-id="model-label">{modelLabel}</span>
+            </template>
+        </header>
+
+        <!-- Loading -------------------------------------------------------- -->
+        <template lwc:if={isLoadingContext}>
+            <div class="ohm-ask__loading" role="status">
+                <span class="ohm-ask__spinner" aria-hidden="true"></span>
+                Grounding on this process…
+            </div>
+        </template>
+
+        <!-- Context error / unavailable ------------------------------------ -->
+        <template lwc:if={contextError}>
+            <div class="ohm-ask__unavailable" data-id="ctx-error" role="alert">
+                {contextError}
+            </div>
+        </template>
+
+        <template lwc:if={context}>
+            <!-- Grounding line + chips ------------------------------------ -->
+            <template lwc:if={groundingSummary}>
+                <p class="ohm-ask__grounding" data-id="grounding">
+                    {groundingSummary}
+                </p>
+            </template>
+            <template lwc:if={groundedChips.length}>
+                <ul class="ohm-ask__chips" data-id="chips">
+                    <template for:each={groundedChips} for:item="chip">
+                        <li key={chip} class="ohm-ask__chip">{chip}</li>
+                    </template>
+                </ul>
+            </template>
+
+            <template lwc:if={available}>
+                <!-- Transcript -------------------------------------------- -->
+                <div
+                    class="ohm-ask__transcript"
+                    data-id="transcript"
+                    role="log"
+                    aria-live="polite"
+                >
+                    <template lwc:if={showGreeting}>
+                        <p class="ohm-ask__greeting" data-id="greeting">
+                            {greeting}
+                        </p>
+                    </template>
+
+                    <template for:each={turns} for:item="turn">
+                        <div key={turn.key} class="ohm-ask__row">
+                            <div class={turn.bubbleClass}>
+                                <p class="ohm-ask__text">{turn.text}</p>
+
+                                <!-- Draft rewrite block ------------------ -->
+                                <template lwc:if={turn.isDraft}>
+                                    <div class="ohm-ask__delta" data-id="draft-delta">
+                                        <span class="ohm-ask__delta-pct">{turn.reductionText}</span>
+                                        <span class="ohm-ask__delta-metric">{turn.charDeltaText}</span>
+                                        <span class="ohm-ask__delta-sep">·</span>
+                                        <span class="ohm-ask__delta-metric">{turn.tokenDeltaText}</span>
+                                    </div>
+                                    <pre class="ohm-ask__draft" data-id="draft-text">{turn.draftText}</pre>
+                                    <button
+                                        type="button"
+                                        class="ohm-ask__copy"
+                                        data-text={turn.draftText}
+                                        onclick={handleCopyDraft}
+                                    >
+                                        Copy trimmed instructions
+                                    </button>
+                                </template>
+
+                                <!-- Provenance under Ohm bubbles --------- -->
+                                <template lwc:if={turn.isOhm}>
+                                    <template lwc:if={turn.modelLabel}>
+                                        <span class="ohm-ask__prov">{turn.modelLabel}</span>
+                                    </template>
+                                </template>
+
+                                <!-- Follow-up chips ---------------------- -->
+                                <template lwc:if={turn.followUps}>
+                                    <div class="ohm-ask__followups">
+                                        <template for:each={turn.followUps} for:item="fu">
+                                            <button
+                                                key={fu.id}
+                                                type="button"
+                                                class="ohm-ask__prompt"
+                                                data-prompt={fu.prompt}
+                                                onclick={handleQuickPrompt}
+                                            >
+                                                {fu.label}
+                                            </button>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Thinking indicator -------------------------------- -->
+                    <template lwc:if={isThinking}>
+                        <div class="ohm-ask__row" data-id="thinking">
+                            <div class="ohm-ask__bubble ohm-ask__bubble--ohm ohm-ask__thinking">
+                                <span class="ohm-ask__dot"></span>
+                                <span class="ohm-ask__dot"></span>
+                                <span class="ohm-ask__dot"></span>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Standing quick-prompt tray (before first turn) -------- -->
+                <template lwc:if={showQuickPrompts}>
+                    <div class="ohm-ask__prompts" data-id="quick-prompts">
+                        <template for:each={quickPrompts} for:item="qp">
+                            <button
+                                key={qp.id}
+                                type="button"
+                                class="ohm-ask__prompt"
+                                data-prompt={qp.prompt}
+                                onclick={handleQuickPrompt}
+                            >
+                                {qp.label}
+                            </button>
+                        </template>
+                    </div>
+                </template>
+
+                <!-- Composer ---------------------------------------------- -->
+                <div class="ohm-ask__composer">
+                    <textarea
+                        class="ohm-ask__input"
+                        data-id="input"
+                        rows="1"
+                        placeholder="Ask about this process…"
+                        value={draftInput}
+                        oninput={handleInput}
+                        onkeydown={handleKeydown}
+                        disabled={inputDisabled}
+                        aria-label="Ask Ohm a question about this process"
+                    ></textarea>
+                    <button
+                        type="button"
+                        class="ohm-ask__send"
+                        data-id="send"
+                        onclick={handleSendClick}
+                        disabled={sendDisabled}
+                    >
+                        Ask
+                    </button>
+                </div>
+            </template>
+
+            <!-- Model unavailable ----------------------------------------- -->
+            <template lwc:if={unavailable}>
+                <div class="ohm-ask__unavailable" data-id="unavailable">
+                    {unavailableReason}
+                </div>
+            </template>
+        </template>
+    </section>
+</template>

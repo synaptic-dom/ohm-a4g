@@ -354,4 +354,48 @@ public with sharing class OhmDTO {
         @AuraEnabled public String afterInstructions;     // topic Scope snapshot (may be null)
         @AuraEnabled public Boolean improved;             // afterScore > beforeScore
     }
+
+    // ===================== Wave 6 — "Ask Ohm" per-process assistant =====================
+
+    /** One suggested prompt chip surfaced under the assistant, grounded in this process. */
+    public class AssistantPromptDTO {
+        @AuraEnabled public String id;      // stable key for the LWC list
+        @AuraEnabled public String label;   // short chip text
+        @AuraEnabled public String prompt;  // full question sent to the model
+    }
+
+    /**
+     * Initial render context for the assistant: a one-line grounding summary, the
+     * "grounded on" chips (what data the answers draw from), the process-specific
+     * quick prompts, and whether the Trust-Layer model is reachable at all.
+     */
+    public class AssistantContextDTO {
+        @AuraEnabled public Id plannerId;
+        @AuraEnabled public String processLabel;
+        @AuraEnabled public String greeting;            // Ohm's opening line
+        @AuraEnabled public String groundingSummary;    // "Grounded in Lead Triage · grade F · 82,486 Wh/yr"
+        @AuraEnabled public List<String> groundedOn;     // discrete chips
+        @AuraEnabled public List<AssistantPromptDTO> quickPrompts;
+        @AuraEnabled public Boolean available;           // Models API usable on this org
+        @AuraEnabled public String unavailableReason;    // set when available=false
+        @AuraEnabled public String modelLabel;           // provenance, e.g. "GPT-4o mini · Einstein Trust Layer"
+    }
+
+    /**
+     * One assistant answer. `answer` is always the human-readable reply. When the
+     * question was a rewrite/trim request, `draftText` carries ONLY the proposed
+     * instructions and beforeChars/afterChars/tokenDelta drive a before→after readout.
+     */
+    public class AssistantReplyDTO {
+        @AuraEnabled public String answer;
+        @AuraEnabled public Boolean isDraft;             // true when a trimmed rewrite is attached
+        @AuraEnabled public String draftText;            // the proposed instruction rewrite (nullable)
+        @AuraEnabled public Integer beforeChars;         // original instruction length (draft only)
+        @AuraEnabled public Integer afterChars;          // rewritten length (draft only)
+        @AuraEnabled public Integer beforeTokens;        // approx tokens before (draft only)
+        @AuraEnabled public Integer afterTokens;         // approx tokens after (draft only)
+        @AuraEnabled public List<String> groundedOn;     // chips echoing what grounded THIS answer
+        @AuraEnabled public List<AssistantPromptDTO> followUps;  // suggested next prompts
+        @AuraEnabled public String modelLabel;           // provenance
+    }
 }

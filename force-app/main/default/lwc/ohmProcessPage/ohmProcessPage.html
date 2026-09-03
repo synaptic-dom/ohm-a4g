@@ -173,20 +173,13 @@
                 </section>
             </template>
 
-            <!-- Ask Ohm assistant strip (Wave 6 seam) --------------------- -->
-            <section class="ohm-process__assistant" data-id="assistant-strip">
-                <span class="ohm-process__assistant-badge"
-                    >Coming in this build</span
-                >
-                <div class="ohm-process__assistant-body">
-                    <span class="ohm-process__assistant-title">Ask Ohm</span>
-                    <span class="ohm-process__assistant-hint">
-                        “Why is this wasteful?” · “Draft the trimmed
-                        instructions” — the grounded per-process assistant lands
-                        in a later build.
-                    </span>
-                </div>
-            </section>
+            <!-- Ask Ohm assistant (Wave 6) — grounded, headless via Trust Layer -->
+            <c-ohm-ask-assistant
+                planner-id={plannerId}
+                process-label={label}
+                calm-mode={calmMode}
+                data-id="ask-assistant"
+            ></c-ohm-ask-assistant>
         </template>
     </div>
 </template>

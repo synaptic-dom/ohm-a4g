@@ -750,6 +750,26 @@ public with sharing class OhmAuditController {
         }
     }
 
+    // ===================== Wave 6 — "Ask Ohm" per-process assistant =====================
+
+    /**
+     * Opening context for the per-process assistant: grounding summary, chips, and
+     * process-specific quick prompts. Cheap — never calls the model.
+     */
+    @AuraEnabled(cacheable=false)
+    public static OhmDTO.AssistantContextDTO getAssistantContext(Id plannerId) {
+        return OhmAssistantService.getContext(plannerId);
+    }
+
+    /**
+     * Answer one grounded question about a process through the Einstein Trust Layer.
+     * A rewrite/trim request returns the drafted instructions plus a before→after readout.
+     */
+    @AuraEnabled(cacheable=false)
+    public static OhmDTO.AssistantReplyDTO askAssistant(Id plannerId, String question) {
+        return OhmAssistantService.ask(plannerId, question);
+    }
+
     // ---------- Wave 5 private helpers ----------
 
     /** Bulk-safe: write each INSTRUCTION_BLOAT finding's audited raw instructions to the snapshot. */

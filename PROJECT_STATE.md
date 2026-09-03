@@ -49,10 +49,10 @@ Reframe from single-scroll report → tabbed application. Waves committed:
 - **Wave 2 ✅ (dad5ef8)** app shell (tabs FLEET/FINDINGS/RECOMMENDATIONS/TRENDS, breadcrumb, Calm) + Fleet table with per-row Audit → in-place grade refresh. ohmApp is now the FlexiPage root (ohmAuditExperience kept as fallback).
 - **Wave 3 ✅ (5b7578b)** process page: call graph (agent→topic→action, waste flagged) + node inspector showing RAW instructions with excess highlighted + Trim/Downsize/Replace CTAs.
 - **Wave 4 ✅ (9e99ea3)** Findings worklist on Salesforce Tasks (status pipeline Open/Accepted/Dismissed/Applied + assign+due) + Recommendations quick-wins (savings÷effort). Fixed cross-scope duplicate-finding dedup (key on artifact+signal, Process rows win).
-- **Wave 5 (next)** Trends (footprint/grade over time) + before/after diff on re-audit.
-- **Wave 6** per-process "Ask Ohm" assistant (seam stubbed in ohmProcessPage).
+- **Wave 5 ✅ (08fafb9)** Trends (footprint/grade over time, inline-SVG) + before/after diff on re-audit. Cool-down proven live (getDiff before=F/82,486 after=A/0 improved=true). Reset Lead Concierge to a single F report so the resting diff shows a clean "ONE AUDIT SO FAR" empty state (no misleading A→F).
+- **Wave 6 ✅** per-process "Ask Ohm" assistant — **HEADLESS**: the LLM is invoked entirely from Apex via the callout-free Models API (`aiplatform.ModelsAPI` → Einstein Trust Layer, model `sfdc_ai__DefaultGPT4OmniMini`), NO connected app / Agent API / embedded messaging widget. Every answer is GROUNDED server-side (grade, modeled energy, the top finding, the raw bloated topic scope). A rewrite request returns ONLY trimmed instructions + a before→after char/token readout. New: `OhmAssistantService` (+Test), `OhmAuditController.getAssistantContext`/`askAssistant`, DTOs (AssistantContextDTO/AssistantReplyDTO/AssistantPromptDTO), LWC `ohmAskAssistant` wired into ohmProcessPage (replaced the seam). Fixed intent-regex bug: `optimi[sz]e` matched inside the label "(un**optimize**d)" → word-boundaried so "why" no longer mis-fires the draft path (caught in-browser, not by the apex probe).
 
-**TESTS after v2 w4:** 34 Apex controller/persistence + full suite green; 139 Jest. Fleet has 4 agents; getFindings returns 2 deduped worklist items (Lead Triage High 52,921 Wh, Order Help Medium 16,083 Wh).
+**TESTS after v2 w6:** OhmAssistantServiceTest 7/7 (service 83% cov — uncovered = the real Trust-Layer callout, mocked in tests); OhmAuditControllerTest+OhmDTOTest 22/22 green (no regression); ohmAskAssistant Jest 4/4. E2E-verified live in browser: grounded "why" answer (1,395 vs 500 token budget, 82,486 Wh/yr, 52,921 Wh/yr savings) + draft rewrite (5,400→920 chars, −83%, rules preserved) — screenshots read: v2w6-assistant-initial/why-answer/draft.png.
 
 **DEMO-READY.** Remaining for the win (not code-blocking): quality-gate skills (security-audit/code-review/optimize/deploy-check) as submission artifacts; submission writeups (300-500 word desc naming Headless Hero, RAI Self Check, methodology doc, a11y writeup); video shot-list (W8) + hook (W2) — recording is the user's. Optional stretch: W6 dogfood (build full clean Ohm_Auditor agent), signal (a) live 2nd finding (generatePromptResponse fixture).
 
@@ -69,4 +69,4 @@ Reframe from single-scroll report → tabbed application. Waves committed:
 ## Blockers
 None. Auth blocker eliminated by inline-SOQL discovery.
 
-_Last updated: 2026-09-01 — Execute in progress; auth chain deleted (inline SOQL)._
+_Last updated: 2026-09-03 — v2 Fleet Workbench COMPLETE (waves 1–6). Ask Ohm assistant is headless (Apex Models API → Trust Layer) and grounded; all six tabs/surfaces real and E2E-verified._
