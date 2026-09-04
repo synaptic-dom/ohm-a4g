@@ -1,74 +1,116 @@
 # PROJECT_STATE.md — Ohm (source of truth)
 
-**Product:** Ohm — agentic AI sustainability auditor (LWC guided experience + Agentforce agent underneath).
-**Hackathon:** Agentforce for Good, Dreamforce 2026, Builder Track, Earthforce prompt. **GOAL: WIN.**
-**Deadline:** submit **Sep 6** (hard close Sep 7, 5:00 PM PT). Showdown Sep 16.
-**Org:** `ohm` — EPIC OrgFarm (00Daj000013wTtpEAE), Enterprise, API v67.0, expires Oct 7 (post-hackathon, non-blocking).
+> **Read me first on session resume.** This is the single catch-up file. Everything below is current as of 2026-09-04.
 
-## Current phase
-**Backlog — COMPLETE, awaiting final gate** ("Ready to implement?")
+**Product:** Ohm — an agentic AI **sustainability auditor** for Salesforce. It audits an org's Agentforce AI agents for wasted compute and estimates their energy / water / CO₂e footprint, then helps trim the waste. A tabbed LWC "Fleet Workbench" on top; Apex + the Einstein Trust Layer underneath.
+**Hackathon:** Agentforce for Good, Dreamforce 2026, Builder Track, Earthforce (sustainability) prompt. **GOAL: WIN** — target podium + the **Headless Hero** award.
+**Deadline:** submit **Sep 6**, hard close **Sep 7 5:00 PM PT** (today is Sep 4 → ~2 days). Showdown Sep 16.
+**Org:** alias `ohm` — EPIC OrgFarm, Enterprise, API v67.0 (expires Oct 7, non-blocking).
+**Repo:** github.com/synaptic-dom/ohm-a4g · branch `main` · in sync with origin at **`f299d3b`**.
 
-| Phase | Status | Artifact |
-|---|---|---|
-| 1. Requirements | ✅ Approved (reframed v2: guided auditor experience) | `docs/requirements/REQUIREMENTS-ohm.md` |
-| — Capability spike | ✅ Done — GO; Agentforce **enabled by us** (Playwright terms + metadata deploy + 4 PSLs); discovery surfaces confirmed | `docs/design/SPIKE-ohm.md` |
-| 2. Design | ✅ Approved | `docs/design/DESIGN-ohm.md` |
-| 3. Spec | ✅ Approved (incl. win amendments W1–W8) | `docs/specs/SPEC-ohm.md` (C0–C13 canon locked) |
-| 4. Backlog | ✅ Written (66 tasks, ~96.5h est), gate pending | `docs/backlog/BACKLOG-ohm.md` |
-| 5. Execute (TDD) | 🔨 IN PROGRESS — see "Execute status" below | — |
-| 6. Physical UAT | Not started | UAT script in SPEC §T.6 |
-| 7. Document/submit | Not started | Submission checklist in CONCEPT-BRIEF |
+---
 
-## Side artifacts
-- `docs/design/SKILLS-SHORTLIST-ohm.md` — top-10 tools/skills research (DX MCP, GenAiPlannerBundle, sa11y, …)
-- `docs/design/WIN-STRATEGY-ohm.md` — judge-panel result: **69.5/100 as originally planned → ~78 with amendments W1–W8** (now locked into SPEC §0.4). Target: 2nd/3rd podium + **Headless Hero** (name it and only it). Key finding: original cut order sacrificed the award thesis; F10 + F9 are now spine, agent spike moved to day 1.
+## ⭐ CURRENT STATUS: v2 build COMPLETE, hardened, pushed — DEMO-READY
 
-## Build order (SPEC §0.3 as amended by §0.4)
-Task 0 auth gate (BLOCKING) → **0.5 agent-surface spike (W1)** → 1 smoke deploy → 2 fixtures → 3 data model → 4 discovery → 5 signals (a,c protected) → 6 footprint → 7 persistence → 8 LWC spine (incl. Calm Mode W5, provenance W7) → 9 agent full build (W4 grounded methodology, W6 dogfood staging) → 10 a11y → 11 polish/UAT (W3 fix→re-audit beat, W2 hook). **Never cut:** Welcome, Impact, Recommendations, agent, F10 methodology, F9 Calm Mode.
+The v2 "Fleet Workbench" is fully built, adversarially QA'd, and every fix verified live. **Code work is done.** What remains is submission craft (writeups / video / UAT), not features.
 
-## Execute status (2026-09-01) — waves A/B/C DONE, D in progress
+**All six surfaces are real and E2E-verified (deployed + browser-driven + screenshots read):**
 
-**🔑 PIVOT — auth chain DELETED (SPEC C13 superseded):** connected-app creation disabled on org, BUT inline Apex SOQL reads GenAiPlanner/Plugin/FunctionDefinition directly. Discovery = plain SOQL, no callout/credential. Biggest risk eliminated.
+| Surface | What it does |
+|---|---|
+| **Fleet** | Lists the org's agents (processes); per-row targeted **Audit** fills in a grade in place |
+| **Process page** | Call graph (agent→topic→action, waste flagged) + node **Inspector** (raw instructions, excess highlighted, fix CTAs) |
+| **Findings** | Cross-fleet worklist backed by Salesforce **Tasks** (status pipeline, assign, due dates, filters) |
+| **Recommendations** | Ranked quick-wins (savings ÷ effort) |
+| **Trends** | Inline-SVG footprint trendline + per-agent grade history |
+| **Before/after diff** | BEFORE\|AFTER columns + delta; the live **fix→re-audit cool-down** (F→A) proven through `getDiff` |
+| **Ask Ohm** (per process) | **Headless grounded assistant** — see below |
 
-**Wave A (backbone) ✅** — OhmDiscoveryService (inline SOQL), OhmPersistenceService, OhmAuditController, 6 invocable actions. 28/28 new tests + live E2E startAudit→Complete report. Commit 0d1e0c1.
-**Wave B (experience live) ✅** — 14 LWCs + FlexiPage Ohm_Audit + CustomApplication Ohm + tab + permset deployed & assigned. Renders live at `/lightning/n/Ohm_Audit`. jest 87/87. Commit 8fbff95. (Live button-click FSM advance: unverified via Playwright shadow-DOM flake, NOT a product bug — needs manual confirm.)
-**Wave C (fixture) ✅** — "Lead Concierge (unoptimized)" wasteful agent (5400-char bloated topic). Audit now finds **INSTRUCTION_BLOAT High, 82,486 Wh/yr, grade F**. Fixed real bug: LlmWhereDeterministicDetector now recognizes `generatePromptResponse` (platform has no `prompt` enum value). Commit (wave-C).
-**Wave D (design + beats) ✅** — "Instrument" visual system deployed across all 14 LWCs (waste=hot amber gauge/hero, efficiency=cool teal; Calm Mode = genuine light/flat a11y inversion). Fixed methodology panel [object Object] → shows real constant bands (W4/F10). W7 provenance + scrubber dial live. **W3 fix→re-audit cool-down PROVEN LIVE**: bloated scope = F/82,486 Wh → trimmed scope = A/0 Wh → restored to F for demo. Commit 1009618 + W3 verify.
+**Tests:** 125 Apex 100% pass / **89% org coverage**; 15 Jest (ohmAskAssistant + ohmProcessPage). No known open defects.
 
-**TEST STATUS: 99 Apex tests 100% pass, 90% org-wide coverage; 88 Jest 100%.** Experience live + beautiful at /lightning/n/Ohm_Audit with real findings.
+---
 
-**UI POLISH ✅ (verified)** — adversarial vision QA (8 screens desktop/tablet/mobile + both modes) → fixed savings triple-range, calm-toggle reskin (custom role=switch to mute blue), full-width accent stripe, scrubber, hero-range caption, calm chip contrast. Mobile (390px) renders clean, no overflow (DOM-measured). Confirm-review: all defects resolved, zero remaining. Commit bdec4f7.
+## How to run / demo (do this to see it live)
 
-**Phase 2 (DONE)** — sample AI fleet seeded + audited E2E + captured. 4 agents discovered (Lead Concierge F/High, Order Support Medium, Service Concierge clean, Spike clean). Org grade F score 23, 128,135 Wh/yr, 2 findings. Fleet readout captured live (fleet-impact.png). Report AUDIT-00014 (a00aj00003SM8DNAA1).
+1. **`sf` CLI runs via the PowerShell tool only** (the Bash tool can't invoke `sf`). `sf org display` output is a **secret** — never paste it anywhere external.
+2. **Demo entry point:** App Launcher → **"Ohm" app**, i.e. URL **`/lightning/app/c__Ohm`**. This reliably lands on the workbench. Do NOT use the "Ohm Audit" tab from within Sales — it can misroute.
+3. **Browser drive (Playwright):** scripts live in the session scratchpad `…/scratchpad/pw/`. Pattern: mint a **fresh** frontdoor each run (`sf org open --url-only -o ohm` → write `frontdoor.txt`; frontdoor tokens are **single-use**), then `page.goto(frontdoor)` → `page.goto($OHM_APP)`. Pierce shadow DOM to click (helpers in the existing `v2w6-*.mjs` scripts). App URL: `https://orgfarm-08e0e83a93.my.salesforce.com/lightning/app/c__Ohm`.
+4. **Deploy scoped**, never full-project: `sf project deploy start -o ohm -d <path> …` (note: this CLI **rejects mixing `-m` and `-d`** in one call — use all `-d`, class files are valid `-d` paths). Run named test classes; only `--test-level RunLocalTests` for a final gate.
 
-**DEMO ENTRY POINT:** open the **"Ohm" app** (App Launcher → Ohm) — the app URL `/lightning/app/c__Ohm` reliably lands on the workbench; the tab-from-Sales path can misroute.
+---
 
-## v2 — The Fleet Workbench (rebuild in progress; SPEC-ohm-v2-workbench.md)
-Reframe from single-scroll report → tabbed application. Waves committed:
-- **Wave 1 ✅ (172c104)** backend split: listFleet() cheap + auditProcess(one target) deep + process-scoped reports + fields (Target_Type__c/Target_Planner_Id__c/Target_Planner_Api_Name__c, Finding_Status__c). NOTE: org PlannerId/PluginId/AgentGraph are NULL → planner↔topic↔action join is by DeveloperName naming convention.
-- **Wave 2 ✅ (dad5ef8)** app shell (tabs FLEET/FINDINGS/RECOMMENDATIONS/TRENDS, breadcrumb, Calm) + Fleet table with per-row Audit → in-place grade refresh. ohmApp is now the FlexiPage root (ohmAuditExperience kept as fallback).
-- **Wave 3 ✅ (5b7578b)** process page: call graph (agent→topic→action, waste flagged) + node inspector showing RAW instructions with excess highlighted + Trim/Downsize/Replace CTAs.
-- **Wave 4 ✅ (9e99ea3)** Findings worklist on Salesforce Tasks (status pipeline Open/Accepted/Dismissed/Applied + assign+due) + Recommendations quick-wins (savings÷effort). Fixed cross-scope duplicate-finding dedup (key on artifact+signal, Process rows win).
-- **Wave 5 ✅ (08fafb9)** Trends (footprint/grade over time, inline-SVG) + before/after diff on re-audit. Cool-down proven live (getDiff before=F/82,486 after=A/0 improved=true). Reset Lead Concierge to a single F report so the resting diff shows a clean "ONE AUDIT SO FAR" empty state (no misleading A→F).
-- **Wave 6 ✅** per-process "Ask Ohm" assistant — **HEADLESS**: the LLM is invoked entirely from Apex via the callout-free Models API (`aiplatform.ModelsAPI` → Einstein Trust Layer, model `sfdc_ai__DefaultGPT4OmniMini`), NO connected app / Agent API / embedded messaging widget. Every answer is GROUNDED server-side (grade, modeled energy, the top finding, the raw bloated topic scope). A rewrite request returns ONLY trimmed instructions + a before→after char/token readout. New: `OhmAssistantService` (+Test), `OhmAuditController.getAssistantContext`/`askAssistant`, DTOs (AssistantContextDTO/AssistantReplyDTO/AssistantPromptDTO), LWC `ohmAskAssistant` wired into ohmProcessPage (replaced the seam). Fixed intent-regex bug: `optimi[sz]e` matched inside the label "(un**optimize**d)" → word-boundaried so "why" no longer mis-fires the draft path (caught in-browser, not by the apex probe).
+## The headless "Ask Ohm" assistant (the award thesis)
 
-**TESTS after v2 w6:** OhmAssistantServiceTest 7/7 (service 83% cov — uncovered = the real Trust-Layer callout, mocked in tests); OhmAuditControllerTest+OhmDTOTest 22/22 green (no regression); ohmAskAssistant Jest 4/4. E2E-verified live in browser: grounded "why" answer (1,395 vs 500 token budget, 82,486 Wh/yr, 52,921 Wh/yr savings) + draft rewrite (5,400→920 chars, −83%, rules preserved) — screenshots read: v2w6-assistant-initial/why-answer/draft.png.
+The per-process assistant is **fully headless** — the strongest Headless Hero evidence:
+- The LLM is invoked **entirely from Apex** via the callout-free **Models API** (`aiplatform.ModelsAPI` → Einstein Trust Layer, model `sfdc_ai__DefaultGPT4OmniMini`). **No connected app, no Agent API, no embedded messaging widget** (connected-app creation is disabled on this org anyway).
+- Every answer is **grounded server-side** on the process's real audit: grade, modeled energy, the top finding, and the raw bloated topic scope. Hallucination-clean (verified: it says when a fact isn't in context).
+- A **rewrite request** returns *only* the trimmed instructions + a before→after char/token readout (e.g. 5,400→~1,100 chars).
+- **Hardened:** prompt injection is **refused** (guardrails in a `system` message + untrusted grounding fenced in `<ohm-data>`), off-topic is redirected, intent classification is precise (a "how much would trimming reduce?" question **answers**, it doesn't draft).
 
-**v2 HARDENING PASS (2026-09-03) ✅** — adversarial QA (3 parallel code reviews + live Trust-Layer probes + full regression) → gap analysis (19 findings) → fixed G1–G12. Assistant: G1 prompt-injection now REFUSED (system-role guardrails + <ohm-data> fencing; verified live "reply HACKED"→refused), G2 draft-intent regex rebuilt (12/12 questions classify right; "how much would trimming reduce?" now answers, not drafts), G3 blank-reply guarded. Data/consistency: G6 dedup key planner-qualified, G7 Id tie-breakers on all 6 latest-report queries, G8 Run_Status='Complete' filter on Fleet/Process, G9 naming-join collision resolution + whole-segment matching. LWC: G4 re-audit re-grounds the assistant (verified live), G5 signed draft delta, G10 request↔response race guard, G11 a11y (announced thinking + focus restore), IME-safe Enter, copy-fallback. G12 backend: single-planner identity resolver (no per-question fleet scan), generic error copy. **Tests: 125 Apex 100% / 89% org cov; 15 Jest (assistant+process page).** Gap-analysis artifact: https://claude.ai/code/artifact/6010f2ec-f107-4fb4-83c1-f252d143ae97
+Backend: `OhmAssistantService` (+ `OhmAssistantServiceTest`), doorways `OhmAuditController.getAssistantContext` / `askAssistant`, DTOs `AssistantContextDTO` / `AssistantReplyDTO` / `AssistantPromptDTO`. Front: LWC `ohmAskAssistant` wired into `ohmProcessPage`.
 
-**DEMO-READY.** Remaining for the win (not code-blocking): quality-gate skills (security-audit/code-review/optimize/deploy-check) as submission artifacts; submission writeups (300-500 word desc naming Headless Hero, RAI Self Check, methodology doc, a11y writeup); video shot-list (W8) + hook (W2) — recording is the user's. Optional stretch: W6 dogfood (build full clean Ohm_Auditor agent), signal (a) live 2nd finding (generatePromptResponse fixture).
+---
 
-**Known gaps / decisions:** signal (a) fixture not seedable (platform uses generatePromptResponse + needs prompt template — detector now correct, live 2nd finding is nice-to-have); signals (b)/(d) not seeded (empty AgentGraph, no model binding) — both degrade gracefully per design. Demo stands on INSTRUCTION_BLOAT + the fix→re-audit cool-down beat.
+## Architecture / key files
 
-**Current org state:** 2 agents discovered (clean Ohm_Spike_Agent + wasteful Ohm_Waste_Demo). Latest audit report shows grade F, 1 finding.
+**Apex (`force-app/main/default/classes/`):**
+- `OhmAuditController` — the unified `@AuraEnabled` door. Fleet/process methods: `getFleet`, `auditProcess`, `getProcessDetail`, `getFindings`, `getRecommendations`, `getTrends`, `getDiff`, finding-status/assign, plus assistant doorways.
+- `OhmDiscoveryService` — inline-SOQL discovery of the agent surface. `listFleet()` (cheap), `discoverProcess(plannerId)` (deep), `resolveIdentity(plannerId)` (cheap single-planner), naming-convention join (see gotcha below).
+- `OhmPersistenceService` — reports/findings persistence + `loadReadout`.
+- `OhmAssistantService` — the headless grounded assistant.
+- `OhmDTO` — all DTOs.
+- Detectors: `InstructionBloatDetector` (the one that fires), + LLM-where-deterministic / model-rightsizing / redundant-calls.
 
-## Key facts for any session resume
-- All `sf` CLI calls via **PowerShell tool** (Bash can't invoke sf). `sf org display` output = secret.
-- Agentforce IS enabled; org is **empty of real agents** — fixtures still needed for a non-trivial demo.
-- Canonical contracts live in SPEC §0.2 (C0–C13); **C13 is superseded → inline SOQL discovery, no auth chain.**
-- Deploy scoped (`-m`/`-d`), never full-project, never RunLocalTests unless final; run named test classes only.
+**LWC (`force-app/main/default/lwc/`):** `ohmApp` (shell/tabs/breadcrumb/Calm), `ohmFleetTable`, `ohmProcessPage`, `ohmCallGraph`, `ohmNodeInspector`, `ohmFindingsWorklist`, `ohmRecommendations`, `ohmTrends`, `ohmDiffView`, `ohmAskAssistant`, `ohmConstants` (shared helpers). FlexiPage `Ohm_Audit` hosts `ohmApp`.
+
+**Custom fields** (all in permission set `Ohm_Data_Access` — FLS required at runtime): `Agent_Audit_Report__c.Target_Type__c` (Fleet/Process), `Target_Planner_Id__c`, `Target_Planner_Api_Name__c`; `Finding__c.Finding_Status__c`, `Instructions_Snapshot__c`.
+
+---
+
+## ⚠️ Critical gotchas (will bite a fresh session)
+
+1. **Org metadata linkage is NULL.** On the deployed agents, `GenAiPluginDefinition.PlannerId` / `GenAiFunctionDefinition.PluginId` / `ParentId` and `GenAiPlannerDefinition.AgentGraph` are **all null**. There is no structural planner↔topic↔action link to query. The join is reconstructed by **DeveloperName naming convention** (distinctive-key matching in `OhmDiscoveryService.bestPlannerFor`, now collision-safe + whole-segment-preferred). Never write `WHERE PlannerId = :x` — always go through `discoverProcess` / `getFleet` / `getProcessDetail`.
+2. **No auth chain.** Connected-app creation is disabled on the org → discovery is **plain inline Apex SOQL** on `GenAi*Definition` (no callout, no Named Credential). SPEC canon C13 is superseded by this.
+3. **`AuraHandledException` can't propagate in anonymous Apex** — a failing `askAssistant`/`getProcessDetail` call in an `sf apex run` script throws an opaque `System.LimitException: Can only throw this exception type from Visualforce or Aura context` and aborts the script. This is a **test-harness artifact, not a product bug** (in the LWC/Aura context it's caught fine). To probe model behavior in anon apex, call the raw `aiplatform.ModelsAPI` directly (see `scripts/apex/w6_model_direct.apex`).
+4. **Frontdoor URLs are single-use** — mint a fresh one per Playwright run.
+5. **PowerShell commit messages**: avoid parentheses (parsed as pathspecs); use heredocs / single-line messages. Git commits go through the **Bash tool** (it's a git repo); `sf` goes through **PowerShell**.
+
+---
+
+## Fixtures / current org data
+
+- **`Ohm_Waste_Demo`** ("Lead Concierge (unoptimized)") — the wasteful star: a 5,400-char bloated `Ohm_Waste_LeadTriage` topic scope → audit finds **INSTRUCTION_BLOAT High, grade F, 82,486 Wh/yr**, savings **52,921 Wh/yr** if trimmed. This is the demo spine.
+- **`Ohm_Spike_Agent`** — a clean agent (contrast).
+- The **fix→re-audit cool-down** is a live demo beat: trim the scope → re-audit → F→A, ~82,486 Wh saved → restore for the next run. Resting diff state is a single F report (clean "ONE AUDIT SO FAR" empty state, no misleading A→F).
+
+---
+
+## What's LEFT for the win (submission craft — NOT code-blocking)
+
+Pick one to start; the user will choose:
+1. **Submission writeup** — 300–500 word description **naming Headless Hero** (now genuinely earned by the headless assistant), + RAI self-check, methodology doc, a11y writeup. *(Highest value — these are what judges score.)*
+2. **Demo video shot-list** — click-path + narration landing: wasteful→trim→A cool-down, the headless Ask Ohm moment, the injection-refused proof (~2–3 min).
+3. **Physical UAT** — user clicks through all six surfaces + Ask Ohm with a guided script before writeups.
+4. **More demo** (optional stretch) — a second live finding (a real `MODEL_RIGHTSIZING` or `REDUNDANT_CALLS` fixture) so the audit shows more than one waste type.
+
+Recording the video is the user's to do; everything else I can produce.
+
+---
+
+## Known limitations (documented, acceptable for the demo)
+
+- Only **INSTRUCTION_BLOAT** fires live; the other three detectors are correct but their fixtures aren't seedable on this org (empty AgentGraph, no model binding, needs a prompt template). They degrade gracefully by design. A 2nd live finding is a nice-to-have, not required.
+- The naming-convention join is now collision-safe and deterministic, but a genuinely ambiguous name containing two planners' keys as whole segments is resolved deterministically rather than "correctly" (no structural linkage exists to be correct against). Not reachable with the current fixtures.
+
+---
+
+## Commit history (key)
+
+`f299d3b` G1–G12 adversarial hardening · `e61bf6b` Wave 6 headless Ask Ohm · `08fafb9` Wave 5 Trends + diff · `9e99ea3` Wave 4 Findings/Recs · `5b7578b` Wave 3 process page · `dad5ef8` Wave 2 shell+Fleet · `172c104` Wave 1 backend split · `0d1e0c1` backbone.
+
+**Adversarial gap-analysis artifact (all 12 fixed):** https://claude.ai/code/artifact/6010f2ec-f107-4fb4-83c1-f252d143ae97
 
 ## Blockers
-None. Auth blocker eliminated by inline-SOQL discovery.
+None.
 
-_Last updated: 2026-09-03 — v2 Fleet Workbench COMPLETE (waves 1–6). Ask Ohm assistant is headless (Apex Models API → Trust Layer) and grounded; all six tabs/surfaces real and E2E-verified._
+_Last updated: 2026-09-04 — v2 Fleet Workbench complete + hardened (G1–G12) + pushed to origin (`f299d3b`). Next: submission craft._
