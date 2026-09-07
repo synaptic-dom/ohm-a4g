@@ -1,0 +1,32 @@
+{
+  "backupDirectory": "/Users/dom/.local/state/ohm/demo-refresh/00DEc00000kvSbNMAU/20260907T175342Z-tlpurslu",
+  "backupVerified": true,
+  "counts": {
+    "Agent_Audit_Report__c": 15,
+    "Audit_Artifact_Snapshot__c": 64,
+    "Finding__c": 5,
+    "Ohm_Instruction_Source__c": 11,
+    "Task": 1
+  },
+  "families": [
+    "ActionChaining",
+    "ActionDefinitions",
+    "Ohm_Weather_Demo",
+    "PromptTemplateActions"
+  ],
+  "mode": "applied",
+  "org": {
+    "Id": "00DEc00000kvSbNMAU",
+    "IsSandbox": true,
+    "OrganizationType": "Developer Edition"
+  },
+  "planSha256": "403ef76d0a8c29646b72adca2209e60f3d43998f346a4d7f2c099acf8227779d",
+  "remainingLiveRecords": {
+    "Agent_Audit_Report__c": 0,
+    "Audit_Artifact_Snapshot__c": 0,
+    "Finding__c": 0,
+    "Ohm_Instruction_Source__c": 0,
+    "Task": 0
+  },
+  "reportsPreservedOutsideScope": 0
+}

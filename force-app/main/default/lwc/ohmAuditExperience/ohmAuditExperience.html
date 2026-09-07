@@ -1,17 +1,8 @@
 <template>
     <template lwc:if={isReady}>
-        <div class={experienceClass}>
-            <div class="ohm-experience__toolbar">
-                <c-ohm-calm-mode-toggle
-                    calm-mode={calmMode}
-                    oncalmtoggle={handleCalmToggle}
-                    data-id="calm-toggle"
-                ></c-ohm-calm-mode-toggle>
-            </div>
-
+        <div class="ohm-experience">
             <template lwc:if={isWelcome}>
                 <c-ohm-welcome
-                    calm-mode={calmMode}
                     onstartaudit={handleStart}
                     data-screen="welcome"
                     data-id="welcome"
@@ -24,20 +15,21 @@
                     run-status={runStatus}
                     stage-message={stageMessage}
                     percent-complete={percentComplete}
-                    calm-mode={calmMode}
                     data-screen="discover"
                     data-id="discover"
                 ></c-ohm-discover-analyze>
+                <p class="ohm-experience__progress-note">You can leave this page. Progress resumes when you return.</p>
             </template>
 
             <template lwc:if={isImpact}>
+                <c-ohm-review-panel review-json={reviewJson} data-screen="review" data-id="review-panel"></c-ohm-review-panel>
+                <details class="ohm-experience__supporting" data-id="supporting-evidence"><summary>Supporting checks and assumptions</summary>
                 <c-ohm-impact-readout
                     readout={readout}
-                    calm-mode={calmMode}
                     onviewrecommendations={handleViewRecommendations}
-                    data-screen="impact"
                     data-id="impact"
                 ></c-ohm-impact-readout>
+                </details>
             </template>
 
             <template lwc:if={isRecommendations}>
@@ -45,7 +37,6 @@
                     <c-ohm-recommendations
                         findings={findings}
                         report-id={reportId}
-                        calm-mode={calmMode}
                         volume-assumption={volumeAssumption}
                         telemetry-backed={telemetryBacked}
                         data-screen="recs"
@@ -53,8 +44,8 @@
                     ></c-ohm-recommendations>
                     <lightning-button
                         variant="neutral"
-                        label="Back to impact"
-                        title="Back to impact"
+                        label="Back to review"
+                        title="Back to review"
                         onclick={handleBack}
                         data-id="back-button"
                     ></lightning-button>
@@ -74,10 +65,12 @@
                         The audit hit a problem
                     </h2>
                     <p role="alert" data-id="error-message">{errorMessage}</p>
+                    <p>{errorHelp}</p>
+                    <template lwc:if={reportUrl}><p><a href={reportUrl} target="_blank" rel="noopener">Open this audit record ↗</a></p></template>
                     <lightning-button
                         variant="brand"
-                        label="Try again"
-                        title="Try again"
+                        label={retryLabel}
+                        title={retryLabel}
                         onclick={handleRetry}
                         data-id="retry-button"
                     ></lightning-button>

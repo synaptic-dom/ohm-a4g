@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Source_Json__c</fullName>
+    <label>Lossless Source JSON</label>
+    <type>LongTextArea</type>
+    <length>131072</length>
+    <visibleLines>10</visibleLines>
+    <description>JSON string encoding preserves source whitespace that Salesforce text storage may trim. Decoded text must match the stored source hash.</description>
+</CustomField>

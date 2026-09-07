@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+<deploymentStatus>Deployed</deploymentStatus><label>Ohm Instruction Source</label><pluralLabel>Ohm Instruction Sources</pluralLabel>
+<nameField><displayFormat>SOURCE-{00000}</displayFormat><label>Source Number</label><type>AutoNumber</type></nameField>
+<sharingModel>Read</sharingModel></CustomObject>

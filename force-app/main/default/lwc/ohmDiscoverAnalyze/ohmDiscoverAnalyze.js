@@ -44,7 +44,7 @@ export default class OhmDiscoverAnalyze extends LightningElement {
     get headingText() {
         return this.runStatus === 'Analyzing'
             ? 'Analyzing for waste signals'
-            : 'Discovering your agents';
+            : 'Discovering published Agent Script bundles';
     }
 
     @api

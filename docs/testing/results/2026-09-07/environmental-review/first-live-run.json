@@ -1,0 +1,8 @@
+{
+  "reportId": "a00Ec00000lt5aHIAQ",
+  "planner": "PromptTemplateActions_v1",
+  "status": "Failed",
+  "stageMessage": "Audit failed: Salesforce prompt review could not run. Check the active OHM review template and Execute Prompt Templates access, then retry.",
+  "acceptedReview": false,
+  "note": "First real transport attempt; retained as failure evidence, not counted as a passing review."
+}

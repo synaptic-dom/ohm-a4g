@@ -196,8 +196,12 @@ private class OhmPersistenceServiceTest {
             buildFinding('MODEL_RIGHTSIZING', 'Downsize_Model', 20000)
         };
 
+        OhmDTO.AgentModel audited = buildGraph();
+        audited.topics[0].instructions = 'Audited instructions with an independent workload baseline.';
+        OhmAuditImpactService.Snapshot modeled = OhmAuditImpactService.compute(audited, findings, null);
         Test.startTest();
-        svc.persistFindings(reportId, buildGraph(), findings, buildRating());
+        OhmAuditImpactService.save(reportId, audited, findings, null);
+        svc.persistFindings(reportId, audited, findings, buildRating());
         OhmDTO.AuditReadoutDTO dto = svc.loadReadout(reportId);
         Test.stopTest();
 
@@ -214,15 +218,16 @@ private class OhmPersistenceServiceTest {
         System.assertNotEquals(null, dto.volumeAssumption, 'volume scenario disclosed');
         System.assertNotEquals(null, dto.assumptions, 'assumptions disclosed (F10)');
 
-        // org-wide band sums come from the single finding
-        System.assertEquals(15000, dto.orgEnergyWhLow);
-        System.assertEquals(20000, dto.orgEnergyWhCentral);
-        System.assertEquals(25000, dto.orgEnergyWhHigh);
-        System.assertEquals(40000, dto.orgWaterMlCentral);
-        System.assertEquals(10000, dto.orgCo2eGCentral);
-        System.assertEquals(1000, dto.orgEnergySavingsWhLow);
-        System.assertEquals(2000, dto.orgEnergySavingsWhCentral);
-        System.assertEquals(3000, dto.orgEnergySavingsWhHigh);
+        // Totals come from the persisted modeled workload, not the finding's overlapping cost.
+        System.assertEquals(modeled.baseline.energyWhLow, dto.orgEnergyWhLow);
+        System.assertEquals(modeled.baseline.energyWhCentral, dto.orgEnergyWhCentral);
+        System.assertEquals(modeled.baseline.energyWhHigh, dto.orgEnergyWhHigh);
+        System.assertEquals(modeled.baseline.waterMlCentral, dto.orgWaterMlCentral);
+        System.assertEquals(modeled.baseline.co2eGCentral, dto.orgCo2eGCentral);
+        System.assertEquals(modeled.savings.energyWhLow, dto.orgEnergySavingsWhLow);
+        System.assertEquals(modeled.savings.energyWhCentral, dto.orgEnergySavingsWhCentral);
+        System.assertEquals(modeled.savings.energyWhHigh, dto.orgEnergySavingsWhHigh);
+        System.assertNotEquals(20000, dto.orgEnergyWhCentral);
 
         System.assertEquals(1, dto.findings.size());
         OhmDTO.FindingDTO f = dto.findings[0];
@@ -377,4 +382,16 @@ private class OhmPersistenceServiceTest {
         System.assertEquals(100, rep.Efficiency_Score__c);
         System.assertEquals(0, rep.Findings_Count__c);
     }
+    @IsTest static void legacyReadoutDoesNotPretendFindingCostIsTotalWorkload() {
+        OhmPersistenceService service = new OhmPersistenceService();
+        Id reportId = service.createReport();
+        service.persistFindings(reportId, buildGraph(), new List<OhmDTO.Finding>{
+            buildFinding('INSTRUCTION_BLOAT', 'Trim_Instructions', 10000)
+        }, buildRating());
+        OhmDTO.AuditReadoutDTO readout = service.loadReadout(reportId);
+        System.assertEquals(null, readout.orgEnergyWhCentral);
+        System.assertEquals(null, readout.orgEnergySavingsWhCentral);
+        System.assertEquals(1, readout.findings.size(), 'Historical findings remain available as evidence.');
+    }
+
 }

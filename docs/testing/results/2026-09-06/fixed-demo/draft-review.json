@@ -1,0 +1,7 @@
+{
+  "exactMatchToReference": true,
+  "characters": 773,
+  "sha256": "8128ac0e1af2b1cda6aa7100fe60f3f1da96c1ae234d6740c5eb5f192cdae226",
+  "reference": "test-fixtures/controlled-weather/after/force-app/main/default/aiAuthoringBundles/Ohm_Weather_Demo/Ohm_Weather_Demo.agent",
+  "method": "Exact adjacent duplicate prose removal; all remaining source bytes unchanged"
+}

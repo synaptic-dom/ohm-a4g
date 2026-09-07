@@ -1,5 +1,5 @@
 import { LightningElement, api, track } from 'lwc';
-import getDiff from '@salesforce/apex/OhmAuditController.getDiff';
+import getDiff from '@salesforce/apex/OhmAuditController.getArtifactDiff';
 import { formatNumber, gradeTone, GRADE_WORDS } from 'c/ohmConstants';
 
 /**
@@ -16,6 +16,15 @@ import { formatNumber, gradeTone, GRADE_WORDS } from 'c/ohmConstants';
  */
 export default class OhmDiffView extends LightningElement {
     @api calmMode = false;
+    _artifactKey;
+    @api
+    get artifactKey() { return this._artifactKey; }
+    set artifactKey(value) {
+        if (this._artifactKey !== value) {
+            this._artifactKey = value;
+            if (this._plannerId) this.refresh();
+        }
+    }
 
     @track diff;
     @track isLoading = false;
@@ -50,6 +59,7 @@ export default class OhmDiffView extends LightningElement {
 
     async load() {
         const planner = this._plannerId;
+        const artifact = this._artifactKey;
         if (!planner) {
             return;
         }
@@ -57,7 +67,8 @@ export default class OhmDiffView extends LightningElement {
         this.isLoading = true;
         this.loadError = undefined;
         try {
-            const data = await getDiff({ plannerId: planner });
+            const data = await getDiff({ plannerId: planner, artifactKey: artifact || null });
+            if (planner !== this._plannerId || artifact !== this._artifactKey) return;
             this.diff = data || null;
         } catch (e) {
             this.loadError = this._msg(e) || 'Could not load the comparison.';
@@ -83,6 +94,8 @@ export default class OhmDiffView extends LightningElement {
     get hasComparison() {
         return this.hasDiff && !!this.diff.beforeReportId;
     }
+    get comparisonReason() { return this.diff && this.diff.comparisonReason; }
+    get artifactLabel() { return this.diff && this.diff.artifactLabel; }
 
     get label() {
         return this.diff ? this.diff.label : '';
@@ -136,9 +149,10 @@ export default class OhmDiffView extends LightningElement {
 
     // ---- DELTA row ----------------------------------------------------------
     get improved() {
-        return !!(this.diff && this.diff.improved);
+        return !!(this.diff && this.diff.comparable === true && this.diff.improved);
     }
     get deltaClass() {
+        if (!this.diff || this.diff.comparable !== true) return 'ohm-diff__delta';
         return this.improved
             ? 'ohm-diff__delta ohm-diff__delta--improved'
             : 'ohm-diff__delta ohm-diff__delta--worse';
@@ -150,6 +164,7 @@ export default class OhmDiffView extends LightningElement {
     }
     // energyDeltaWh = before - after (positive = improvement / energy saved).
     get energyDeltaText() {
+        if (!this.diff || this.diff.comparable !== true) return 'Not comparable';
         const d = this.diff ? Number(this.diff.energyDeltaWh) : 0;
         if (!d) {
             return '0 Wh/yr';
@@ -168,6 +183,7 @@ export default class OhmDiffView extends LightningElement {
         return `${b} → ${a} findings`;
     }
     get deltaSummary() {
+        if (!this.diff || this.diff.comparable !== true) return 'Comparison unavailable';
         return this.improved ? 'Improved' : 'No improvement';
     }
 

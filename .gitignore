@@ -5,3 +5,7 @@ coverage/
 .localdevserver/
 *.log
 ohm-secrets.json
+
+# Vendored third-party Salesforce sample repos used only as local audit fixtures.
+# Not our code, and coral-cloud ships an AWS key pair in its config.
+test-fixtures/public-agents/

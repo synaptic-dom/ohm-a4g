@@ -1,0 +1,21 @@
+{
+  "summary": {
+    "failRate": "0%",
+    "failing": 0,
+    "hostname": "https://innovation-inspiration-231-dev-ed.scratch.my.salesforce.com",
+    "orgId": "00DEc00000kvSbNMAU",
+    "outcome": "Passed",
+    "passRate": "100%",
+    "passing": 259,
+    "skipped": 0,
+    "testRunId": "707Ec00002XqCkj",
+    "testStartTime": "2026-09-07T17:55:26.000Z",
+    "testsRan": 259,
+    "userId": "005Ec00000deLvLIAU",
+    "username": "test-0w1smir2zegu@example.com",
+    "commandTime": "163 ms",
+    "testExecutionTime": "17210 ms",
+    "testTotalTime": "17532 ms"
+  },
+  "failures": []
+}

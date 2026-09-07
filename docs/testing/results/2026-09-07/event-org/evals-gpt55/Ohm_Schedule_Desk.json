@@ -1,0 +1,45 @@
+{
+  "bundle": "Ohm_Schedule_Desk",
+  "promptModel": "sfdc_ai__DefaultGPT55",
+  "cliStatus": 0,
+  "tests": [
+    {
+      "id": "control-day",
+      "status": "passed",
+      "evaluations": [
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "compute_status": "COMPLETED",
+          "score": 5,
+          "is_pass": true,
+          "label": null,
+          "explainability": "The bot's response accurately reflects the expected outcome by including the correct activities in the specified order and omitting the Clay studio activity due to insufficient free time. The response is clear, precise, and contains all relevant information without unnecessary details. It also aligns with the instruction to preserve the Apex-prepared plan and not claim a booking exists.",
+          "error_message": null,
+          "actual_value": "Here is your validated day plan:\n\n09:00\u201309:45 | Kayaking | Boathouse | 45 minutes  \n10:45\u201311:30 | Garden tour | Garden | 45 minutes  \n13:00\u201314:00 | Forest walk | Trailhead | 60 minutes  \n\nThe Clay studio activity was not included because of overlap or insufficient free time. The schedule starts with the earliest activity and selects the next compatible one.\n\nIf you would like to adjust the activities or times, let me know. Please contact the desk to book. Would you like to make any changes to your plan?",
+          "expected_value": "Include Kayaking at 09:00\u201309:45, Garden tour at 10:45\u201311:30, and Forest walk at 13:00\u201314:00, in that order. Omit Clay studio because of insufficient free time. Preserve the Apex-prepared plan and do not claim a booking exists."
+        }
+      ],
+      "response": "Here is your validated day plan:\n\n09:00\u201309:45 | Kayaking | Boathouse | 45 minutes  \n10:45\u201311:30 | Garden tour | Garden | 45 minutes  \n13:00\u201314:00 | Forest walk | Trailhead | 60 minutes  \n\nThe Clay studio activity was not included because of overlap or insufficient free time. The schedule starts with the earliest activity and selects the next compatible one.\n\nIf you would like to adjust the activities or times, let me know. Please contact the desk to book. Would you like to make any changes to your plan?"
+    },
+    {
+      "id": "control-invalid",
+      "status": "passed",
+      "evaluations": [
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "compute_status": "COMPLETED",
+          "score": 5,
+          "is_pass": true,
+          "label": null,
+          "explainability": "The bot correctly identifies the invalid time and asks the user to provide a corrected time, aligning with the expected response to relay the validation problem and request corrected rows without inventing a new time.",
+          "error_message": null,
+          "actual_value": "The time you entered, \"25:00\", is not a valid time. Please provide the activity in the format HH:MM (using a 24-hour clock, so the latest valid time is 23:59). Would you like to adjust the activity time and try again?",
+          "expected_value": "Relay the preparation action validation problem and ask for corrected rows. Do not invent a new time or schedule."
+        }
+      ],
+      "response": "The time you entered, \"25:00\", is not a valid time. Please provide the activity in the format HH:MM (using a 24-hour clock, so the latest valid time is 23:59). Would you like to adjust the activity time and try again?"
+    }
+  ]
+}

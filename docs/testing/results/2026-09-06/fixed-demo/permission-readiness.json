@@ -1,0 +1,141 @@
+{
+  "scope": "Non-admin Ohm audit data paths and imported-source integrity",
+  "profile": "Minimum Access - Salesforce",
+  "assignedPermissionSets": [
+    "Ohm_App_Access",
+    "Ohm_Data_Access"
+  ],
+  "globalModifyAllDataRequired": false,
+  "observedLicenses": [
+    {
+      "Name": "Salesforce",
+      "Status": "Active",
+      "TotalLicenses": 2,
+      "UsedLicenses": 1
+    },
+    {
+      "Name": "Salesforce Platform",
+      "Status": "Active",
+      "TotalLicenses": 3,
+      "UsedLicenses": 0
+    }
+  ],
+  "objectGrants": {
+    "Agent_Audit_Report__c": {
+      "allowCreate": "true",
+      "allowDelete": "true",
+      "allowEdit": "true",
+      "allowRead": "true",
+      "modifyAllRecords": "true",
+      "viewAllRecords": "true"
+    },
+    "Finding__c": {
+      "allowCreate": "true",
+      "allowDelete": "true",
+      "allowEdit": "true",
+      "allowRead": "true",
+      "modifyAllRecords": "true",
+      "viewAllRecords": "true"
+    },
+    "Audit_Artifact_Snapshot__c": {
+      "allowCreate": "true",
+      "allowDelete": "false",
+      "allowEdit": "false",
+      "allowRead": "true",
+      "modifyAllRecords": "false",
+      "viewAllRecords": "false"
+    },
+    "Ohm_Instruction_Source__c": {
+      "allowCreate": "false",
+      "allowDelete": "false",
+      "allowEdit": "false",
+      "allowRead": "true",
+      "modifyAllRecords": "false",
+      "viewAllRecords": "false"
+    }
+  },
+  "newSourceAndSnapshotFieldGrants": {
+    "Agent_Audit_Report__c.Impact_Snapshot__c": {
+      "editable": "true",
+      "readable": "true"
+    },
+    "Audit_Artifact_Snapshot__c.Source_Path__c": {
+      "editable": "true",
+      "readable": "true"
+    },
+    "Audit_Artifact_Snapshot__c.Artifact_Key__c": {
+      "editable": "true",
+      "readable": "true"
+    },
+    "Audit_Artifact_Snapshot__c.Artifact_Type__c": {
+      "editable": "true",
+      "readable": "true"
+    },
+    "Audit_Artifact_Snapshot__c.Process_Key__c": {
+      "editable": "true",
+      "readable": "true"
+    },
+    "Audit_Artifact_Snapshot__c.Character_Count__c": {
+      "editable": "true",
+      "readable": "true"
+    },
+    "Audit_Artifact_Snapshot__c.Source_Hash__c": {
+      "editable": "true",
+      "readable": "true"
+    },
+    "Audit_Artifact_Snapshot__c.Artifact_Api_Name__c": {
+      "editable": "true",
+      "readable": "true"
+    },
+    "Audit_Artifact_Snapshot__c.Source_Kind__c": {
+      "editable": "true",
+      "readable": "true"
+    },
+    "Audit_Artifact_Snapshot__c.Artifact_Label__c": {
+      "editable": "true",
+      "readable": "true"
+    },
+    "Audit_Artifact_Snapshot__c.Source_Version__c": {
+      "editable": "true",
+      "readable": "true"
+    },
+    "Audit_Artifact_Snapshot__c.Coverage_Status__c": {
+      "editable": "true",
+      "readable": "true"
+    },
+    "Audit_Artifact_Snapshot__c.Instructions__c": {
+      "editable": "true",
+      "readable": "true"
+    },
+    "Ohm_Instruction_Source__c.Source_Revision__c": {
+      "editable": "false",
+      "readable": "true"
+    },
+    "Ohm_Instruction_Source__c.Manifest__c": {
+      "editable": "false",
+      "readable": "true"
+    },
+    "Ohm_Instruction_Source__c.Planner_Id__c": {
+      "editable": "false",
+      "readable": "true"
+    },
+    "Ohm_Instruction_Source__c.Metadata_Fingerprint__c": {
+      "editable": "false",
+      "readable": "true"
+    },
+    "Audit_Artifact_Snapshot__c.Source_Json__c": {
+      "editable": "true",
+      "readable": "true"
+    }
+  },
+  "testClass": "test-fixtures/lab-tests/force-app/main/default/classes/OhmAuditorPermissionAcceptanceTest.cls",
+  "tests": [
+    "auditorPersistsAndReadsImpactAndImmutableSource",
+    "auditorCanReadButCannotOverwriteImportedSource"
+  ],
+  "testMethod": "Isolated runAs user with minimum-access profile; exact persisted snapshot/impact reads, user-mode provenance update denied; test users and data roll back.",
+  "verification": "Central final-gate runner reported 217/217 Apex passing, including both minimum-access permission checks and the tightened immutable-snapshot assertion. No permanent user was created.",
+  "limits": [
+    "This isolates Apex data access. It does not claim a browser login as the non-admin persona or live model permission checks for that persona."
+  ]
+}

@@ -1,0 +1,646 @@
+{
+  "collectedAt": "2026-09-07T20:43:55.111717+00:00",
+  "targetOrg": "ohm-hackathon",
+  "requestedReportCount": 4,
+  "returnedReportCount": 4,
+  "reports": [
+    {
+      "reportId": "a00aj00003WVjPtAAL",
+      "planner": "Ohm_Schedule_Desk_v1",
+      "status": "Complete",
+      "stageMessage": "Salesforce review complete; category ratings ready",
+      "reviewerModel": "sfdc_ai__DefaultGPT55",
+      "reviewerTemplate": "Ohm_Bundle_Environmental_Review",
+      "declaredReviewerVersion": "WCyeBTg2NZWRDVRViggPve0yyaQfI6t9+0AlEdZ1LCQ=_1",
+      "reviewedAt": "2026-09-07T20:41:17.581Z",
+      "coverage": {
+        "assessedArtifactCount": 4,
+        "artifactCount": 4
+      },
+      "categories": [
+        {
+          "totalArtifactCount": 4,
+          "status": "reviewed",
+          "rating": "A",
+          "label": "Input efficiency",
+          "issues": [],
+          "id": "INPUT",
+          "environmentalMechanism": "Removing unnecessary instruction input may reduce inference work when that source is included in a request.",
+          "coverageStatus": "Complete",
+          "coverageNote": "The supplied source was assessed under the review rubric.",
+          "assessment": "The supplied artifacts divide routing, preparation boundaries, and presentation instructions without evidenced unnecessary context or conflict.",
+          "assessedArtifactCount": 4
+        },
+        {
+          "totalArtifactCount": 4,
+          "status": "reviewed",
+          "rating": "A",
+          "label": "Output efficiency",
+          "issues": [],
+          "id": "OUTPUT",
+          "environmentalMechanism": "Avoiding unnecessary generated output may reduce inference work while preserving the required response.",
+          "coverageStatus": "Complete",
+          "coverageNote": "The supplied source was assessed under the review rubric.",
+          "assessment": "The bundle requests concise routing and guest-facing presentation while preserving validation results and booking limits. No format mismatch is evidenced.",
+          "assessedArtifactCount": 4
+        },
+        {
+          "totalArtifactCount": 4,
+          "status": "unknown",
+          "rating": "UNRATED",
+          "label": "Model fit",
+          "issues": [],
+          "id": "MODEL",
+          "environmentalMechanism": "A suitable smaller model may use less compute; model quality and environmental effects require separate validation.",
+          "coverageStatus": "Unknown",
+          "coverageNote": "No model quality evaluation is available. A verified binding permits candidates only; fit is unproven.",
+          "assessment": "Not every supplied artifact has a known binding, and model fit evaluation evidence is unavailable.",
+          "assessedArtifactCount": 0
+        },
+        {
+          "totalArtifactCount": 4,
+          "status": "reviewed",
+          "rating": "A",
+          "label": "Call efficiency",
+          "issues": [],
+          "id": "CALLS",
+          "environmentalMechanism": "Avoiding unnecessary model invocations may reduce inference work; static source does not establish runtime call frequency.",
+          "coverageStatus": "Complete",
+          "coverageNote": "Static source suitability only. Runtime frequency, repeated execution and complete path coverage are unverified.",
+          "assessment": "The bundle uses Apex for preparation and a linked prompt for presentation. Static source does not evidence repeated model work or an unbounded retry loop.",
+          "assessedArtifactCount": 4
+        }
+      ],
+      "artifacts": [
+        {
+          "artifactId": "16jaj000003G45xAAC",
+          "label": "Efficient Schedule Desk",
+          "characterCount": 157,
+          "sourceHash": "a66b71ef41766436e89ecb99a306f0a887112c2e996e02d0b16ddc64787c0f60",
+          "sourceVersion": "MetadataApi:67.0:Ohm_Schedule_Desk.v1:15bd722054af9ff346143bfb0dc173247d8e596299f9e86710930b67afd6dc6c",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        },
+        {
+          "artifactId": "179aj0000057jFFAAY",
+          "label": "Agent Router",
+          "characterCount": 105,
+          "sourceHash": "7d2f541fc01f3179773c269547198d6a2d8b006a5fb4b44198e692f26e64d8d4",
+          "sourceVersion": "MetadataApi:67.0:Ohm_Schedule_Desk.v1:15bd722054af9ff346143bfb0dc173247d8e596299f9e86710930b67afd6dc6c",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        },
+        {
+          "artifactId": "179aj0000057jFGAAY",
+          "label": "Schedule Desk",
+          "characterCount": 539,
+          "sourceHash": "48262066b9fcfe1a143af0683f1b72be64cc35b8e3ae75bc56cf6cfcbe9e1fb7",
+          "sourceVersion": "MetadataApi:67.0:Ohm_Schedule_Desk.v1:15bd722054af9ff346143bfb0dc173247d8e596299f9e86710930b67afd6dc6c",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        },
+        {
+          "artifactId": "172aj00000sdeGEAAY",
+          "label": "Present Schedule",
+          "characterCount": 746,
+          "sourceHash": "fee678652ab9ac6a9b4d4d23168f3280574cbfe24427b71d024307ebf4c3e622",
+          "sourceVersion": "MetadataApi:67.0:nddsbVLRGZWqI9ukSuUpe6apaPE5e+EAQj/pAXK8ulk=_1:4c0b4fc63df62e533e9546843775ad09bb842d764cbfa6bf10e2bdf940fd07aa",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        }
+      ],
+      "configurationSources": [
+        {
+          "artifactId": "configuration:16jaj000003G45xAAC",
+          "verified": true
+        }
+      ],
+      "quotedEvidenceCount": 0,
+      "allQuotesMatchStoredSources": true,
+      "fleetSummaryMatchesDetail": true,
+      "verified": true
+    },
+    {
+      "reportId": "a00aj00003WVjcnAAD",
+      "planner": "Ohm_Support_Desk_v1",
+      "status": "Complete",
+      "stageMessage": "Salesforce review complete; category ratings ready",
+      "reviewerModel": "sfdc_ai__DefaultGPT55",
+      "reviewerTemplate": "Ohm_Bundle_Environmental_Review",
+      "declaredReviewerVersion": "WCyeBTg2NZWRDVRViggPve0yyaQfI6t9+0AlEdZ1LCQ=_1",
+      "reviewedAt": "2026-09-07T20:42:50.485Z",
+      "coverage": {
+        "assessedArtifactCount": 4,
+        "artifactCount": 4
+      },
+      "categories": [
+        {
+          "totalArtifactCount": 4,
+          "status": "reviewed",
+          "rating": "C",
+          "label": "Input efficiency",
+          "issues": [
+            {
+              "validation": "Review draft outputs from representative support messages and confirm the same policy constraints are met.",
+              "recommendation": "Consolidate the repeated prompt policy into a single authoritative policy passage before publishing a revised bundle.",
+              "preserve": "The agent must still use the supplied customer message, follow the replacement policy, and present a draft for user review.",
+              "origin": "Reviewer",
+              "explanation": "The prompt reached by the configured drafting action repeats the same policy instruction, adding avoidable input to the bundle path.",
+              "evidence": [
+                {
+                  "quote": "For a damaged item reported within thirty days, ask for the order reference and a photo of the damage, then explain the replacement review. A specialist decides eligibility; do not promise a refund or replacement approval. Do not request card details.",
+                  "artifactId": "172aj00000sdfXFAAY"
+                },
+                {
+                  "quote": "target: \"generatePromptResponse://Ohm_Support_Reply\"",
+                  "artifactId": "configuration:16jaj000003G47ZAAS"
+                }
+              ],
+              "code": "INPUT_REDUNDANCY"
+            },
+            {
+              "validation": "Confirm any revised budget or source change against the required behavior before claiming an improvement.",
+              "recommendation": "Review whether this source budget is appropriate and whether any text is unnecessary; do not trim required behavior solely to meet the budget.",
+              "preserve": "Required instructions, conditions, routing, inputs and outputs.",
+              "origin": "Rule",
+              "explanation": "Configured source review budget exceeded: 475 approximate source tokens against a hard review budget of 300.",
+              "evidence": [
+                {
+                  "quote": "You work for Juniper Outdoor customer support. Draft one helpful reply to the customer message below. Use the supplied policy, acknowledge the problem, and give the next step. Do not invent an order s",
+                  "artifactId": "172aj00000sdfXFAAY"
+                }
+              ],
+              "code": "INPUT_HARD_BUDGET"
+            }
+          ],
+          "id": "INPUT",
+          "environmentalMechanism": "Removing unnecessary instruction input may reduce inference work when that source is included in a request.",
+          "coverageStatus": "Complete",
+          "coverageNote": "The supplied source was assessed under the review rubric.",
+          "assessment": "The bundle is coherent for support reply drafting, but the linked prompt contains repeated policy text that should be consolidated with validation.",
+          "assessedArtifactCount": 4
+        },
+        {
+          "totalArtifactCount": 4,
+          "status": "reviewed",
+          "rating": "A",
+          "label": "Output efficiency",
+          "issues": [],
+          "id": "OUTPUT",
+          "environmentalMechanism": "Avoiding unnecessary generated output may reduce inference work while preserving the required response.",
+          "coverageStatus": "Complete",
+          "coverageNote": "The supplied source was assessed under the review rubric.",
+          "assessment": "The bundle output requirements are bounded to draft preparation, review presentation, and brief scope handling. No output waste issue is evidenced.",
+          "assessedArtifactCount": 4
+        },
+        {
+          "totalArtifactCount": 4,
+          "status": "unknown",
+          "rating": "UNRATED",
+          "label": "Model fit",
+          "issues": [],
+          "id": "MODEL",
+          "environmentalMechanism": "A suitable smaller model may use less compute; model quality and environmental effects require separate validation.",
+          "coverageStatus": "Unknown",
+          "coverageNote": "No model quality evaluation is available. A verified binding permits candidates only; fit is unproven.",
+          "assessment": "Not every supplied artifact has a known model binding, and model fit has not been established by evaluation.",
+          "assessedArtifactCount": 0
+        },
+        {
+          "totalArtifactCount": 4,
+          "status": "reviewed",
+          "rating": "A",
+          "label": "Call efficiency",
+          "issues": [],
+          "id": "CALLS",
+          "environmentalMechanism": "Avoiding unnecessary model invocations may reduce inference work; static source does not establish runtime call frequency.",
+          "coverageStatus": "Complete",
+          "coverageNote": "Static source suitability only. Runtime frequency, repeated execution and complete path coverage are unverified.",
+          "assessment": "The configured path invokes the prompt action when drafting is needed, and the source avoids automatic retry on error. No repeated model work or missing bound is evidenced.",
+          "assessedArtifactCount": 4
+        }
+      ],
+      "artifacts": [
+        {
+          "artifactId": "16jaj000003G47ZAAS",
+          "label": "Customer Support",
+          "characterCount": 165,
+          "sourceHash": "ff6c9f71941a335cbce63da532d5884728fd8d0dd7dcdc7c5a5e2029642be719",
+          "sourceVersion": "MetadataApi:67.0:Ohm_Support_Desk.v1:0b4b2828d9a0d9ee2e2dd41b79086e1cf83efb7b0cb4f98c5cf4d479f48f1708",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        },
+        {
+          "artifactId": "179aj0000057jGrAAI",
+          "label": "Agent Router",
+          "characterCount": 116,
+          "sourceHash": "3563e5a49280f1e531e83634f2033741ba0d5cc83e90bf800e8c606dee97eb3f",
+          "sourceVersion": "MetadataApi:67.0:Ohm_Support_Desk.v1:0b4b2828d9a0d9ee2e2dd41b79086e1cf83efb7b0cb4f98c5cf4d479f48f1708",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        },
+        {
+          "artifactId": "179aj0000057jGsAAI",
+          "label": "Customer Support",
+          "characterCount": 371,
+          "sourceHash": "4619e22fd6496b74287a3a9dca90ac52a6884b07bba35d2dda44b56e00c31584",
+          "sourceVersion": "MetadataApi:67.0:Ohm_Support_Desk.v1:0b4b2828d9a0d9ee2e2dd41b79086e1cf83efb7b0cb4f98c5cf4d479f48f1708",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        },
+        {
+          "artifactId": "172aj00000sdfXFAAY",
+          "label": "Draft Support Reply",
+          "characterCount": 1900,
+          "sourceHash": "c60b29f481d0e4424d5ae1e7ed86413574bfeda61049a6d95a5a82020ec144b1",
+          "sourceVersion": "MetadataApi:67.0:opHac2i3kePxHpLyGunHDZzoI1EZtc/9GjkheHFMSm8=_1:9e0e6bf0de7a9b605e3dc33e813b78a221e8238e01345f760ac2278587809814",
+          "verified": true,
+          "ratings": {
+            "INPUT": "C",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        }
+      ],
+      "configurationSources": [
+        {
+          "artifactId": "configuration:16jaj000003G47ZAAS",
+          "verified": true
+        }
+      ],
+      "quotedEvidenceCount": 5,
+      "allQuotesMatchStoredSources": true,
+      "fleetSummaryMatchesDetail": true,
+      "verified": true
+    },
+    {
+      "reportId": "a00aj00003WVjcoAAD",
+      "planner": "Ohm_Sales_Follow_Up_v1",
+      "status": "Complete",
+      "stageMessage": "Salesforce review complete; category ratings ready",
+      "reviewerModel": "sfdc_ai__DefaultGPT55",
+      "reviewerTemplate": "Ohm_Bundle_Environmental_Review",
+      "declaredReviewerVersion": "WCyeBTg2NZWRDVRViggPve0yyaQfI6t9+0AlEdZ1LCQ=_1",
+      "reviewedAt": "2026-09-07T20:42:45.739Z",
+      "coverage": {
+        "assessedArtifactCount": 4,
+        "artifactCount": 4
+      },
+      "categories": [
+        {
+          "totalArtifactCount": 4,
+          "status": "reviewed",
+          "rating": "A",
+          "label": "Input efficiency",
+          "issues": [],
+          "id": "INPUT",
+          "environmentalMechanism": "Removing unnecessary instruction input may reduce inference work when that source is included in a request.",
+          "coverageStatus": "Complete",
+          "coverageNote": "The supplied source was assessed under the review rubric.",
+          "assessment": "The bundle input sources are coherent across agent, router, topic, and prompt. No removable shared context is evident from the supplied source.",
+          "assessedArtifactCount": 4
+        },
+        {
+          "totalArtifactCount": 4,
+          "status": "reviewed",
+          "rating": "B",
+          "label": "Output efficiency",
+          "issues": [
+            {
+              "validation": "Test the end-to-end drafting path with representative notes and confirm user review remains effective after narrowing output.",
+              "recommendation": "Align the prompt with the workflow by returning the requested review draft and making expanded alternatives optional.",
+              "preserve": "The bundle must still ask for missing notes, preserve supplied text, and show the draft for review.",
+              "origin": "Reviewer",
+              "explanation": "The linked prompt expands the draft output beyond the bundle workflow need to show a returned draft for review.",
+              "evidence": [
+                {
+                  "quote": "Write eight complete alternatives to the follow-up email, even when the rep requested only one draft.",
+                  "artifactId": "172aj00000sdfYrAAI"
+                },
+                {
+                  "quote": "Add a paragraph explaining the stylistic choices for each alternative.",
+                  "artifactId": "172aj00000sdfYrAAI"
+                },
+                {
+                  "quote": "Once that input is available, use {!@actions.draft_follow_up} and show the returned draft to the user for review.",
+                  "artifactId": "configuration:16jaj000003G49BAAS"
+                }
+              ],
+              "code": "OUTPUT_UNNECESSARY_VERBOSITY"
+            },
+            {
+              "validation": "Validate with users that the plain-text-only default supports the intended workflow without rework.",
+              "recommendation": "Return the selected plain-text email by default and reserve other formats for explicit user requests.",
+              "preserve": "The selected email must remain copyable by the rep and must not be sent by the assistant.",
+              "origin": "Reviewer",
+              "explanation": "The prompt requests formats that the bundle evidence says no downstream system consumes.",
+              "evidence": [
+                {
+                  "quote": "After the eight alternatives, repeat the selected email in plain text, Markdown, HTML, and a JSON object with the entire body.",
+                  "artifactId": "172aj00000sdfYrAAI"
+                },
+                {
+                  "quote": "The rep will copy only the selected plain-text email into their email editor; no downstream system consumes the other formats or explanations.",
+                  "artifactId": "172aj00000sdfYrAAI"
+                }
+              ],
+              "code": "OUTPUT_FORMAT_MISMATCH"
+            }
+          ],
+          "id": "OUTPUT",
+          "environmentalMechanism": "Avoiding unnecessary generated output may reduce inference work while preserving the required response.",
+          "coverageStatus": "Complete",
+          "coverageNote": "The supplied source was assessed under the review rubric.",
+          "assessment": "The bundle routes to a draft-for-review workflow, but the linked prompt requests unused formats and expanded alternatives beyond the evidenced consumer need.",
+          "assessedArtifactCount": 4
+        },
+        {
+          "totalArtifactCount": 4,
+          "status": "unknown",
+          "rating": "UNRATED",
+          "label": "Model fit",
+          "issues": [],
+          "id": "MODEL",
+          "environmentalMechanism": "A suitable smaller model may use less compute; model quality and environmental effects require separate validation.",
+          "coverageStatus": "Unknown",
+          "coverageNote": "No model quality evaluation is available. A verified binding permits candidates only; fit is unproven.",
+          "assessment": "Not every artifact has a known binding, and no model quality evaluation is supplied for the bundle.",
+          "assessedArtifactCount": 0
+        },
+        {
+          "totalArtifactCount": 4,
+          "status": "reviewed",
+          "rating": "A",
+          "label": "Call efficiency",
+          "issues": [],
+          "id": "CALLS",
+          "environmentalMechanism": "Avoiding unnecessary model invocations may reduce inference work; static source does not establish runtime call frequency.",
+          "coverageStatus": "Complete",
+          "coverageNote": "Static source suitability only. Runtime frequency, repeated execution and complete path coverage are unverified.",
+          "assessment": "The configured path invokes a linked prompt action for drafting, and the source bars automatic retry on error. No repeated equivalent model invocation is established.",
+          "assessedArtifactCount": 4
+        }
+      ],
+      "artifacts": [
+        {
+          "artifactId": "16jaj000003G49BAAS",
+          "label": "Sales Follow-up",
+          "characterCount": 158,
+          "sourceHash": "b54a47d209bc7ab9a7db4f448fbec8cc9c4ae00c2d6a01f8ca238d21c6b81281",
+          "sourceVersion": "MetadataApi:67.0:Ohm_Sales_Follow_Up.v1:69656a6d36effb77f4418c50cb8b150d0b7f0b1767876befdfcfdaed21ac7509",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        },
+        {
+          "artifactId": "179aj0000057jITAAY",
+          "label": "Agent Router",
+          "characterCount": 116,
+          "sourceHash": "3563e5a49280f1e531e83634f2033741ba0d5cc83e90bf800e8c606dee97eb3f",
+          "sourceVersion": "MetadataApi:67.0:Ohm_Sales_Follow_Up.v1:69656a6d36effb77f4418c50cb8b150d0b7f0b1767876befdfcfdaed21ac7509",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        },
+        {
+          "artifactId": "179aj0000057jIUAAY",
+          "label": "Sales Follow Up",
+          "characterCount": 364,
+          "sourceHash": "f2919bb8056bd2ec818bd838431d20f2b51f083dd7224e271896aa864b0fec92",
+          "sourceVersion": "MetadataApi:67.0:Ohm_Sales_Follow_Up.v1:69656a6d36effb77f4418c50cb8b150d0b7f0b1767876befdfcfdaed21ac7509",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        },
+        {
+          "artifactId": "172aj00000sdfYrAAI",
+          "label": "Draft Follow Up",
+          "characterCount": 900,
+          "sourceHash": "a6a5e0d1e5678002219e594ccdd6fb4ac70275e60f75af2b4d1e45766ab120ae",
+          "sourceVersion": "MetadataApi:67.0:1NWgVGuP/P4L9GgM4ksqvmo4FhfLfWopnL53BUS0BI4=_1:555404e4a7f74d4a92007ee541a8ce89f962f5ae2b61dd8071e6584aa674b158",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "B",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        }
+      ],
+      "configurationSources": [
+        {
+          "artifactId": "configuration:16jaj000003G49BAAS",
+          "verified": true
+        }
+      ],
+      "quotedEvidenceCount": 10,
+      "allQuotesMatchStoredSources": true,
+      "fleetSummaryMatchesDetail": true,
+      "verified": true
+    },
+    {
+      "reportId": "a00aj00003WVjcpAAD",
+      "planner": "Ohm_Schedule_Planner_v1",
+      "status": "Complete",
+      "stageMessage": "Salesforce review complete; category ratings ready",
+      "reviewerModel": "sfdc_ai__DefaultGPT55",
+      "reviewerTemplate": "Ohm_Bundle_Environmental_Review",
+      "declaredReviewerVersion": "WCyeBTg2NZWRDVRViggPve0yyaQfI6t9+0AlEdZ1LCQ=_1",
+      "reviewedAt": "2026-09-07T20:42:52.376Z",
+      "coverage": {
+        "assessedArtifactCount": 4,
+        "artifactCount": 4
+      },
+      "categories": [
+        {
+          "totalArtifactCount": 4,
+          "status": "reviewed",
+          "rating": "A",
+          "label": "Input efficiency",
+          "issues": [],
+          "id": "INPUT",
+          "environmentalMechanism": "Removing unnecessary instruction input may reduce inference work when that source is included in a request.",
+          "coverageStatus": "Complete",
+          "coverageNote": "The supplied source was assessed under the review rubric.",
+          "assessment": "The bundle sources are aligned around gathering activity rows, preserving supplied text, and producing a draft day plan. No cross-artifact redundancy or conflict merits an issue.",
+          "assessedArtifactCount": 4
+        },
+        {
+          "totalArtifactCount": 4,
+          "status": "reviewed",
+          "rating": "A",
+          "label": "Output efficiency",
+          "issues": [],
+          "id": "OUTPUT",
+          "environmentalMechanism": "Avoiding unnecessary generated output may reduce inference work while preserving the required response.",
+          "coverageStatus": "Complete",
+          "coverageNote": "The supplied source was assessed under the review rubric.",
+          "assessment": "The bundle requests a bounded draft schedule, review display, and booking disclaimer. The explicit output requirements are coherent across artifacts.",
+          "assessedArtifactCount": 4
+        },
+        {
+          "totalArtifactCount": 4,
+          "status": "unknown",
+          "rating": "UNRATED",
+          "label": "Model fit",
+          "issues": [],
+          "id": "MODEL",
+          "environmentalMechanism": "A suitable smaller model may use less compute; model quality and environmental effects require separate validation.",
+          "coverageStatus": "Unknown",
+          "coverageNote": "No model quality evaluation is available. A verified binding permits candidates only; fit is unproven.",
+          "assessment": "Not every artifact has a known binding, and model fit has not been established by evaluation evidence.",
+          "assessedArtifactCount": 0
+        },
+        {
+          "totalArtifactCount": 4,
+          "status": "reviewed",
+          "rating": "B",
+          "label": "Call efficiency",
+          "issues": [
+            {
+              "validation": "Use fixed test cases and reviewer comparison to confirm the deterministic plan matches intended scheduling behavior before deployment.",
+              "recommendation": "Evaluate deterministic schedule construction before the prompt and retain model use for user-facing wording only if quality validation supports it.",
+              "preserve": "The bundle must keep input preservation, revision handling, no automatic retry, correction requests and the desk-contact disclaimer.",
+              "origin": "Reviewer",
+              "explanation": "The bundle links the prompt action to model generation while the scheduling selection rules are bounded and suitable for code evaluation.",
+              "evidence": [
+                {
+                  "quote": "Calculate each activity's end time from its start time and duration. Sort the activities by start time. Select the earliest activity, then include the next activity only when it starts at least sixty minutes after the previous included activity ends.",
+                  "artifactId": "172aj00000sdfaTAAQ"
+                },
+                {
+                  "quote": "target: \"generatePromptResponse://Ohm_Plan_Day\"",
+                  "artifactId": "configuration:16jaj000003G4AnAAK"
+                }
+              ],
+              "code": "CALLS_DETERMINISTIC_ALTERNATIVE"
+            }
+          ],
+          "id": "CALLS",
+          "environmentalMechanism": "Avoiding unnecessary model invocations may reduce inference work; static source does not establish runtime call frequency.",
+          "coverageStatus": "Complete",
+          "coverageNote": "Static source suitability only. Runtime frequency, repeated execution and complete path coverage are unverified.",
+          "assessment": "The linked prompt includes bounded scheduling logic that should be evaluated for deterministic handling. The configured action path otherwise avoids automatic retry and does not prove repeated model work.",
+          "assessedArtifactCount": 4
+        }
+      ],
+      "artifacts": [
+        {
+          "artifactId": "16jaj000003G4AnAAK",
+          "label": "Schedule Planning",
+          "characterCount": 167,
+          "sourceHash": "243e438098d5d0f6d43f578b3bb3ec45d17218a27a782385f1ed3d9efd75cb0f",
+          "sourceVersion": "MetadataApi:67.0:Ohm_Schedule_Planner.v1:d1811864aa91c01fb79a439f4a298e69da87086b8c021e792a3e3191a9d20261",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        },
+        {
+          "artifactId": "179aj0000057jK5AAI",
+          "label": "Agent Router",
+          "characterCount": 116,
+          "sourceHash": "3563e5a49280f1e531e83634f2033741ba0d5cc83e90bf800e8c606dee97eb3f",
+          "sourceVersion": "MetadataApi:67.0:Ohm_Schedule_Planner.v1:d1811864aa91c01fb79a439f4a298e69da87086b8c021e792a3e3191a9d20261",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        },
+        {
+          "artifactId": "179aj0000057jK6AAI",
+          "label": "Schedule Planning",
+          "characterCount": 357,
+          "sourceHash": "84f896f733bb235fcfa5bd5a7cc4a87b1266927f1516fd19663d199a7e5c07e0",
+          "sourceVersion": "MetadataApi:67.0:Ohm_Schedule_Planner.v1:d1811864aa91c01fb79a439f4a298e69da87086b8c021e792a3e3191a9d20261",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        },
+        {
+          "artifactId": "172aj00000sdfaTAAQ",
+          "label": "Plan Day",
+          "characterCount": 1011,
+          "sourceHash": "ea40e66d8c7fc889d63ecde0003e66b13dfb7dec097bc061ac6eacfc143f215c",
+          "sourceVersion": "MetadataApi:67.0:RjYWqS5407SJkIso5OsiRgDX4BtDXULuZOLGwySSivQ=_1:5e6f11cddba355a264443abb059339b3b6d6d9cc0e3df62de81f6e2cbd8f8e80",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "B"
+          }
+        }
+      ],
+      "configurationSources": [
+        {
+          "artifactId": "configuration:16jaj000003G4AnAAK",
+          "verified": true
+        }
+      ],
+      "quotedEvidenceCount": 4,
+      "allQuotesMatchStoredSources": true,
+      "fleetSummaryMatchesDetail": true,
+      "verified": true
+    }
+  ],
+  "allVerified": true
+}

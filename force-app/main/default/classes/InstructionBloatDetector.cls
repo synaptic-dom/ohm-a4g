@@ -1,6 +1,6 @@
 /**
  * Signal (c) INSTRUCTION_BLOAT — CONFIRMED, protected (SPEC §S.6c, canon C9).
- * totalTokens = approxTokens(scope|description|capabilities). Fire strictly > soft.
+ * totalTokens = approxTokens(authoritative instructions). Fire strictly > soft.
  * excess = total - soft. score = min(1, excess/soft). Metric_Value = EXCESS tokens (C9),
  * Metric_Unit = 'tokens', Evidence records total. Confidence = High.
  * Thresholds: Topic 500/1000, Agent 400/800, Action 150/300.
@@ -21,8 +21,7 @@ public with sharing class InstructionBloatDetector implements SignalDetector {
             for (OhmDTO.TopicNode t : g.topics) {
                 if (t == null) { continue; }
                 Integer total = TokenEstimator.approxTokens(
-                    concat(t.scope, t.description, null)
-                );
+                    String.isNotBlank(t.instructions) ? t.instructions : t.scope);
                 addIfBloated(out, total, c.topicScopeSoftTokens(), 'Topic', t.developerName, t.masterLabel, t.id);
             }
         }
@@ -30,9 +29,7 @@ public with sharing class InstructionBloatDetector implements SignalDetector {
         if (g.agentsById != null) {
             for (OhmDTO.AgentNode a : g.agentsById.values()) {
                 if (a == null) { continue; }
-                Integer total = TokenEstimator.approxTokens(
-                    concat(a.description, a.capabilities, null)
-                );
+                Integer total = TokenEstimator.approxTokens(a.instructions);
                 addIfBloated(out, total, c.agentSoftTokens(), 'Agent', a.developerName, a.masterLabel, a.id);
             }
         }
@@ -40,10 +37,10 @@ public with sharing class InstructionBloatDetector implements SignalDetector {
         if (g.actions != null) {
             for (OhmDTO.ActionNode a : g.actions) {
                 if (a == null) { continue; }
-                Integer total = TokenEstimator.approxTokens(
-                    concat(a.description, null, null)
-                );
+                Integer total = TokenEstimator.approxTokens(a.instructions);
+                Integer beforeCount = out.size();
                 addIfBloated(out, total, c.actionSoftTokens(), 'Action', a.developerName, a.masterLabel, a.id);
+                if (out.size() > beforeCount) { out[out.size() - 1].boundModel = a.boundModel; }
             }
         }
         return out;
@@ -70,16 +67,9 @@ public with sharing class InstructionBloatDetector implements SignalDetector {
         f.metricValue = excess;                 // C9 — EXCESS over soft, not total
         f.metricUnit = 'tokens';
         f.evidence = 'Instruction block ≈ ' + total + ' tokens vs soft budget ' + soft +
-            ' (excess ' + excess + '). Trimming to budget removes recurring per-turn token cost.';
+            ' (excess ' + excess + '). Review a shorter version that preserves required behavior. ' +
+            'Any modeled reduction assumes this instruction input is sent at the stated usage volume.';
         out.add(f);
-    }
-
-    private String concat(String a, String b, String cc) {
-        String s = '';
-        if (String.isNotBlank(a)) { s += a; }
-        if (String.isNotBlank(b)) { s += ' ' + b; }
-        if (String.isNotBlank(cc)) { s += ' ' + cc; }
-        return s;
     }
 
     private Decimal min1(Decimal v) {

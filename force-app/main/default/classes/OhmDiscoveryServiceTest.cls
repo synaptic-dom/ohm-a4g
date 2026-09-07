@@ -1,6 +1,6 @@
 /**
  * OhmDiscoveryServiceTest — integration-style tests against LIVE org metadata (intentional).
- * The org carries the deployed spike agent Ohm_Spike_Agent (1 planner, 1 topic, 1 apex action),
+ * The org carries the four event fixtures or Weather and public recipe bundles,
  * so discovery has real GenAi* rows to read. SeeAllData=true is required because the
  * GenAi*Definition setup entities are org data, not test-created data.
  */
@@ -8,7 +8,7 @@
 private class OhmDiscoveryServiceTest {
 
     @IsTest(SeeAllData=true)
-    static void test_discoverFindsLiveSpikeAgent() {
+    static void test_discoverFindsLiveAgentScriptAndExcludesLegacyAgents() {
         Test.startTest();
         OhmDTO.AgentModel g = new OhmDiscoveryService().discover();
         Test.stopTest();
@@ -16,36 +16,36 @@ private class OhmDiscoveryServiceTest {
         System.assertNotEquals(null, g, 'discover() must return an AgentModel');
         System.assertNotEquals(null, g.agentsById, 'agentsById must be initialized');
         System.assert(g.agentsById.size() >= 1,
-            'Org has the live Ohm_Spike_Agent — expected >= 1 agent, got ' + g.agentsById.size());
+            'Org has published Agent Script bundles — expected >= 1 agent, got ' + g.agentsById.size());
         System.assertEquals(0, g.discoveryErrors.size(),
             'All three inline SOQL queries are verified on this org — expected no discovery errors: '
             + String.join(g.discoveryErrors, '; '));
 
-        // the spike planner is present
+        // Current Agent Script publication is present; legacy metadata is outside audit scope.
+        Id controlId = OhmAuditTestSupport.scriptPlannerId();
         OhmDTO.AgentNode spike = null;
         for (OhmDTO.AgentNode a : g.agentsById.values()) {
-            if (a.developerName != null && a.developerName.startsWith('Ohm_Spike_Agent')) {
+            System.assert(OhmDiscoveryService.isAgentScriptCandidate(a.developerName));
+            if (a.id == String.valueOf(controlId)) {
                 spike = a;
-                break;
             }
         }
         System.assertNotEquals(null, spike,
-            'Expected planner Ohm_Spike_Agent among discovered agents');
+            'Expected the supported published Agent Script control among discovered agents');
 
         // ...with its apex action reachable (by planner linkage or by spike naming)
         Boolean spikeApexActionFound = false;
         for (OhmDTO.ActionNode act : g.actions) {
             Boolean isApex = act.invocationTargetType != null
                 && act.invocationTargetType.equalsIgnoreCase('apex');
-            Boolean linkedToSpike = act.plannerId == spike.id
-                || (act.developerName != null && act.developerName.contains('Spike'));
+            Boolean linkedToSpike = act.plannerId == spike.id;
             if (isApex && linkedToSpike) {
                 spikeApexActionFound = true;
                 break;
             }
         }
         System.assert(spikeApexActionFound,
-            'Expected the spike apex action (Ohm_Spike_Ping) among discovered actions');
+            'Expected the control Apex action linked to its exact published planner');
     }
 
     @IsTest(SeeAllData=true)
@@ -61,7 +61,7 @@ private class OhmDiscoveryServiceTest {
         Set<String> expected = new Set<String>();
         Integer promptActionCount = 0;
         for (OhmDTO.ActionNode a : g.actions) {
-            if (a.invocationTargetType != null && a.invocationTargetType.equalsIgnoreCase('prompt')) {
+            if (OhmActionTypes.isPrompt(a.invocationTargetType)) {
                 promptActionCount++;
                 if (String.isNotBlank(a.invocationTarget)) {
                     expected.add(a.invocationTarget);
@@ -116,8 +116,7 @@ private class OhmDiscoveryServiceTest {
         for (OhmDTO.ActionNode a : g.actions) {
             System.assertNotEquals(null, a.modelAssumed,
                 'modelAssumed must be set on every action: ' + a.developerName);
-            Boolean isPrompt = a.invocationTargetType != null
-                && a.invocationTargetType.equalsIgnoreCase('prompt');
+            Boolean isPrompt = OhmActionTypes.isPrompt(a.invocationTargetType);
             if (isPrompt && String.isBlank(a.boundModel)) {
                 System.assertEquals(true, a.modelAssumed,
                     'Prompt action without bound model must be modelAssumed=true: ' + a.developerName);
@@ -146,7 +145,7 @@ private class OhmDiscoveryServiceTest {
     // ===================== v2 Workbench — listFleet / discoverProcess / deriveDomain =====================
 
     /**
-     * listFleet() returns one ProcessSummaryDTO per live planner (org has 4), each with a
+     * listFleet() returns one ProcessSummaryDTO per current Agent Script family, each with a
      * derived domain and topic/action counts, and NO grade/score/energy (the controller joins
      * those from reports). Fleet listing must never carry audit results.
      */
@@ -158,11 +157,14 @@ private class OhmDiscoveryServiceTest {
 
         System.assertNotEquals(null, fleet, 'listFleet() must return a list');
         System.assert(fleet.size() >= 4,
-            'Org has 4 live planners — expected >= 4 fleet rows, got ' + fleet.size());
+            'Org has 4 Agent Script families — expected >= 4 fleet rows, got ' + fleet.size());
 
         Boolean sawWasteDemo = false;
+        Id controlId = OhmAuditTestSupport.scriptPlannerId();
         Set<String> domainsSeen = new Set<String>();
         for (OhmDTO.ProcessSummaryDTO row : fleet) {
+            System.assert(OhmDiscoveryService.isAgentScriptCandidate(row.plannerApiName),
+                'Legacy planners and standalone prompts must not appear as audit targets.');
             System.assertNotEquals(null, row.plannerId, 'each row must carry a plannerId');
             System.assertNotEquals(null, row.plannerApiName, 'each row must carry a plannerApiName');
             System.assert(String.isNotBlank(row.label), 'each row must carry a label');
@@ -177,66 +179,64 @@ private class OhmDiscoveryServiceTest {
             System.assertEquals(null, row.energyWhCentral, 'listFleet() must not set energy');
 
             domainsSeen.add(row.domain);
-            if (row.plannerApiName == 'Ohm_Waste_Demo') {
+            if (row.plannerId == controlId) {
                 sawWasteDemo = true;
-                System.assertEquals('Sales', row.domain,
-                    'Ohm_Waste_Demo (Lead Concierge) must derive domain Sales');
+                System.assertEquals('Internal', row.domain,
+                    'The Apex-backed control derives its internal tooling domain');
                 System.assert(row.topicCount >= 1,
-                    'Ohm_Waste_Demo must count its Lead Triage topic, got ' + row.topicCount);
+                    'The control bundle must count its topics, got ' + row.topicCount);
                 System.assert(row.actionCount >= 1,
-                    'Ohm_Waste_Demo must count its lead-tier action, got ' + row.actionCount);
+                    'The control bundle must count its actions, got ' + row.actionCount);
             }
         }
-        System.assert(sawWasteDemo, 'Ohm_Waste_Demo must appear in the fleet');
-        System.assert(domainsSeen.size() >= 2,
-            'The four live agents span multiple derived domains, got ' + domainsSeen);
+        System.assert(sawWasteDemo, 'The current control publication must appear in the fleet');
+        // Domain diversity depends on which fixtures an org carries (every Ohm_* fixture derives
+        // Internal), so assert that each row's domain comes from the documented keyword map instead.
+        Set<String> documentedDomains = new Set<String>{'Sales', 'Commerce', 'Customer Service', 'Finance', 'Internal', 'General'};
+        for (String domain : domainsSeen) {
+            System.assert(documentedDomains.contains(domain),
+                'Every fleet row must derive a documented domain, got ' + domain);
+        }
     }
 
     /**
-     * discoverProcess(Ohm_Waste_Demo) returns an AgentModel scoped to that one planner and
-     * containing its bloated "Lead Triage" topic (Scope ~5400 chars). Other planners' nodes
-     * (Order/Service/Spike) must NOT leak into the subtree.
+     * discoverProcess returns one exact Agent Script publication with its instruction evidence.
+     * Legacy and unrelated Agent Script nodes must not leak into the subtree.
      */
     @IsTest(SeeAllData=true)
-    static void test_discoverProcessScopedToWasteDemoHasBloatedLeadTriage() {
-        GenAiPlannerDefinition waste = [
-            SELECT Id FROM GenAiPlannerDefinition WHERE DeveloperName = 'Ohm_Waste_Demo' LIMIT 1
-        ];
+    static void test_discoverProcessScopedToPublishedBundleKeepsInstructionEvidence() {
+        Id weatherId = OhmAuditTestSupport.scriptPlannerId();
+        OhmAuditTestSupport.seedInstructionFixture(weatherId);
 
         Test.startTest();
-        OhmDTO.AgentModel g = new OhmDiscoveryService().discoverProcess(waste.Id);
+        OhmDTO.AgentModel g = new OhmDiscoveryService().discoverProcess(weatherId);
         Test.stopTest();
 
         System.assertNotEquals(null, g, 'discoverProcess() must return an AgentModel');
         System.assertEquals(1, g.agentsById.size(),
             'scoped model must contain exactly the target planner');
-        System.assert(g.agentsById.containsKey(String.valueOf(waste.Id)),
-            'scoped model must contain the Waste Demo planner');
+        System.assert(g.agentsById.containsKey(String.valueOf(weatherId)),
+            'scoped model must contain the selected Weather publication');
 
-        // the bloated Lead Triage topic is present, with its oversized Scope
+        // Synthetic bloat is real version-bound source evidence for this readout test.
         OhmDTO.TopicNode leadTriage = null;
         for (OhmDTO.TopicNode t : g.topics) {
-            if (t.developerName != null && t.developerName.contains('LeadTriage')) {
+            if (t.instructions != null && t.instructions.length() >= 5000) {
                 leadTriage = t;
             }
-            // no foreign topics leaked in
-            System.assert(
-                t.developerName == null ||
-                (!t.developerName.contains('Sample') && !t.developerName.contains('Spike')),
-                'scoped topics must not include other planners: ' + t.developerName);
+            System.assertEquals(String.valueOf(weatherId), t.plannerId,
+                'scoped topics must not include other publications');
         }
         System.assertNotEquals(null, leadTriage,
-            'Ohm_Waste_Demo subtree must contain the Lead Triage topic');
+            'Weather subtree must contain the synthetic bloat topic');
         System.assert(leadTriage.scope != null && leadTriage.scope.length() >= 5000,
-            'Lead Triage Scope must be the bloated ~5400-char instruction, got '
+            'Test topic must contain the complete oversized instruction, got '
             + (leadTriage.scope == null ? 0 : leadTriage.scope.length()));
 
-        // scoped actions belong to the Waste Demo family only
+        // Scoped actions belong to this exact publication only.
         for (OhmDTO.ActionNode a : g.actions) {
-            System.assert(
-                a.developerName == null ||
-                (!a.developerName.contains('Sample') && !a.developerName.contains('Spike')),
-                'scoped actions must not include other planners: ' + a.developerName);
+            System.assertEquals(String.valueOf(weatherId), a.plannerId,
+                'scoped actions must not include other publications');
         }
 
         // consumable by the detectors (Wave-A handoff) without throwing

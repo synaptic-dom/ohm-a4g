@@ -1,0 +1,62 @@
+{
+  "tests": [
+    {
+      "id": "sales-follow-up",
+      "steps": [
+        {
+          "type": "agent.create_session",
+          "id": "cs",
+          "use_agent_api": true
+        },
+        {
+          "type": "agent.send_message",
+          "id": "sm",
+          "session_id": "{cs.session_id}",
+          "utterance": "Draft one follow-up email from these meeting notes: Morgan Vega at Blue Harbor Events coordinates two venues and thirty planners. Handover notes get lost between teams. Morgan asked for a short product walkthrough. Pricing was not discussed. Our next step is to offer a twenty-minute call next Tuesday; no time has been accepted."
+        },
+        {
+          "type": "agent.get_state",
+          "id": "state",
+          "session_id": "{cs.session_id}"
+        },
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "utterance": "Draft one follow-up email from these meeting notes: Morgan Vega at Blue Harbor Events coordinates two venues and thirty planners. Handover notes get lost between teams. Morgan asked for a short product walkthrough. Pricing was not discussed. Our next step is to offer a twenty-minute call next Tuesday; no time has been accepted.",
+          "expected": "Draft follow-up content grounded in these notes and offer the unconfirmed next step without inventing pricing, promises, links or an accepted meeting. Do not claim that email was sent. Multiple formats are an intentional audit defect in this fixture; response length is not an acceptance requirement.",
+          "actual": "{sm.response}",
+          "threshold": 3.0
+        }
+      ]
+    },
+    {
+      "id": "sales-missing-notes",
+      "steps": [
+        {
+          "type": "agent.create_session",
+          "id": "cs",
+          "use_agent_api": true
+        },
+        {
+          "type": "agent.send_message",
+          "id": "sm",
+          "session_id": "{cs.session_id}",
+          "utterance": "Write a follow-up email for me."
+        },
+        {
+          "type": "agent.get_state",
+          "id": "state",
+          "session_id": "{cs.session_id}"
+        },
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "utterance": "Write a follow-up email for me.",
+          "expected": "Ask for the meeting notes or relevant facts rather than inventing a sales conversation.",
+          "actual": "{sm.response}",
+          "threshold": 3.0
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "dataKind": "Synthetic authored fixtures. No real customers, emails, bookings or usage measurements.",
+  "activityRows": "13:00|60|Forest walk|Trailhead\n09:00|45|Kayaking|Boathouse\n10:30|30|Clay studio|Art room\n10:45|45|Garden tour|Garden",
+  "expectedDeterministicSchedule": [
+    "09:00–09:45 | Kayaking | Boathouse | 45 minutes",
+    "10:45–11:30 | Garden tour | Garden | 45 minutes",
+    "13:00–14:00 | Forest walk | Trailhead | 60 minutes"
+  ],
+  "fixtures": [
+    {
+      "apiName": "Ohm_Support_Desk",
+      "label": "Customer Support",
+      "primaryCategory": "INPUT",
+      "expectedOpportunity": "Repeated replacement-policy paragraphs can be consolidated while preserving eligibility, specialist approval and information requirements.",
+      "cases": [
+        {
+          "id": "support-damaged-lantern",
+          "utterance": "Draft a reply to this customer message: My TrekLite lantern arrived with a cracked lens. I bought it last Tuesday and my order reference is JUN-4201. I can send a photo. What should I do next?",
+          "expected": "Acknowledge the damage, ask the customer to provide a photo, and explain specialist replacement review without promising approval or requesting card information. Do not claim that an email was sent."
+        },
+        {
+          "id": "support-missing-message",
+          "utterance": "Help me reply to a customer.",
+          "expected": "Ask for the customer message or details of the issue rather than inventing a customer or order."
+        }
+      ]
+    },
+    {
+      "apiName": "Ohm_Sales_Follow_Up",
+      "label": "Sales Follow-up",
+      "primaryCategory": "OUTPUT",
+      "expectedOpportunity": "Remove unused variants, encodings and commentary; retain the one useful email draft, factual recap and next step.",
+      "cases": [
+        {
+          "id": "sales-follow-up",
+          "utterance": "Draft one follow-up email from these meeting notes: Morgan Vega at Blue Harbor Events coordinates two venues and thirty planners. Handover notes get lost between teams. Morgan asked for a short product walkthrough. Pricing was not discussed. Our next step is to offer a twenty-minute call next Tuesday; no time has been accepted.",
+          "expected": "Draft follow-up content grounded in these notes and offer the unconfirmed next step without inventing pricing, promises, links or an accepted meeting. Do not claim that email was sent. Multiple formats are an intentional audit defect in this fixture; response length is not an acceptance requirement."
+        },
+        {
+          "id": "sales-missing-notes",
+          "utterance": "Write a follow-up email for me.",
+          "expected": "Ask for the meeting notes or relevant facts rather than inventing a sales conversation."
+        }
+      ]
+    },
+    {
+      "apiName": "Ohm_Schedule_Planner",
+      "label": "Schedule Planning",
+      "primaryCategory": "CALLS",
+      "expectedOpportunity": "Evaluate deterministic overlap, gap and ordering checks while preserving the schedule selection rule and guest-facing presentation.",
+      "cases": [
+        {
+          "id": "schedule-day",
+          "utterance": "Create a guest day plan from these activity rows:\n13:00|60|Forest walk|Trailhead\n09:00|45|Kayaking|Boathouse\n10:30|30|Clay studio|Art room\n10:45|45|Garden tour|Garden",
+          "expected": "Include Kayaking at 09:00–09:45, Garden tour at 10:45–11:30, and Forest walk at 13:00–14:00, in that order. Omit Clay studio because the gap after Kayaking is too short. Do not claim any booking was created."
+        },
+        {
+          "id": "schedule-invalid",
+          "utterance": "Plan this activity: 25:00|30|Evening yoga|Studio",
+          "expected": "Ask for a corrected time rather than inventing a valid time or a reservation."
+        }
+      ]
+    },
+    {
+      "apiName": "Ohm_Schedule_Desk",
+      "label": "Efficient Schedule Desk",
+      "primaryCategory": "CONTROL",
+      "expectedOpportunity": "Existing Apex calculations and run/set bindings must not be mislabeled as LLM math. A clean rating is an observed review result, never seeded.",
+      "cases": [
+        {
+          "id": "control-day",
+          "utterance": "Create a guest day plan from these activity rows:\n13:00|60|Forest walk|Trailhead\n09:00|45|Kayaking|Boathouse\n10:30|30|Clay studio|Art room\n10:45|45|Garden tour|Garden",
+          "expected": "Include Kayaking at 09:00–09:45, Garden tour at 10:45–11:30, and Forest walk at 13:00–14:00, in that order. Omit Clay studio because of insufficient free time. Preserve the Apex-prepared plan and do not claim a booking exists."
+        },
+        {
+          "id": "control-invalid",
+          "utterance": "Plan this activity: 25:00|30|Evening yoga|Studio",
+          "expected": "Relay the preparation action validation problem and ask for corrected rows. Do not invent a new time or schedule."
+        }
+      ]
+    }
+  ]
+}

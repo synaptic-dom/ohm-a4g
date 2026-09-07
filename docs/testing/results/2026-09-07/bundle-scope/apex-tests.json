@@ -1,0 +1,1330 @@
+{
+  "execution": "Metadata deployment RunLocalTests",
+  "deploymentId": "0AfEc00000nZaHKKA0",
+  "testsRan": 264,
+  "failures": 0,
+  "totalTimeMs": 36842,
+  "successes": [
+    {
+      "name": "OhmActionsTest",
+      "methodName": "createRemediationTaskBuildsTaskFromPersistedFinding",
+      "time": 231
+    },
+    {
+      "name": "OhmActionsTest",
+      "methodName": "createRemediationTaskReportsMissingFindingGracefully",
+      "time": 77
+    },
+    {
+      "name": "OhmActionsTest",
+      "methodName": "discoverAgenticWorkCreatesReportAndSavesGraph",
+      "time": 239
+    },
+    {
+      "name": "OhmActionsTest",
+      "methodName": "discoverAgenticWorkReusesExistingReport",
+      "time": 143
+    },
+    {
+      "name": "OhmActionsTest",
+      "methodName": "estimateFootprintReturnsOrderedBandsPerElement",
+      "time": 69
+    },
+    {
+      "name": "OhmActionsTest",
+      "methodName": "persistAuditReportWritesAgentNarratives",
+      "time": 159
+    },
+    {
+      "name": "OhmActionsTest",
+      "methodName": "recommendImprovementsAttachesDeterministicFixes",
+      "time": 66
+    },
+    {
+      "name": "OhmActionsTest",
+      "methodName": "runSignalsDetectsWasteFromGraphJson",
+      "time": 65
+    },
+    {
+      "name": "OhmActionsTest",
+      "methodName": "runSignalsReloadsGraphFromReportWhenJsonBlank",
+      "time": 99
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testAskDraftReturnsRewriteWithDeltas",
+      "time": 477
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testAskReturnsGroundedAnswer",
+      "time": 363
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testBaselineCannotRenderAsSavingsFromModel",
+      "time": 65
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testBlankQuestionThrows",
+      "time": 72
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testBlankReplyThrowsInsteadOfEmptyDraft",
+      "time": 500
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testChangedOrMissingSourceHashStopsBeforeModel",
+      "time": 70
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testDslDraftCannotPublishFlattenedOrChangedLogic",
+      "time": 74
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testDslGuardPreservesConditionsReferencesAndIndentation",
+      "time": 64
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testExactLimitPreservesTailAndUntrustedContent",
+      "time": 67
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testExactProseRemovalPreservesEveryOtherSourceByte",
+      "time": 55
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testExplicitArtifactControlsSourceAndFinding",
+      "time": 67
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testFullSourceLimitNeverTruncatesAndSkipsModel",
+      "time": 66
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testGetContextGroundsOnAudit",
+      "time": 364
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testGroundedContextCarriesAuditNumbers",
+      "time": 391
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testImportedScriptDuplicateDraftUsesNoModel",
+      "time": 77
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testIncompleteCoverageAndCalmPreferenceReachModel",
+      "time": 137
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testIntentMatrixClassifiesRealQuestions",
+      "time": 55
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testLegacyWrapperRequiresSelectionForRewrite",
+      "time": 70
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testNoSelectedTrimNeverSubstitutesBaseline",
+      "time": 75
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testNoSourceOrUnknownArtifactDoesNotDraft",
+      "time": 81
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testNullArgumentsThrow",
+      "time": 61
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testQualitativeExplanationSurvivesButSpelledMetricClaimsDoNot",
+      "time": 72
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testQuantitativeQuestionsUseServerMetricsWithoutModel",
+      "time": 61
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testSignalLabelMapsKnownValues",
+      "time": 57
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testSourceChangedSinceAuditRequiresReaudit",
+      "time": 70
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testUnoptimizedLabelDoesNotTriggerDraft",
+      "time": 407
+    },
+    {
+      "name": "OhmAssistantServiceTest",
+      "methodName": "testUnsupportedGradeAndCoverageClaimsNeverRender",
+      "time": 71
+    },
+    {
+      "name": "OhmAuditControllerTest",
+      "methodName": "testAssignFindingCreatesTaskWithOwnerAndDue",
+      "time": 262
+    },
+    {
+      "name": "OhmAuditControllerTest",
+      "methodName": "testAuditProcessCapturesInstructionSnapshotForBloatFinding",
+      "time": 295
+    },
+    {
+      "name": "OhmAuditControllerTest",
+      "methodName": "testAuditProcessPersistsScopedReportAndFleetReflectsGrade",
+      "time": 322
+    },
+    {
+      "name": "OhmAuditControllerTest",
+      "methodName": "testCalmModePreferenceRoundTrip",
+      "time": 217
+    },
+    {
+      "name": "OhmAuditControllerTest",
+      "methodName": "testCreateRemediationTaskDoorDelegatesToPersistence",
+      "time": 176
+    },
+    {
+      "name": "OhmAuditControllerTest",
+      "methodName": "testEstimateFootprintPerElement",
+      "time": 73
+    },
+    {
+      "name": "OhmAuditControllerTest",
+      "methodName": "testGetAuditStatusBadIdThrowsAuraHandled",
+      "time": 80
+    },
+    {
+      "name": "OhmAuditControllerTest",
+      "methodName": "testGetAuditStatusReflectsInProgressReport",
+      "time": 127
+    },
+    {
+      "name": "OhmAuditControllerTest",
+      "methodName": "testGetDiffAfterTwoAuditsReturnsBeforeAfterWithDeltas",
+      "time": 512
+    },
+    {
+      "name": "OhmAuditControllerTest",
+      "methodName": "testGetDiffSingleAuditReturnsAfterOnly",
+      "time": 317
+    },
+    {
+      "name": "OhmAuditControllerTest",
+      "methodName": "testGetFindingsAppliesStatusAndSeverityFilters",
+      "time": 166
+    },
+    {
+      "name": "OhmAuditControllerTest",
+      "methodName": "testGetFindingsDedupsAcrossReAudits",
+      "time": 490
+    },
+    {
+      "name": "OhmAuditControllerTest",
+      "methodName": "testGetFleetReturnsUnauditedFleet",
+      "time": 109
+    },
+    {
+      "name": "OhmAuditControllerTest",
+      "methodName": "testGetProcessDetailMarksBloatedTopicWasteful",
+      "time": 342
+    },
+    {
+      "name": "OhmAuditControllerTest",
+      "methodName": "testGetRecommendationsRanksQuickWinsBySavingsPerEffort",
+      "time": 146
+    },
+    {
+      "name": "OhmAuditControllerTest",
+      "methodName": "testGetTrendsOrgReturnsPointsAndPerAgentHistory",
+      "time": 296
+    },
+    {
+      "name": "OhmAuditControllerTest",
+      "methodName": "testGetTrendsPerProcessReturnsChronologicalPoints",
+      "time": 476
+    },
+    {
+      "name": "OhmAuditControllerTest",
+      "methodName": "testLegacyPlannerCannotQueueAnAuditOrAppearInAcquisition",
+      "time": 142
+    },
+    {
+      "name": "OhmAuditControllerTest",
+      "methodName": "testPrimitiveTaskDoorUsesSavedEvidenceAndPreservesAssignment",
+      "time": 230
+    },
+    {
+      "name": "OhmAuditControllerTest",
+      "methodName": "testStartAuditReturnsCompleteReportWithReadout",
+      "time": 361
+    },
+    {
+      "name": "OhmAuditControllerTest",
+      "methodName": "testUpdateFindingStatusPersistsAndMirrorsTask",
+      "time": 273
+    },
+    {
+      "name": "OhmAuditCoordinatorTest",
+      "methodName": "cleanRetrievedRunUsesItsPinnedSourceAndClosesExistingTask",
+      "time": 604
+    },
+    {
+      "name": "OhmAuditCoordinatorTest",
+      "methodName": "excessiveSourceIsRejectedWithoutTruncation",
+      "time": 212
+    },
+    {
+      "name": "OhmAuditCoordinatorTest",
+      "methodName": "independentPromptChangeBeforeFinalizationPreventsFindings",
+      "time": 202
+    },
+    {
+      "name": "OhmAuditCoordinatorTest",
+      "methodName": "invalidSourceHashFailsDurablyAndDoesNotPersistPartialEvidence",
+      "time": 207
+    },
+    {
+      "name": "OhmAuditCoordinatorTest",
+      "methodName": "pendingAcquisitionHasNoPartialFindingsAndResumesFromContext",
+      "time": 329
+    },
+    {
+      "name": "OhmAuditCoordinatorTest",
+      "methodName": "processEndpointReturnsQueuedExactPublication",
+      "time": 340
+    },
+    {
+      "name": "OhmAuditCoordinatorTest",
+      "methodName": "publicationChangeRejectsEvidenceWithoutFindings",
+      "time": 169
+    },
+    {
+      "name": "OhmAuditCoordinatorTest",
+      "methodName": "queueBudgetOverridesScratchDefaultAndFailsDurablyAtLimit",
+      "time": 236
+    },
+    {
+      "name": "OhmAuditCoordinatorTest",
+      "methodName": "sharedBundleWarningsAreStoredOnce",
+      "time": 176
+    },
+    {
+      "name": "OhmAuditCoordinatorTest",
+      "methodName": "sourceAcquisitionFinishesOnceAndPreservesExactProvenance",
+      "time": 318
+    },
+    {
+      "name": "OhmAuditCoordinatorTest",
+      "methodName": "startAuditReturnsQueuedRunAndRecordsJobHandle",
+      "time": 342
+    },
+    {
+      "name": "OhmAuditCoordinatorTest",
+      "methodName": "transientRetriesAreBoundedAndPermissionErrorsAreNotRetried",
+      "time": 230
+    },
+    {
+      "name": "OhmAuditLifecycleAcceptanceTest",
+      "methodName": "cleanReauditRemovesStaleRecommendations",
+      "time": 152
+    },
+    {
+      "name": "OhmAuditLifecycleAcceptanceTest",
+      "methodName": "differentAgentsDoNotCreateRealizedSavings",
+      "time": 178
+    },
+    {
+      "name": "OhmAuditLifecycleAcceptanceTest",
+      "methodName": "missingCoverageMustNotReceiveAnA",
+      "time": 62
+    },
+    {
+      "name": "OhmAuditLifecycleAcceptanceTest",
+      "methodName": "unchangedIssueKeepsItsTaskAndStatus",
+      "time": 281
+    },
+    {
+      "name": "OhmAuditLifecycleAcceptanceTest",
+      "methodName": "unknownModelDoesNotPromiseSavings",
+      "time": 61
+    },
+    {
+      "name": "OhmDiscoveryContractTest",
+      "methodName": "conflictingRelationshipsDoNotInventOwnership",
+      "time": 59
+    },
+    {
+      "name": "OhmDiscoveryContractTest",
+      "methodName": "currentImportedSourceCarriesProvenanceAndStaleSourceIsIgnored",
+      "time": 101
+    },
+    {
+      "name": "OhmDiscoveryContractTest",
+      "methodName": "legacyNameInferenceIsExplicitlyIncomplete",
+      "time": 58
+    },
+    {
+      "name": "OhmDiscoveryContractTest",
+      "methodName": "promptActionAliasesNormalize",
+      "time": 53
+    },
+    {
+      "name": "OhmDiscoveryContractTest",
+      "methodName": "realRelationshipsOverrideMisleadingNames",
+      "time": 53
+    },
+    {
+      "name": "OhmDiscoveryContractTest",
+      "methodName": "sourceFingerprintIsStableAndDetectsMetadataChange",
+      "time": 53
+    },
+    {
+      "name": "OhmDiscoveryContractTest",
+      "methodName": "unresolvedExplicitParentNeverFallsBackToName",
+      "time": 55
+    },
+    {
+      "name": "OhmDiscoveryServiceTest",
+      "methodName": "test_deriveDomainKeywordMap",
+      "time": 52
+    },
+    {
+      "name": "OhmDiscoveryServiceTest",
+      "methodName": "test_discoverFindsLiveAgentScriptAndExcludesLegacyAgents",
+      "time": 81
+    },
+    {
+      "name": "OhmDiscoveryServiceTest",
+      "methodName": "test_discoverNeverThrowsOnRealOrgData",
+      "time": 87
+    },
+    {
+      "name": "OhmDiscoveryServiceTest",
+      "methodName": "test_discoverProcessScopedToPublishedBundleKeepsInstructionEvidence",
+      "time": 141
+    },
+    {
+      "name": "OhmDiscoveryServiceTest",
+      "methodName": "test_listFleetReturnsProcessesWithCountsAndDomainsNoGrade",
+      "time": 75
+    },
+    {
+      "name": "OhmDiscoveryServiceTest",
+      "methodName": "test_promptTemplateCountIsDistinctPromptTargets",
+      "time": 87
+    },
+    {
+      "name": "OhmDiscoveryServiceTest",
+      "methodName": "test_treeMapsAreConsistentWithFlatLists",
+      "time": 82
+    },
+    {
+      "name": "OhmFleetVersionTest",
+      "methodName": "bundleScopeRemovesLegacyAndUnownedArtifactsBeforeRelationshipWarnings",
+      "time": 54
+    },
+    {
+      "name": "OhmFleetVersionTest",
+      "methodName": "candidateNamesMatchPublishedRetrievalContract",
+      "time": 54
+    },
+    {
+      "name": "OhmFleetVersionTest",
+      "methodName": "highestNumericVersionWinsAndOldArtifactsLeaveFleetScope",
+      "time": 53
+    },
+    {
+      "name": "OhmFleetVersionTest",
+      "methodName": "missingRelationshipsRemainUnknownWhileOldOwnedActionsAreRemoved",
+      "time": 65
+    },
+    {
+      "name": "OhmFleetVersionTest",
+      "methodName": "previousPublicationWarningsDoNotLowerLatestPublicationCoverage",
+      "time": 67
+    },
+    {
+      "name": "OhmFleetVersionTest",
+      "methodName": "sameLabelsAndSimilarNamesDoNotMergeDifferentProcesses",
+      "time": 65
+    },
+    {
+      "name": "OhmFleetVersionTest",
+      "methodName": "supportedPlannerWithMissingActionParentStillLowersCoverage",
+      "time": 67
+    },
+    {
+      "name": "OhmPublicWorkflowAcceptanceTest",
+      "methodName": "informationIsNotEvidenceOfFormattingWork",
+      "time": 87
+    },
+    {
+      "name": "OhmPublicWorkflowAcceptanceTest",
+      "methodName": "paymentFlowChainIsNotRedundantLlmWork",
+      "time": 98
+    },
+    {
+      "name": "OhmPublicWorkflowAcceptanceTest",
+      "methodName": "promptInventoryRecognizesPublishedTargetType",
+      "time": 94
+    },
+    {
+      "name": "OhmPublicWorkflowAcceptanceTest",
+      "methodName": "publishedScheduleMiniModelIsSmall",
+      "time": 70
+    },
+    {
+      "name": "OhmPublicWorkflowAcceptanceTest",
+      "methodName": "weatherDiscoveryUsesRealRelationships",
+      "time": 94
+    },
+    {
+      "name": "OhmRemediationLifecycleTest",
+      "methodName": "assignmentIsIdempotentAndOpenClearsTaskCompletion",
+      "time": 469
+    },
+    {
+      "name": "OhmRemediationLifecycleTest",
+      "methodName": "changedScenarioWithholdsDeltaButRetainsExactSourceDiff",
+      "time": 332
+    },
+    {
+      "name": "OhmRemediationLifecycleTest",
+      "methodName": "coveredCleanAuditResolvesTaskAndKeepsAfterSource",
+      "time": 494
+    },
+    {
+      "name": "OhmRemediationLifecycleTest",
+      "methodName": "exactArtifactDiffSurvivesCleanAuditAndPublicationIds",
+      "time": 317
+    },
+    {
+      "name": "OhmRemediationLifecycleTest",
+      "methodName": "logicalProcessTrendsRetainPriorPublicationAndSeparateSimilarNames",
+      "time": 370
+    },
+    {
+      "name": "OhmRemediationLifecycleTest",
+      "methodName": "oversizedSourceIsNeverSavedAsACompleteTruncatedSnapshot",
+      "time": 123
+    },
+    {
+      "name": "OhmRemediationLifecycleTest",
+      "methodName": "reappearingIssueReopensSameTaskWithoutLosingAssignment",
+      "time": 500
+    },
+    {
+      "name": "OhmRemediationLifecycleTest",
+      "methodName": "republishedIssueRetainsTaskOwnerDateAndAcceptedState",
+      "time": 464
+    },
+    {
+      "name": "OhmRemediationLifecycleTest",
+      "methodName": "sameLabelsDifferentArtifactsRemainSeparateIssues",
+      "time": 205
+    },
+    {
+      "name": "OhmRemediationLifecycleTest",
+      "methodName": "snapshotRoundTripPreservesWhitespaceQuotesAndHash",
+      "time": 135
+    },
+    {
+      "name": "OhmRemediationLifecycleTest",
+      "methodName": "unknownCoverageDoesNotResolveExistingWork",
+      "time": 393
+    },
+    {
+      "name": "OhmSourceParserTest",
+      "methodName": "keepsConditionalDslAndDedentsOnlyBlockMargin",
+      "time": 58
+    },
+    {
+      "name": "OhmSourceParserTest",
+      "methodName": "legacyUsesNestedInstructionsNeverTopicDescription",
+      "time": 54
+    },
+    {
+      "name": "OhmSourceParserTest",
+      "methodName": "quotedInstructionsRetainEscapesAndSingleQuotes",
+      "time": 54
+    },
+    {
+      "name": "OhmSourceParserTest",
+      "methodName": "refusesMissingDuplicateAndDraftPromptVersions",
+      "time": 54
+    },
+    {
+      "name": "OhmSourceParserTest",
+      "methodName": "refusesOversizedAndUnsafeZipEntriesBeforeReturningSources",
+      "time": 82
+    },
+    {
+      "name": "OhmSourceParserTest",
+      "methodName": "rejectsAmbiguousPublishedBindings",
+      "time": 54
+    },
+    {
+      "name": "OhmSourceParserTest",
+      "methodName": "rejectsUnexpectedNamespaceAndOversizedSource",
+      "time": 55
+    },
+    {
+      "name": "OhmSourceParserTest",
+      "methodName": "rejectsWrongScriptIdentityAndUnsupportedExpressions",
+      "time": 57
+    },
+    {
+      "name": "OhmSourceParserTest",
+      "methodName": "selectsOneActivePromptAndPreservesExactText",
+      "time": 55
+    },
+    {
+      "name": "OhmSourceParserTest",
+      "methodName": "targetBindingControlsSelectionRegardlessOfDirectoryCounter",
+      "time": 56
+    },
+    {
+      "name": "OhmSourceParserTest",
+      "methodName": "zipReadsActualEntriesWithoutFileProperties",
+      "time": 87
+    },
+    {
+      "name": "OhmSourceRetrievalServiceTest",
+      "methodName": "boundedStateAndManifestNeverSilentlyTruncate",
+      "time": 84
+    },
+    {
+      "name": "OhmSourceRetrievalServiceTest",
+      "methodName": "inactivePromptNeverFallsBackToLatestVersion",
+      "time": 71
+    },
+    {
+      "name": "OhmSourceRetrievalServiceTest",
+      "methodName": "legacyPlannerWithLinkedPromptIsRejectedBeforeCallouts",
+      "time": 54
+    },
+    {
+      "name": "OhmSourceRetrievalServiceTest",
+      "methodName": "mismatchedConfigAndTopicSetCannotBecomeCurrentEvidence",
+      "time": 74
+    },
+    {
+      "name": "OhmSourceRetrievalServiceTest",
+      "methodName": "missingPromptIsExplicitPartialCoverage",
+      "time": 73
+    },
+    {
+      "name": "OhmSourceRetrievalServiceTest",
+      "methodName": "missingScriptAndFailedRetrieveAreVisible",
+      "time": 69
+    },
+    {
+      "name": "OhmSourceRetrievalServiceTest",
+      "methodName": "pendingResponseDoesNotInventSourcesOrResubmit",
+      "time": 72
+    },
+    {
+      "name": "OhmSourceRetrievalServiceTest",
+      "methodName": "previousLegacyRetrievalStateCannotResume",
+      "time": 56
+    },
+    {
+      "name": "OhmSourceRetrievalServiceTest",
+      "methodName": "refusesUnscopedInventoryWithoutCallouts",
+      "time": 55
+    },
+    {
+      "name": "OhmSourceRetrievalServiceTest",
+      "methodName": "rejectsInventoryChangesBeforeAcceptingSource",
+      "time": 55
+    },
+    {
+      "name": "OhmSourceRetrievalServiceTest",
+      "methodName": "rejectsPromptEditsThatDoNotChangePlannerFingerprint",
+      "time": 68
+    },
+    {
+      "name": "OhmSourceRetrievalServiceTest",
+      "methodName": "retrievesPublicationByTargetAndActivePromptWithProvenance",
+      "time": 85
+    },
+    {
+      "name": "OhmSourceRetrievalServiceTest",
+      "methodName": "standalonePromptCannotStartBundleRetrieval",
+      "time": 53
+    },
+    {
+      "name": "OhmSourceRetrievalServiceTest",
+      "methodName": "wrongPublicationFailsClosed",
+      "time": 69
+    },
+    {
+      "name": "ActionChainingFlowTest",
+      "methodName": "testAwardLoyaltyPoints",
+      "time": 271
+    },
+    {
+      "name": "ActionChainingFlowTest",
+      "methodName": "testLogTransaction",
+      "time": 177
+    },
+    {
+      "name": "ActionChainingFlowTest",
+      "methodName": "testProcessPaymentSuccess",
+      "time": 230
+    },
+    {
+      "name": "ActionChainingFlowTest",
+      "methodName": "testSendReceipt",
+      "time": 180
+    },
+    {
+      "name": "ActionDefinitionsFlowTest",
+      "methodName": "testGetCurrentWeather",
+      "time": 160
+    },
+    {
+      "name": "ActionDefinitionsFlowTest",
+      "methodName": "testGetWeatherForecast",
+      "time": 156
+    },
+    {
+      "name": "ChangePasswordControllerTest",
+      "methodName": "testChangePasswordController",
+      "time": 55
+    },
+    {
+      "name": "CommunitiesLandingControllerTest",
+      "methodName": "testCommunitiesLandingController",
+      "time": 58
+    },
+    {
+      "name": "CommunitiesLoginControllerTest",
+      "methodName": "testCommunitiesLoginController",
+      "time": 52
+    },
+    {
+      "name": "CommunitiesSelfRegConfirmControllerTest",
+      "methodName": "testCommunitiesSelfRegConfirmController",
+      "time": 53
+    },
+    {
+      "name": "CommunitiesSelfRegControllerTest",
+      "methodName": "testCommunitiesSelfRegController",
+      "time": 55
+    },
+    {
+      "name": "CurrentDateTest",
+      "methodName": "testGetCurrentDate",
+      "time": 55
+    },
+    {
+      "name": "ExperienceControllerTest",
+      "methodName": "testGetExperiencesSuccess",
+      "time": 58
+    },
+    {
+      "name": "ForgotPasswordControllerTest",
+      "methodName": "testForgotPasswordController",
+      "time": 55
+    },
+    {
+      "name": "ModelRegistryTest",
+      "methodName": "test_embeddedSizeWordsAreNotModelEvidence",
+      "time": 70
+    },
+    {
+      "name": "ModelRegistryTest",
+      "methodName": "test_knownModelName",
+      "time": 64
+    },
+    {
+      "name": "ModelRegistryTest",
+      "methodName": "test_knownTiers",
+      "time": 64
+    },
+    {
+      "name": "ModelRegistryTest",
+      "methodName": "test_recommendedFor",
+      "time": 61
+    },
+    {
+      "name": "ModelRegistryTest",
+      "methodName": "test_specificSmallVariantsWinOverFamily",
+      "time": 64
+    },
+    {
+      "name": "ModelRegistryTest",
+      "methodName": "test_unknownModelBaseline",
+      "time": 63
+    },
+    {
+      "name": "MyProfilePageControllerTest",
+      "methodName": "testSave",
+      "time": 227
+    },
+    {
+      "name": "OhmAuditImpactServiceTest",
+      "methodName": "changedVolumeOrScopeBlocksComparison",
+      "time": 76
+    },
+    {
+      "name": "OhmAuditImpactServiceTest",
+      "methodName": "cleanInstructionsRetainResidualFootprint",
+      "time": 63
+    },
+    {
+      "name": "OhmAuditImpactServiceTest",
+      "methodName": "duplicateFlagsDoNotDuplicateCostOrSavings",
+      "time": 65
+    },
+    {
+      "name": "OhmAuditImpactServiceTest",
+      "methodName": "unavailableSourceHasNoDisplayedZeroEstimate",
+      "time": 102
+    },
+    {
+      "name": "OhmAuditorPermissionAcceptanceTest",
+      "methodName": "auditorCanReadButCannotOverwriteImportedSource",
+      "time": 1800
+    },
+    {
+      "name": "OhmAuditorPermissionAcceptanceTest",
+      "methodName": "auditorPersistsAndReadsImpactAndImmutableSource",
+      "time": 765
+    },
+    {
+      "name": "OhmConstantsTest",
+      "methodName": "test_bands",
+      "time": 71
+    },
+    {
+      "name": "OhmConstantsTest",
+      "methodName": "test_defaultVolume",
+      "time": 66
+    },
+    {
+      "name": "OhmConstantsTest",
+      "methodName": "test_happyOrFallback_values",
+      "time": 66
+    },
+    {
+      "name": "OhmConstantsTest",
+      "methodName": "test_parseOrDefault_fallbacks",
+      "time": 67
+    },
+    {
+      "name": "OhmConstantsTest",
+      "methodName": "test_partialJson_perKeyFallback",
+      "time": 67
+    },
+    {
+      "name": "OhmConstantsTest",
+      "methodName": "test_signalWeightsAndGrades",
+      "time": 71
+    },
+    {
+      "name": "OhmConstantsTest",
+      "methodName": "test_unknownModelBaseline",
+      "time": 62
+    },
+    {
+      "name": "OhmDTOTest",
+      "methodName": "test_C3_vocabularyRoundTrip",
+      "time": 59
+    },
+    {
+      "name": "OhmDTOTest",
+      "methodName": "test_agentModel_defaults",
+      "time": 57
+    },
+    {
+      "name": "OhmDTOTest",
+      "methodName": "test_remediationInput_shape",
+      "time": 56
+    },
+    {
+      "name": "OhmFootprintServiceTest",
+      "methodName": "test_C3_vocabulary",
+      "time": 62
+    },
+    {
+      "name": "OhmFootprintServiceTest",
+      "methodName": "test_assumptions_disclosed",
+      "time": 62
+    },
+    {
+      "name": "OhmFootprintServiceTest",
+      "methodName": "test_bandOrdering",
+      "time": 67
+    },
+    {
+      "name": "OhmFootprintServiceTest",
+      "methodName": "test_estimate_centralPin",
+      "time": 65
+    },
+    {
+      "name": "OhmFootprintServiceTest",
+      "methodName": "test_savings_a_fullBaseline",
+      "time": 67
+    },
+    {
+      "name": "OhmFootprintServiceTest",
+      "methodName": "test_savings_b_multiplierRatio",
+      "time": 66
+    },
+    {
+      "name": "OhmFootprintServiceTest",
+      "methodName": "test_savings_c_tokenDelta",
+      "time": 64
+    },
+    {
+      "name": "OhmFootprintServiceTest",
+      "methodName": "test_savings_d_callDelta",
+      "time": 67
+    },
+    {
+      "name": "OhmFootprintServiceTest",
+      "methodName": "test_sumAll_orgWide",
+      "time": 66
+    },
+    {
+      "name": "OhmFootprintServiceTest",
+      "methodName": "test_tokenAndMultiplierScaling",
+      "time": 68
+    },
+    {
+      "name": "OhmFootprintServiceTest",
+      "methodName": "test_unknownModel_assumed",
+      "time": 65
+    },
+    {
+      "name": "OhmFootprintServiceTest",
+      "methodName": "test_zeroCalls_noDivideByZero",
+      "time": 71
+    },
+    {
+      "name": "OhmPersistenceServiceTest",
+      "methodName": "legacyReadoutDoesNotPretendFindingCostIsTotalWorkload",
+      "time": 200
+    },
+    {
+      "name": "OhmPersistenceServiceTest",
+      "methodName": "testCreateRemediationTaskInsertsTaskAndWritesBackId",
+      "time": 253
+    },
+    {
+      "name": "OhmPersistenceServiceTest",
+      "methodName": "testCreateRemediationTaskRequiresFindingId",
+      "time": 62
+    },
+    {
+      "name": "OhmPersistenceServiceTest",
+      "methodName": "testCreateReportInsertsQueuedAndUpdateProgressAdvances",
+      "time": 103
+    },
+    {
+      "name": "OhmPersistenceServiceTest",
+      "methodName": "testLoadReadoutMapsEveryField",
+      "time": 223
+    },
+    {
+      "name": "OhmPersistenceServiceTest",
+      "methodName": "testPersistFindingsInsertsChildrenAndComputesRollups",
+      "time": 208
+    },
+    {
+      "name": "OhmPersistenceServiceTest",
+      "methodName": "testPersistFindingsWithNoFindingsStillCompletesReport",
+      "time": 170
+    },
+    {
+      "name": "OhmPersistenceServiceTest",
+      "methodName": "testSaveDiscoveryGraphSerializesModel",
+      "time": 113
+    },
+    {
+      "name": "OhmPersistenceServiceTest",
+      "methodName": "testWriteAgentNarrativesEmptyOrForeignIdsReturnsZero",
+      "time": 214
+    },
+    {
+      "name": "OhmPersistenceServiceTest",
+      "methodName": "testWriteAgentNarrativesUpdatesMatchingFindings",
+      "time": 223
+    },
+    {
+      "name": "OhmRecommendationServiceTest",
+      "methodName": "test_bulk",
+      "time": 70
+    },
+    {
+      "name": "OhmRecommendationServiceTest",
+      "methodName": "test_instructionBloat",
+      "time": 68
+    },
+    {
+      "name": "OhmRecommendationServiceTest",
+      "methodName": "test_llmWhereDeterministic",
+      "time": 66
+    },
+    {
+      "name": "OhmRecommendationServiceTest",
+      "methodName": "test_modelRightsizing",
+      "time": 65
+    },
+    {
+      "name": "OhmRecommendationServiceTest",
+      "methodName": "test_modelRightsizing_blankTarget_doesNotInventTarget",
+      "time": 64
+    },
+    {
+      "name": "OhmRecommendationServiceTest",
+      "methodName": "test_nullFinding_safe",
+      "time": 61
+    },
+    {
+      "name": "OhmRecommendationServiceTest",
+      "methodName": "test_redundantCalls",
+      "time": 68
+    },
+    {
+      "name": "OhmRecommendationServiceTest",
+      "methodName": "test_redundant_blankTarget_derivesDefault",
+      "time": 73
+    },
+    {
+      "name": "OhmRecommendationServiceTest",
+      "methodName": "test_unknownModelCannotBeDownsizedFromAMultiplier",
+      "time": 67
+    },
+    {
+      "name": "OhmSalesforceApiTest",
+      "methodName": "authFailuresDoNotExposeServerSecrets",
+      "time": 61
+    },
+    {
+      "name": "OhmSalesforceApiTest",
+      "methodName": "authenticatesSoapAndReusesTransactionToken",
+      "time": 62
+    },
+    {
+      "name": "OhmSalesforceApiTest",
+      "methodName": "onlyAllowsMetadataReadOperationsAndSameOrgPaths",
+      "time": 66
+    },
+    {
+      "name": "OhmSalesforceApiTest",
+      "methodName": "oversizedSourcesFailWithoutTruncation",
+      "time": 59
+    },
+    {
+      "name": "OhmSalesforceApiTest",
+      "methodName": "readsJsonWithBearerToken",
+      "time": 56
+    },
+    {
+      "name": "OhmSalesforceApiTest",
+      "methodName": "soapFaultIsExplicitAndDoesNotExposeBody",
+      "time": 56
+    },
+    {
+      "name": "OhmSalesforceApiTest",
+      "methodName": "throttlingIsRetryableButPermissionsAreNot",
+      "time": 57
+    },
+    {
+      "name": "OhmSeverityTest",
+      "methodName": "test_bandCutoffs",
+      "time": 56
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_a_bulk_noGovernor",
+      "time": 89
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_a_generatePromptResponse_fires",
+      "time": 55
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_a_informationDoesNotMatchFormat",
+      "time": 55
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_a_malformed_empty",
+      "time": 56
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_a_negative_apex",
+      "time": 59
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_a_negative_noLexicon",
+      "time": 58
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_a_positive_oneHit",
+      "time": 58
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_a_positive_twoHits_high",
+      "time": 58
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_a_wholeWordAndApiNameBoundaries",
+      "time": 59
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_b_boundary_overshootOne",
+      "time": 64
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_b_degrade_nullModel",
+      "time": 63
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_b_informationIsNotTrivialAndMiniIsNotOversized",
+      "time": 65
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_b_negative_rightSized",
+      "time": 66
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_b_neverCallout_bulk",
+      "time": 119
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_b_positive_largeOnTrivial",
+      "time": 63
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_b_unknownOrAssumedModelStaysInformational",
+      "time": 62
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_c_agentThreshold",
+      "time": 61
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_c_boundary_exactlySoft_noFire",
+      "time": 60
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_c_boundary_softPlusOne_fires",
+      "time": 60
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_c_bulk",
+      "time": 82
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_c_descriptionsAreNotInstructionSources",
+      "time": 70
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_c_negative_short",
+      "time": 63
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_c_positive_excessNotTotal",
+      "time": 61
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_c_sourceInstructionsOverrideScopeAndCarryModel",
+      "time": 64
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_d_degrade_malformed",
+      "time": 59
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_d_deterministicCycleDoesNotImplicateSeparatePrompt",
+      "time": 58
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_d_emptyGraph_noThrow",
+      "time": 60
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_d_negative_single",
+      "time": 62
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_d_positive_cycle",
+      "time": 59
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_d_positive_fixture",
+      "time": 57
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_d_promptCycleThroughDeterministicNodesIsReviewed",
+      "time": 54
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_d_sameTargetInSeparateTurnsIsNotRedundant",
+      "time": 57
+    },
+    {
+      "name": "OhmSignalDetectorTest",
+      "methodName": "test_d_unknownKeys_ignored",
+      "time": 57
+    },
+    {
+      "name": "OhmSignalServiceTest",
+      "methodName": "test_analyze_empty_noException",
+      "time": 60
+    },
+    {
+      "name": "OhmSignalServiceTest",
+      "methodName": "test_analyze_fourSignalFixture_lowGrade",
+      "time": 60
+    },
+    {
+      "name": "OhmSignalServiceTest",
+      "methodName": "test_rate_cleanModel_gradeA",
+      "time": 60
+    },
+    {
+      "name": "OhmSignalServiceTest",
+      "methodName": "test_rate_mixedFindings_formula",
+      "time": 61
+    },
+    {
+      "name": "OhmSpikeActionTest",
+      "methodName": "ping_echoesInputWithPongPrefix",
+      "time": 56
+    },
+    {
+      "name": "OhmSpikeActionTest",
+      "methodName": "ping_handlesBulkRequests",
+      "time": 58
+    },
+    {
+      "name": "OhmVolumeProviderTest",
+      "methodName": "test_defaultVolume_and_annualCalls",
+      "time": 61
+    },
+    {
+      "name": "OhmVolumeProviderTest",
+      "methodName": "test_scrubberLinearity",
+      "time": 61
+    },
+    {
+      "name": "OhmVolumeProviderTest",
+      "methodName": "test_withCallsPerTurn",
+      "time": 67
+    },
+    {
+      "name": "PersonalizedGuestExperiencesTest",
+      "methodName": "testPersonalizedGuestExperiencesSuccess",
+      "time": 61
+    },
+    {
+      "name": "SiteLoginControllerTest",
+      "methodName": "testSiteLoginController",
+      "time": 56
+    },
+    {
+      "name": "SiteRegisterControllerTest",
+      "methodName": "testRegistration",
+      "time": 56
+    },
+    {
+      "name": "TokenEstimatorTest",
+      "methodName": "test_approxTokens",
+      "time": 100
+    },
+    {
+      "name": "TokenEstimatorTest",
+      "methodName": "test_canonical5200",
+      "time": 57
+    },
+    {
+      "name": "TokenEstimatorTest",
+      "methodName": "test_promptTurnTokens_noThrow",
+      "time": 67
+    },
+    {
+      "name": "WeatherAlertServiceTest",
+      "methodName": "testSendAlertBulkRequests",
+      "time": 59
+    },
+    {
+      "name": "WeatherAlertServiceTest",
+      "methodName": "testSendAlertSingleRequest",
+      "time": 58
+    },
+    {
+      "name": "WeatherAlertServiceTest",
+      "methodName": "testSendAlertWithEmptyMessage",
+      "time": 58
+    },
+    {
+      "name": "WeatherServiceTest",
+      "methodName": "getResortWeather_returnsMockData",
+      "time": 59
+    }
+  ],
+  "testFailures": []
+}

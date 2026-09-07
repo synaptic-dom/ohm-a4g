@@ -1,0 +1,155 @@
+Browser tab: 2, Title: "Ohm: Trim Instructions → 500 tokens | Salesforce", URL: "https://innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/r/Task/00TEc00000a9bLNMAY/view".
+1 AXWebArea Ohm: Trim Instructions → 500 tokens | Salesforce, URL: innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/r/Task/00TEc00000a9bLNMAY/view
+	2 container
+		3 container
+			4 container
+				5 container oneHeader
+					6 link Description: Skip to Navigation, Value: javascript:void(0);
+					7 link Description: Skip to Main Content, Value: javascript:void(0);
+					8 container
+						9 button (collapsed) Description: Toggle Panel, Secondary Actions: Expand
+							10 text Menu
+						11 text Scratch Org
+						12 pop up button (collapsed) Show menu, Secondary Actions: Expand
+							13 text Show menu
+					14 button Search
+					15 container Global Header
+						16 content list
+							17 container
+								18 text EPT:
+								19 link Description: 1.84 s, Help: EPT, Value: javascript:void(0);
+								20 container
+									21 text ART 0 s
+								22 link Description: 602.07 KB, Value: javascript:void(0);
+							23 container
+								24 checkbox Description: Add favorite, Value: 0
+									25 container
+										26 container Add favorite, ID: tt-for-6:202;a
+											27 text Add favorite
+								28 button Favorites list
+									29 container
+										30 container Favorites list, ID: tt-for-30:202;a
+											31 text Favorites list
+							32 pop up button (collapsed) Global Actions, Secondary Actions: Expand
+								33 container
+									34 container Global Actions, ID: tt-for-7:1054;a
+										35 text Global Actions
+							36 pop up button Guidance Center
+								37 container
+									38 container Guidance Center, ID: tt-for-1403:0
+										39 text Guidance Center
+							40 pop up button Salesforce Help
+								41 container
+									42 container Salesforce Help, ID: tt-for-116:202;a
+										43 text Salesforce Help
+							44 pop up button (collapsed) Setup, Secondary Actions: Expand
+								45 container
+									46 container Setup, ID: tt-for-159:202;a
+										47 text Setup
+							48 container
+								49 pop up button 1 Notifications
+									50 container
+										51 text 1
+										52 container Notifications, ID: tt-for-64:202;a
+											53 text Notifications
+								54 text 1 new notifications
+							55 pop up button View profile
+								56 container
+									57 container View profile, ID: tt-for-90:202;a
+										58 text View profile
+				59 container
+					60 container App
+						61 pop up button (collapsed) App Launcher, Secondary Actions: Expand
+							62 container
+								63 text App Launcher
+					64 heading Ohm, Value: 1
+						65 text Ohm
+					66 container Global
+						67 content list
+							68 link Description: Ohm Audit, Value: innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/n/Ohm_Audit
+							69 container
+								70 link Description: * Ohm: Trim Instructions → 500 tokens, Help: Ohm: Trim Instructions → 500 tokens, Value: innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/r/Task/00TEc00000a9bLNMAY/view
+								71 pop up button (collapsed) Ohm: Trim Instructions → 500 tokens List, Secondary Actions: Expand
+									72 text Ohm: Trim Instructions → 500 tokens List
+								73 button Close tab
+									74 text Close tab
+							75 button Edit nav items, Help: Personalize your nav bar
+				76 container
+					77 container Highlights panel header
+						78 container
+							79 heading Task Ohm: Trim Instructions → 500 tokens, Value: 1
+								80 text Task
+								81 text Ohm: Trim Instructions → 500 tokens
+							82 button Completed
+								83 text Completed
+							84 content list
+								85 button Edit Comments
+									86 text Edit Comments
+								87 button Change Date
+									88 text Change Date
+								89 button Create Follow-Up Task
+									90 text Create Follow-Up Task
+								91 pop up button (collapsed) Show 22 more actions, Secondary Actions: Expand
+									92 text Show 22 more actions
+						93 text Name
+						94 text Related To
+						95 link Description: AUDIT-00004, Value: innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/r/a00Ec00000lpuukIAA/view
+					96 heading Tabs, Value: 2
+						97 text Tabs
+					98 tab group
+						99 tab (selected, settable, boolean) Details, Value: 1
+						100 tab (selectable, settable, boolean) Related, Value: 0
+					101 container
+						102 heading Details, Value: 2
+							103 text Details
+						104 content list
+							105 container
+								106 text Assigned To
+								107 container
+									108 link Description: User User, Value: innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/r/005Ec00000deLvLIAU/view
+								109 button Edit Assigned To
+							110 container
+								111 text Status Completed
+								112 button Edit Status
+							113 container
+								114 text Subject Ohm: Trim Instructions → 500 tokens
+								115 button Edit Subject
+							116 container
+								117 text Name
+								118 button Edit Name
+							119 container
+								120 text Due Date
+								121 text 9/8/2026
+								122 button Edit Due Date
+							123 container
+								124 text Related To
+								125 link Description: AUDIT-00004, Value: innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/r/a00Ec00000lpuukIAA/view
+								126 button Edit Related To
+							127 container
+								128 text Priority Normal
+								129 button Edit Priority
+						130 content list
+							131 container
+								132 text Created By
+								133 container
+									134 link Description: User User, Value: innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/r/005Ec00000deLvLIAU/view
+								135 text , 
+								136 text 9/6/2026, 6:09 PM
+							137 container
+								138 text Last Modified By
+								139 container
+									140 link Description: User User, Value: innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/r/005Ec00000deLvLIAU/view
+								141 text , 
+								142 text 9/6/2026, 6:35 PM
+						143 content list
+							144 container
+								145 text Comments The instruction block exceeds the review budget of approximately 500 tokens. Propose a shorter version, preserve required rules and action branches, then validate behavior. The displayed reduction models a trim to that budget at the stated usage volume.
+
+Estimated annual energy savings (central): 30865.8600 Wh (modeled, telemetryBacked=false).
+
+Source finding: a01Ec00002XJzaRIAT
+
+Audit report: a00Ec00000lpuukIAA
+								146 button Edit Comments
+
+The focused UI element is 2 container

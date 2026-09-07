@@ -1,47 +1,21 @@
 /**
  * OhmAuditController — the unified @AuraEnabled door (SPEC §S.10, canon C5).
- * Sync pipeline: createReport → discover → saveDiscoveryGraph → analyze → footprint →
+ * Async pipeline: createReport → retrieve published source → validate → analyze → footprint →
  * recommendations → rate → persistFindings → Complete. reportId == runId.
  * "One service, two doors": every method delegates to the same services the agent
  * actions call — the doors can never diverge.
  */
 public with sharing class OhmAuditController {
 
-    /** The full synchronous audit pipeline. Returns the reportId (== runId). */
+    /** Queue an org-wide audit. Returns the durable reportId (== runId) before acquisition starts. */
     @AuraEnabled
     public static Id startAudit() {
-        OhmPersistenceService persistence = new OhmPersistenceService();
-        Id reportId = persistence.createReport();
         try {
-            persistence.updateProgress(reportId, 'Discovering', 'Discovering agentic work', 10);
-            OhmDTO.AgentModel graph = new OhmDiscoveryService().discover();
-            persistence.saveDiscoveryGraph(reportId, graph);
-
-            persistence.updateProgress(reportId, 'Analyzing', 'Running efficiency signals', 40);
-            OhmSignalService signals = new OhmSignalService();
-            List<OhmDTO.Finding> findings = signals.analyze(graph);
-
-            persistence.updateProgress(reportId, 'Analyzing', 'Estimating footprint and savings', 70);
-            OhmFootprintService footprint = new OhmFootprintService();
-            OhmDTO.VolumeInput volume = new AssumptionVolumeProvider().defaultVolume();
-            for (OhmDTO.Finding f : findings) {
-                f.footprint = footprint.estimateForArtifact(f, volume);
-            }
-            // attachRecommendations fills fixType/recommendationText and savings (savingsFor)
-            new OhmRecommendationService().attachRecommendations(findings);
-
-            OhmDTO.EfficiencyResult rating = signals.rate(graph, findings);
-            persistence.persistFindings(reportId, graph, findings, rating);
-            persistence.updateProgress(reportId, 'Complete', 'Audit complete', 100);
+            Id reportId = new OhmPersistenceService().createReport();
+            OhmAuditCoordinator.enqueue(reportId);
             return reportId;
-        } catch (Exception e) {
-            try {
-                persistence.updateProgress(reportId, 'Failed',
-                    ('Audit failed: ' + e.getMessage()), 100);
-            } catch (Exception ignored) {
-                // best-effort failure stamp; surface the original error below
-            }
-            throw new AuraHandledException('Audit failed: ' + e.getMessage());
+        } catch (Exception ex) {
+            throw new AuraHandledException('Could not start audit: ' + ex.getMessage());
         }
     }
 
@@ -81,6 +55,32 @@ public with sharing class OhmAuditController {
     @AuraEnabled
     public static Id createRemediationTask(OhmDTO.RemediationInputDTO input) {
         try {
+            return new OhmPersistenceService().createRemediationTask(input);
+        } catch (Exception e) {
+            throw new AuraHandledException('Could not create remediation task: ' + e.getMessage());
+        }
+    }
+
+    /** Primitive LWC parameters avoid inner-class Aura input deserialization limitations.
+     * Recommendation content and report ownership are always read from the persisted finding.
+     */
+    @AuraEnabled
+    public static Id createFindingRemediationTask(Id findingId, String note) {
+        if (findingId == null) { throw new AuraHandledException('A saved finding is required to create a remediation Task.'); }
+        try {
+            Finding__c finding = [
+                SELECT Id, Agent_Audit_Report__c, Fix_Type__c, Recommended_Target__c,
+                       Recommendation_Text__c, Annual_Energy_Savings_Wh__c
+                FROM Finding__c WHERE Id = :findingId LIMIT 1
+            ];
+            OhmDTO.RemediationInputDTO input = new OhmDTO.RemediationInputDTO();
+            input.findingId = finding.Id;
+            input.reportId = finding.Agent_Audit_Report__c;
+            input.fixType = finding.Fix_Type__c;
+            input.recommendedTarget = finding.Recommended_Target__c;
+            input.recommendationText = finding.Recommendation_Text__c;
+            input.estimatedSavingsCentralWh = finding.Annual_Energy_Savings_Wh__c;
+            input.note = note;
             return new OhmPersistenceService().createRemediationTask(input);
         } catch (Exception e) {
             throw new AuraHandledException('Could not create remediation task: ' + e.getMessage());
@@ -127,7 +127,8 @@ public with sharing class OhmAuditController {
             if (!plannerIds.isEmpty()) {
                 for (Agent_Audit_Report__c r : [
                     SELECT Id, Target_Planner_Id__c, Efficiency_Grade__c, Efficiency_Score__c,
-                           Total_Annual_Energy_Wh__c, Run_Timestamp__c, CreatedDate
+                           Modeled_Energy_Wh__c, Modeled_Energy_Wh_Low__c, Modeled_Energy_Wh_High__c, Impact_Snapshot__c,
+                           Coverage_Status__c, Run_Timestamp__c, CreatedDate, Review_Summary__c
                     FROM Agent_Audit_Report__c
                     WHERE Target_Type__c = 'Process'
                       AND Target_Planner_Id__c IN :plannerIds
@@ -147,10 +148,14 @@ public with sharing class OhmAuditController {
                     continue;
                 }
                 p.audited = true;
-                p.grade = r.Efficiency_Grade__c;
-                p.score = (r.Efficiency_Score__c == null) ? null : Integer.valueOf(r.Efficiency_Score__c);
-                p.energyWhCentral = r.Total_Annual_Energy_Wh__c;
+                p.grade = r.Coverage_Status__c == 'Complete' ? r.Efficiency_Grade__c : 'IN';
+                p.score = (r.Coverage_Status__c != 'Complete' || r.Efficiency_Score__c == null) ? null : Integer.valueOf(r.Efficiency_Score__c);
+                p.energyWhCentral = r.Modeled_Energy_Wh__c;
                 p.latestReportId = r.Id;
+                p.reviewJson = r.Review_Summary__c;
+                p.energyWhLow = r.Modeled_Energy_Wh_Low__c;
+                p.energyWhHigh = r.Modeled_Energy_Wh_High__c;
+                OhmAuditImpactService.applyBands(p, r.Impact_Snapshot__c);
                 p.lastAudited = r.Run_Timestamp__c;
             }
             return fleet;
@@ -166,55 +171,18 @@ public with sharing class OhmAuditController {
      */
     @AuraEnabled
     public static Id auditProcess(Id plannerId) {
-        if (plannerId == null) {
-            throw new AuraHandledException('auditProcess requires a plannerId.');
-        }
-        OhmPersistenceService persistence = new OhmPersistenceService();
-        Id reportId;
+        if (plannerId == null) throw new AuraHandledException('auditProcess requires a plannerId.');
         try {
-            OhmDiscoveryService discovery = new OhmDiscoveryService();
-            OhmDTO.AgentModel graph = discovery.discoverProcess(plannerId);
-
-            String devName = null;
-            if (graph != null && graph.agentsById != null) {
-                OhmDTO.AgentNode agent = graph.agentsById.get(String.valueOf(plannerId));
-                if (agent != null) {
-                    devName = agent.developerName;
-                }
+            OhmDTO.ProcessSummaryDTO identity = new OhmDiscoveryService().resolveIdentity(plannerId);
+            if (identity == null) throw new AuraHandledException('Published planner is unavailable. Refresh the fleet.');
+            if (!OhmDiscoveryService.isAgentScriptCandidate(identity.plannerApiName)) {
+                throw new OhmDiscoveryService.AuditScopeException(OhmDiscoveryService.AGENT_SCRIPT_SCOPE_MESSAGE);
             }
-
-            reportId = persistence.createProcessReport(plannerId, devName);
-            persistence.saveDiscoveryGraph(reportId, graph);
-
-            OhmSignalService signals = new OhmSignalService();
-            List<OhmDTO.Finding> findings = signals.analyze(graph);
-
-            OhmFootprintService footprint = new OhmFootprintService();
-            OhmDTO.VolumeInput volume = new AssumptionVolumeProvider().defaultVolume();
-            for (OhmDTO.Finding f : findings) {
-                f.footprint = footprint.estimateForArtifact(f, volume);
-            }
-            // attachRecommendations fills fixType/recommendationText and savings (savingsFor)
-            new OhmRecommendationService().attachRecommendations(findings);
-
-            OhmDTO.EfficiencyResult rating = signals.rate(graph, findings);
-            persistence.persistFindings(reportId, graph, findings, rating);
-
-            // Wave 5 — capture the raw instructions (topic Scope / agent+action instructions)
-            // behind each INSTRUCTION_BLOAT finding so the before/after diff can show pre-trim
-            // text. Bulk-safe: build the map in memory, one DML update, no SOQL/DML in loop.
-            captureInstructionSnapshots(graph, findings);
+            Id reportId = new OhmPersistenceService().createProcessReport(plannerId, identity.plannerApiName);
+            OhmAuditCoordinator.enqueue(reportId);
             return reportId;
-        } catch (Exception e) {
-            if (reportId != null) {
-                try {
-                    persistence.updateProgress(reportId, 'Failed',
-                        ('Audit failed: ' + e.getMessage()), 100);
-                } catch (Exception ignored) {
-                    // best-effort failure stamp
-                }
-            }
-            throw new AuraHandledException('Process audit failed: ' + e.getMessage());
+        } catch (Exception ex) {
+            throw new AuraHandledException('Could not start process audit: ' + ex.getMessage());
         }
     }
 
@@ -238,6 +206,12 @@ public with sharing class OhmAuditController {
             detail.plannerId = plannerId;
             detail.findings = new List<OhmDTO.FindingDTO>();
             detail.nodes = new List<OhmDTO.NodeDTO>();
+            detail.coverageStatus = graph.coverageComplete == true ? 'Complete' : 'Incomplete';
+            detail.coverageWarnings = new List<String>();
+            detail.coverageWarnings.addAll(graph.coverageWarnings);
+            detail.coverageWarnings.addAll(graph.discoveryErrors);
+            detail.detectorCoverage = graph.detectorCoverage;
+            detail.sourceCurrent = true;
 
             // identity + domain via the cheap single-planner resolver (G12: no full-fleet scan)
             String key = String.valueOf(plannerId);
@@ -251,7 +225,9 @@ public with sharing class OhmAuditController {
             // latest process report → grade/score/energy + findings
             Agent_Audit_Report__c rep;
             for (Agent_Audit_Report__c r : [
-                SELECT Id, Efficiency_Grade__c, Efficiency_Score__c, Total_Annual_Energy_Wh__c
+                SELECT Id, Efficiency_Grade__c, Efficiency_Score__c, Modeled_Energy_Wh__c,
+                       Modeled_Energy_Wh_Low__c, Modeled_Energy_Wh_High__c, Impact_Snapshot__c, Coverage_Status__c,
+                       Discovery_Graph_Json__c, Review_Result__c
                 FROM Agent_Audit_Report__c
                 WHERE Target_Type__c = 'Process' AND Target_Planner_Id__c = :key
                   AND Run_Status__c = 'Complete'
@@ -265,9 +241,18 @@ public with sharing class OhmAuditController {
             Map<String, OhmDTO.FindingDTO> findingByTypeApi = new Map<String, OhmDTO.FindingDTO>();
             if (rep != null) {
                 detail.reportId = rep.Id;
+                detail.reviewJson = rep.Review_Result__c;
                 detail.grade = rep.Efficiency_Grade__c;
                 detail.score = (rep.Efficiency_Score__c == null) ? null : Integer.valueOf(rep.Efficiency_Score__c);
-                detail.energyWhCentral = rep.Total_Annual_Energy_Wh__c;
+                detail.energyWhCentral = rep.Modeled_Energy_Wh__c;
+                detail.energyWhLow = rep.Modeled_Energy_Wh_Low__c;
+                detail.energyWhHigh = rep.Modeled_Energy_Wh_High__c;
+                detail.impactScope = OhmAuditImpactService.SCOPE;
+                if (String.isNotBlank(rep.Impact_Snapshot__c)) {
+                    OhmAuditImpactService.Snapshot impact = OhmAuditImpactService.readSnapshot(rep.Impact_Snapshot__c);
+                    detail.impactAssumptions = impact.assumptionSummary;
+                    OhmAuditImpactService.applyBands(detail, rep.Impact_Snapshot__c);
+                }
                 OhmDTO.AuditReadoutDTO readout = new OhmPersistenceService().loadReadout(rep.Id);
                 if (readout != null && readout.findings != null) {
                     detail.findings = readout.findings;
@@ -295,7 +280,12 @@ public with sharing class OhmAuditController {
                         n.apiName = a.developerName;
                         n.label = a.masterLabel;
                         n.parentId = null;
-                        n.instructions = joinInstructions(a.description, a.capabilities);
+                        n.instructions = a.instructions;
+                        n.artifactKey = OhmPersistenceService.artifactKey(OhmPersistenceService.logicalProcessKey(a.developerName, a.id), 'Agent', a.developerName, null);
+                        n.sourceKind = a.sourceKind; n.sourceVersion = a.sourceVersion;
+                        n.sourceHash = a.sourceHash; n.sourcePath = a.sourcePath;
+                        n.sourceApiName = a.sourceApiName; n.sourceVersionIdentifier = a.sourceVersionIdentifier;
+                        n.sourceRetrievedAt = a.sourceRetrievedAt; n.sourceBindingVerified = a.sourceBindingVerified;
                         n.tokenCount = TokenEstimator.approxTokens(n.instructions);
                         applyFindingToNode(n, findingByToolingId, findingByTypeApi);
                         detail.nodes.add(n);
@@ -311,6 +301,11 @@ public with sharing class OhmAuditController {
                         n.label = t.masterLabel;
                         n.parentId = t.plannerId;
                         n.instructions = t.scope;
+                        n.artifactKey = OhmPersistenceService.artifactKey(OhmPersistenceService.logicalProcessKey(detail.plannerApiName, key), 'Topic', t.developerName, null);
+                        n.sourceKind = t.sourceKind; n.sourceVersion = t.sourceVersion;
+                        n.sourceHash = t.sourceHash; n.sourcePath = t.sourcePath;
+                        n.sourceApiName = t.sourceApiName; n.sourceVersionIdentifier = t.sourceVersionIdentifier;
+                        n.sourceRetrievedAt = t.sourceRetrievedAt; n.sourceBindingVerified = t.sourceBindingVerified;
                         n.tokenCount = TokenEstimator.approxTokens(t.scope);
                         applyFindingToNode(n, findingByToolingId, findingByTypeApi);
                         detail.nodes.add(n);
@@ -326,11 +321,38 @@ public with sharing class OhmAuditController {
                         n.label = a.masterLabel;
                         n.parentId = (a.pluginId != null) ? a.pluginId : a.plannerId;
                         n.invocationTargetType = a.invocationTargetType;
-                        n.instructions = a.description;
-                        n.tokenCount = TokenEstimator.approxTokens(a.description);
+                        n.instructions = a.instructions;
+                        n.artifactKey = OhmPersistenceService.artifactKey(OhmPersistenceService.logicalProcessKey(detail.plannerApiName, key), 'Action', a.developerName, null);
+                        n.sourceKind = a.sourceKind; n.sourceVersion = a.sourceVersion;
+                        n.sourceHash = a.sourceHash; n.sourcePath = a.sourcePath;
+                        n.sourceApiName = a.sourceApiName; n.sourceVersionIdentifier = a.sourceVersionIdentifier;
+                        n.sourceRetrievedAt = a.sourceRetrievedAt; n.sourceBindingVerified = a.sourceBindingVerified;
+                        n.tokenCount = TokenEstimator.approxTokens(n.instructions);
                         applyFindingToNode(n, findingByToolingId, findingByTypeApi);
                         detail.nodes.add(n);
                     }
+                }
+            }
+            if (rep != null) {
+                Map<String, Audit_Artifact_Snapshot__c> snapshots = OhmPersistenceService.loadSnapshots(new Set<Id>{rep.Id}).get(rep.Id);
+                for (OhmDTO.NodeDTO node : detail.nodes) {
+                    if (node.instructions == null) continue;
+                    Audit_Artifact_Snapshot__c prior = snapshots == null ? null : snapshots.get(node.artifactKey);
+                    String currentHash = OhmPersistenceService.sha256(node.instructions);
+                    if (prior == null || prior.Source_Hash__c != currentHash) detail.sourceCurrent = false;
+                }
+                if (String.isNotBlank(rep.Discovery_Graph_Json__c)) {
+                    OhmDTO.AgentModel priorGraph = (OhmDTO.AgentModel) JSON.deserialize(rep.Discovery_Graph_Json__c, OhmDTO.AgentModel.class);
+                    if (priorGraph.metadataFingerprint != graph.metadataFingerprint) detail.sourceCurrent = false;
+                }
+                if (!detail.sourceCurrent) {
+                    detail.reviewJson = null;
+                    detail.coverageWarnings.add('Source changed since this audit. Re-audit before using its findings, estimates or a rewrite.');
+                    detail.coverageStatus = 'Incomplete';
+                    detail.grade = 'IN'; detail.score = null; detail.energyWhCentral = null;
+                    detail.energyWhLow = null; detail.energyWhHigh = null;
+                    detail.findings.clear();
+                    for (OhmDTO.NodeDTO node : detail.nodes) { node.wasteful = false; node.signalType = null; node.severity = null; }
                 }
             }
             return detail;
@@ -353,110 +375,97 @@ public with sharing class OhmAuditController {
     @AuraEnabled(cacheable=false)
     public static List<OhmDTO.WorklistItemDTO> getFindings(String statusFilter, String severityFilter) {
         try {
-            // one bulk query. Process-scoped reports FIRST (so a process row wins over the fleet-scoped
-            // copy of the same finding — better process label), then newest report first within each.
+            // Select reports first: a clean report has no child rows but still supersedes old work.
+            Map<String, Id> latestReportByProcess = new Map<String, Id>();
+            Id latestFleetReport;
+            for (Agent_Audit_Report__c report : [
+                SELECT Id, Target_Type__c, Target_Planner_Id__c, Target_Planner_Api_Name__c
+                FROM Agent_Audit_Report__c WHERE Run_Status__c = 'Complete'
+                ORDER BY Run_Timestamp__c DESC NULLS LAST, CreatedDate DESC, Id DESC
+            ]) {
+                if (report.Target_Type__c == 'Process') {
+                    String key = OhmPersistenceService.logicalProcessKey(report.Target_Planner_Api_Name__c, report.Target_Planner_Id__c);
+                    if (String.isNotBlank(key) && !latestReportByProcess.containsKey(key)) {
+                        latestReportByProcess.put(key, report.Id);
+                    }
+                } else if (latestFleetReport == null) { latestFleetReport = report.Id; }
+            }
             List<Finding__c> rows = [
-                SELECT Id, Signal_Type__c, Severity__c, Confidence__c, Artifact_Label__c,
+                SELECT Id, Signal_Type__c, Severity__c, Confidence__c, Artifact_Label__c, Artifact_Api_Name__c,
+                       Artifact_Type__c, Parent_Topic_Api_Name__c, Process_Key__c, Artifact_Key__c, Issue_Key__c,
                        Annual_Energy_Savings_Wh_Low__c, Annual_Energy_Savings_Wh__c, Annual_Energy_Savings_Wh_High__c,
                        Fix_Type__c, Recommended_Target__c, Recommendation_Text__c, Effort__c,
                        Finding_Status__c, Remediation_Task_Id__c, Parent_Agent_Api_Name__c,
                        Agent_Audit_Report__c, Agent_Audit_Report__r.Target_Type__c,
-                       Agent_Audit_Report__r.Target_Planner_Id__c, Agent_Audit_Report__r.Target_Planner_Api_Name__c,
-                       Agent_Audit_Report__r.CreatedDate
-                FROM Finding__c
-                ORDER BY Agent_Audit_Report__r.Target_Type__c DESC NULLS LAST, Agent_Audit_Report__r.CreatedDate DESC, CreatedDate DESC
+                       Agent_Audit_Report__r.Target_Planner_Id__c, Agent_Audit_Report__r.Target_Planner_Api_Name__c
+                FROM Finding__c WHERE Agent_Audit_Report__r.Run_Status__c = 'Complete'
+                ORDER BY Agent_Audit_Report__r.Target_Type__c DESC NULLS LAST,
+                         Agent_Audit_Report__r.Run_Timestamp__c DESC NULLS LAST,
+                         Agent_Audit_Report__r.CreatedDate DESC, CreatedDate DESC, Id DESC
             ];
-
-            // pass 1: latest process report id per planner (rows are newest-first, so first wins)
-            Map<String, Id> latestReportByPlanner = new Map<String, Id>();
-            for (Finding__c f : rows) {
-                Agent_Audit_Report__c rep = f.Agent_Audit_Report__r;
-                if (rep == null || rep.Target_Type__c != 'Process') { continue; }
-                String pk = rep.Target_Planner_Id__c;
-                if (String.isBlank(pk)) { continue; }
-                if (!latestReportByPlanner.containsKey(pk)) {
-                    latestReportByPlanner.put(pk, f.Agent_Audit_Report__c);
-                }
+            // Compatibility for historic reports without stable keys: retain the last linked
+            // Task while the latest report governs whether the issue still exists.
+            Map<String, Finding__c> legacyState = new Map<String, Finding__c>();
+            for (Finding__c row : rows) {
+                String key = OhmRemediationLifecycle.keyOf(row);
+                if (String.isBlank(row.Issue_Key__c) && String.isNotBlank(row.Remediation_Task_Id__c)
+                    && !legacyState.containsKey(key)) { legacyState.put(key, row); }
             }
-
-            // pass 2: keep only latest-per-planner (Process) + all Fleet, then dedup newest-wins
             List<OhmDTO.WorklistItemDTO> items = new List<OhmDTO.WorklistItemDTO>();
             Set<String> seenKeys = new Set<String>();
-            Set<String> taskIds = new Set<String>();
-            for (Finding__c f : rows) {
-                Agent_Audit_Report__c rep = f.Agent_Audit_Report__r;
-                String plannerApiName = null;
-                if (rep != null) {
-                    if (rep.Target_Type__c == 'Process') {
-                        String pk = rep.Target_Planner_Id__c;
-                        if (String.isNotBlank(pk) && latestReportByPlanner.get(pk) != f.Agent_Audit_Report__c) {
-                            continue; // stale re-audit
-                        }
-                        plannerApiName = rep.Target_Planner_Api_Name__c;
-                    }
-                }
-                if (String.isBlank(plannerApiName)) { plannerApiName = f.Parent_Agent_Api_Name__c; }
-
-                // Dedup on (planner + artifact label + signal), independent of which report scope
-                // surfaced it — the same finding appears under both a Process report and the Fleet report
-                // (same plannerApiName, so it still collapses). G6: the planner is IN the key so two
-                // DIFFERENT planners that happen to share an artifact label + signal are NOT collapsed
-                // (previously the second planner's finding vanished). Process-scoped rows are ordered first
-                // (Target_Type DESC), so a process row wins and keeps its richer process label.
-                String dedupKey = (String.isBlank(plannerApiName) ? '' : plannerApiName.toLowerCase())
-                    + '|' + (f.Artifact_Label__c == null ? '' : f.Artifact_Label__c.toLowerCase())
-                    + '|' + (f.Signal_Type__c == null ? '' : f.Signal_Type__c);
-                if (seenKeys.contains(dedupKey)) { continue; }
-                seenKeys.add(dedupKey);
-
+            Set<Id> taskIds = new Set<Id>();
+            for (Finding__c row : rows) {
+                String processKey = OhmRemediationLifecycle.processOf(row);
+                Id authoritativeReport = latestReportByProcess.get(processKey);
+                if (authoritativeReport != null && authoritativeReport != row.Agent_Audit_Report__c) { continue; }
+                if (authoritativeReport == null && row.Agent_Audit_Report__r.Target_Type__c != 'Process'
+                    && row.Agent_Audit_Report__c != latestFleetReport) { continue; }
+                String key = OhmRemediationLifecycle.keyOf(row);
+                if (seenKeys.contains(key)) { continue; }
+                seenKeys.add(key);
+                Finding__c state = row;
+                if (String.isBlank(row.Issue_Key__c) && String.isBlank(row.Remediation_Task_Id__c)
+                    && legacyState.containsKey(key)) { state = legacyState.get(key); }
+                String plannerName = row.Agent_Audit_Report__r.Target_Type__c == 'Process'
+                    ? row.Agent_Audit_Report__r.Target_Planner_Api_Name__c : row.Parent_Agent_Api_Name__c;
                 OhmDTO.WorklistItemDTO item = new OhmDTO.WorklistItemDTO();
-                item.findingId = f.Id;
-                item.signal = f.Signal_Type__c;
-                item.severity = f.Severity__c;
-                item.confidence = f.Confidence__c;
-                item.plannerApiName = plannerApiName;
-                item.processLabel = prettyProcessLabel(plannerApiName);
-                item.artifactLabel = f.Artifact_Label__c;
-                item.savingsCentralWh = f.Annual_Energy_Savings_Wh__c;
-                item.savingsLowWh = f.Annual_Energy_Savings_Wh_Low__c;
-                item.savingsHighWh = f.Annual_Energy_Savings_Wh_High__c;
-                item.fixType = f.Fix_Type__c;
-                item.recommendedTarget = f.Recommended_Target__c;
-                item.recommendationText = f.Recommendation_Text__c;
-                item.findingStatus = String.isBlank(f.Finding_Status__c) ? 'Open' : f.Finding_Status__c;
-                item.effort = f.Effort__c;
-                if (String.isNotBlank(f.Remediation_Task_Id__c)) {
-                    item.taskId = (Id) f.Remediation_Task_Id__c;
-                    taskIds.add(f.Remediation_Task_Id__c);
-                }
+                item.findingId = row.Id;
+                item.signal = row.Signal_Type__c;
+                item.severity = row.Severity__c;
+                item.confidence = row.Confidence__c;
+                item.plannerApiName = plannerName;
+                item.processLabel = prettyProcessLabel(plannerName);
+                item.artifactLabel = row.Artifact_Label__c;
+                item.savingsCentralWh = row.Annual_Energy_Savings_Wh__c;
+                item.savingsLowWh = row.Annual_Energy_Savings_Wh_Low__c;
+                item.savingsHighWh = row.Annual_Energy_Savings_Wh_High__c;
+                item.fixType = row.Fix_Type__c;
+                item.recommendedTarget = row.Recommended_Target__c;
+                item.recommendationText = row.Recommendation_Text__c;
+                item.findingStatus = String.isBlank(state.Finding_Status__c) ? 'Open' : state.Finding_Status__c;
+                item.effort = row.Effort__c;
+                item.taskId = OhmRemediationLifecycle.taskIdOf(state.Remediation_Task_Id__c);
+                if (item.taskId != null) { taskIds.add(item.taskId); }
                 items.add(item);
             }
-
-            // one Task query, joined in memory
+            Map<Id, Task> tasks = new Map<Id, Task>();
             if (!taskIds.isEmpty()) {
-                Map<Id, Task> taskById = new Map<Id, Task>([
-                    SELECT Id, OwnerId, Owner.Name, ActivityDate FROM Task WHERE Id IN :taskIds
-                ]);
-                for (OhmDTO.WorklistItemDTO item : items) {
-                    if (item.taskId == null) { continue; }
-                    Task t = taskById.get(item.taskId);
-                    if (t == null) { continue; }
-                    item.assigneeId = t.OwnerId;
-                    item.assigneeName = (t.Owner == null) ? null : t.Owner.Name;
-                    item.dueDate = t.ActivityDate;
-                }
+                tasks = new Map<Id, Task>([SELECT Id, OwnerId, Owner.Name, ActivityDate, IsClosed, Status FROM Task WHERE Id IN :taskIds]);
             }
-
-            // in-memory filters (applied post-dedup so the newest surviving row is judged)
-            Boolean filterStatus = String.isNotBlank(statusFilter) && statusFilter != 'All';
-            Boolean filterSeverity = String.isNotBlank(severityFilter) && severityFilter != 'All';
             List<OhmDTO.WorklistItemDTO> filtered = new List<OhmDTO.WorklistItemDTO>();
             for (OhmDTO.WorklistItemDTO item : items) {
-                if (filterStatus && item.findingStatus != statusFilter) { continue; }
-                if (filterSeverity && item.severity != severityFilter) { continue; }
+                Task task = tasks.get(item.taskId);
+                if (task != null) {
+                    item.assigneeId = task.OwnerId;
+                    item.assigneeName = task.Owner == null ? null : task.Owner.Name;
+                    item.dueDate = task.ActivityDate;
+                    if (task.IsClosed && item.findingStatus != 'Dismissed') { item.findingStatus = 'Applied'; }
+                    else if (task.Status == 'In Progress' && item.findingStatus == 'Open') { item.findingStatus = 'Accepted'; }
+                }
+                if (String.isNotBlank(statusFilter) && statusFilter != 'All' && item.findingStatus != statusFilter) { continue; }
+                if (String.isNotBlank(severityFilter) && severityFilter != 'All' && item.severity != severityFilter) { continue; }
                 filtered.add(item);
             }
-
             sortBySavingsDesc(filtered);
             return filtered;
         } catch (Exception e) {
@@ -471,26 +480,28 @@ public with sharing class OhmAuditController {
      */
     @AuraEnabled
     public static void updateFindingStatus(Id findingId, String status) {
-        if (findingId == null || String.isBlank(status)) {
-            throw new AuraHandledException('updateFindingStatus requires a findingId and status.');
+        if (findingId == null || !new Set<String>{ 'Open', 'Accepted', 'Dismissed', 'Applied' }.contains(status)) {
+            throw new AuraHandledException('A finding and valid status are required.');
         }
         try {
-            Finding__c f = [
-                SELECT Id, Remediation_Task_Id__c FROM Finding__c WHERE Id = :findingId LIMIT 1
-            ];
-            update new Finding__c(Id = findingId, Finding_Status__c = status);
-
-            if (String.isNotBlank(f.Remediation_Task_Id__c)) {
-                String taskStatus = null;
-                if (status == 'Accepted') {
-                    taskStatus = 'In Progress';
-                } else if (status == 'Dismissed' || status == 'Applied') {
-                    taskStatus = 'Completed';
-                }
-                if (taskStatus != null) {
-                    update new Task(Id = (Id) f.Remediation_Task_Id__c, Status = taskStatus);
+            Finding__c finding = [SELECT Id, Issue_Key__c, Remediation_Task_Id__c FROM Finding__c WHERE Id = :findingId LIMIT 1 FOR UPDATE];
+            List<Finding__c> linked = new List<Finding__c>{ finding };
+            if (String.isNotBlank(finding.Issue_Key__c)) {
+                linked = [SELECT Id, Remediation_Task_Id__c FROM Finding__c WHERE Issue_Key__c = :finding.Issue_Key__c FOR UPDATE];
+            }
+            Map<Id, Task> updates = new Map<Id, Task>();
+            List<Finding__c> statusUpdates = new List<Finding__c>();
+            for (Finding__c row : linked) {
+                statusUpdates.add(new Finding__c(Id = row.Id, Finding_Status__c = status,
+                    Rec_Status__c = status == 'Open' ? 'Proposed' : status));
+                Id taskId = OhmRemediationLifecycle.taskIdOf(row.Remediation_Task_Id__c);
+                if (taskId != null) {
+                    updates.put(taskId, new Task(Id = taskId,
+                        Status = status == 'Open' ? 'Not Started' : status == 'Accepted' ? 'In Progress' : 'Completed'));
                 }
             }
+            update statusUpdates;
+            if (!updates.isEmpty()) { update updates.values(); }
         } catch (Exception e) {
             throw new AuraHandledException('Could not update finding status: ' + e.getMessage());
         }
@@ -503,34 +514,24 @@ public with sharing class OhmAuditController {
      */
     @AuraEnabled
     public static Id assignFinding(Id findingId, Id userId, Date dueDate) {
-        if (findingId == null) {
-            throw new AuraHandledException('assignFinding requires a findingId.');
-        }
+        if (findingId == null) { throw new AuraHandledException('assignFinding requires a findingId.'); }
         try {
-            Finding__c f = [
-                SELECT Id, Remediation_Task_Id__c, Fix_Type__c, Recommended_Target__c,
-                       Recommendation_Text__c, Annual_Energy_Savings_Wh__c, Agent_Audit_Report__c
+            Finding__c finding = [
+                SELECT Id, Fix_Type__c, Recommended_Target__c, Recommendation_Text__c,
+                       Annual_Energy_Savings_Wh__c, Agent_Audit_Report__c
                 FROM Finding__c WHERE Id = :findingId LIMIT 1
             ];
-
-            Id taskId;
-            if (String.isBlank(f.Remediation_Task_Id__c)) {
-                OhmDTO.RemediationInputDTO input = new OhmDTO.RemediationInputDTO();
-                input.findingId = f.Id;
-                input.reportId = f.Agent_Audit_Report__c;
-                input.fixType = f.Fix_Type__c;
-                input.recommendedTarget = f.Recommended_Target__c;
-                input.recommendationText = f.Recommendation_Text__c;
-                input.estimatedSavingsCentralWh = f.Annual_Energy_Savings_Wh__c;
-                taskId = new OhmPersistenceService().createRemediationTask(input);
-            } else {
-                taskId = (Id) f.Remediation_Task_Id__c;
-            }
-
-            Task t = new Task(Id = taskId);
-            if (userId != null) { t.OwnerId = userId; }
-            if (dueDate != null) { t.ActivityDate = dueDate; }
-            update t;
+            OhmDTO.RemediationInputDTO input = new OhmDTO.RemediationInputDTO();
+            input.findingId = finding.Id;
+            input.reportId = finding.Agent_Audit_Report__c;
+            input.fixType = finding.Fix_Type__c;
+            input.recommendedTarget = finding.Recommended_Target__c;
+            input.recommendationText = finding.Recommendation_Text__c;
+            input.estimatedSavingsCentralWh = finding.Annual_Energy_Savings_Wh__c;
+            Id taskId = new OhmPersistenceService().createRemediationTask(input);
+            Task task = new Task(Id = taskId, ActivityDate = dueDate);
+            if (userId != null) { task.OwnerId = userId; }
+            update task;
             return taskId;
         } catch (Exception e) {
             throw new AuraHandledException('Could not assign finding: ' + e.getMessage());
@@ -560,14 +561,10 @@ public with sharing class OhmAuditController {
 
     // ===================== Wave 5 Trends + before/after diff (SPEC §2.5 / §2.6) =====================
 
-    /**
-     * Wave 5 — the Trends time series.
-     * plannerId null  → ORG scope: every Fleet-scoped report as a point if any exist, else the
-     *   latest-per-planner PROCESS reports as points; plus perAgent grade history (every process
-     *   report per planner, chronological).
-     * plannerId set   → that planner's PROCESS reports, chronological (oldest→newest).
-     * realizedSavingsWh = max(0, firstEnergy - lastEnergy). Bulk-safe: at most two SOQL, mapped
-     * in memory. Never returns null; points is always present (possibly empty).
+    /** Historical modeled scenarios, grouped by exact logical process across publication IDs.
+     * Org points contain only fleet audits. Versioned process history never fabricates a fleet
+     * time series or applies an old grade to a new unaudited version. Reductions require matching
+     * workload assumptions; the displayed values are modeled, not measured runtime usage.
      */
     @AuraEnabled(cacheable=false)
     public static OhmDTO.TrendDTO getTrends(Id plannerId) {
@@ -576,25 +573,45 @@ public with sharing class OhmAuditController {
             dto.plannerId = plannerId;
             dto.points = new List<OhmDTO.TrendPointDTO>();
             dto.perAgent = new List<OhmDTO.AgentGradeHistoryDTO>();
+            dto.realizedSavingsWh = 0;
+            String firstImpact;
+            String lastImpact;
 
             if (plannerId != null) {
-                // per-process scope: this planner's process reports oldest→newest
-                dto.scope = prettyProcessLabel(processApiNameFor(plannerId));
+                // Publication creates new planner IDs; history belongs to the logical process.
+                // This does not apply old report grades to the newly published Fleet row.
+                String plannerKey = String.valueOf(plannerId);
+                String processName = processApiNameFor(plannerId);
+                if (String.isBlank(processName)) {
+                    OhmDTO.ProcessSummaryDTO identity = new OhmDiscoveryService().resolveIdentity(plannerId);
+                    processName = identity == null ? null : identity.plannerApiName;
+                }
+                String logicalKey = OhmPersistenceService.logicalProcessKey(processName, plannerKey);
+                String candidatePrefix = logicalKey + '_v%';
+                dto.scope = prettyProcessLabel(processName);
                 for (Agent_Audit_Report__c r : [
-                    SELECT Id, Efficiency_Grade__c, Efficiency_Score__c, Total_Annual_Energy_Wh__c,
-                           Findings_Count__c, Run_Timestamp__c, CreatedDate, Target_Planner_Api_Name__c
+                    SELECT Id, Efficiency_Grade__c, Efficiency_Score__c, Modeled_Energy_Wh__c, Impact_Snapshot__c,
+                           Findings_Count__c, Run_Timestamp__c, CreatedDate, Target_Planner_Api_Name__c,
+                           Target_Planner_Id__c
                     FROM Agent_Audit_Report__c
                     WHERE Target_Type__c = 'Process'
-                      AND Target_Planner_Id__c = :String.valueOf(plannerId)
+                      AND (Target_Planner_Id__c = :plannerKey OR Target_Planner_Api_Name__c = :logicalKey
+                           OR Target_Planner_Api_Name__c LIKE :candidatePrefix)
                       AND Run_Status__c = 'Complete'
                     ORDER BY CreatedDate ASC, Id ASC
                 ]) {
+                    if (OhmPersistenceService.logicalProcessKey(r.Target_Planner_Api_Name__c, r.Target_Planner_Id__c) != logicalKey) { continue; }
                     if (dto.scope == null && String.isNotBlank(r.Target_Planner_Api_Name__c)) {
                         dto.scope = prettyProcessLabel(r.Target_Planner_Api_Name__c);
                     }
-                    dto.points.add(toTrendPoint(r));
+                    if (r.Modeled_Energy_Wh__c != null) {
+                        dto.points.add(toTrendPoint(r));
+                        if (firstImpact == null) firstImpact = r.Impact_Snapshot__c;
+                        lastImpact = r.Impact_Snapshot__c;
+                    }
                 }
                 stampEnergyBounds(dto);
+                if (!OhmAuditImpactService.comparable(firstImpact, lastImpact)) dto.realizedSavingsWh = 0;
                 return dto;
             }
 
@@ -602,20 +619,23 @@ public with sharing class OhmAuditController {
             dto.scope = 'Org';
             // Fleet-scoped reports (org-wide runs) as points, if any exist
             for (Agent_Audit_Report__c r : [
-                SELECT Id, Efficiency_Grade__c, Efficiency_Score__c, Total_Annual_Energy_Wh__c,
+                SELECT Id, Efficiency_Grade__c, Efficiency_Score__c, Modeled_Energy_Wh__c, Impact_Snapshot__c,
                        Findings_Count__c, Run_Timestamp__c, CreatedDate
                 FROM Agent_Audit_Report__c
                 WHERE Target_Type__c != 'Process' AND Run_Status__c = 'Complete'
                 ORDER BY CreatedDate ASC, Id ASC
             ]) {
-                dto.points.add(toTrendPoint(r));
+                if (r.Modeled_Energy_Wh__c != null) {
+                        dto.points.add(toTrendPoint(r));
+                        if (firstImpact == null) firstImpact = r.Impact_Snapshot__c;
+                        lastImpact = r.Impact_Snapshot__c;
+                    }
             }
 
-            // Process reports (oldest→newest) power the per-agent grade history, and — when there
-            // are no Fleet reports — the org points fall back to the latest report per planner.
+            // Process reports power logical-process history only; they never become fleet points.
             List<Agent_Audit_Report__c> proc = [
                 SELECT Id, Target_Planner_Id__c, Target_Planner_Api_Name__c, Efficiency_Grade__c,
-                       Efficiency_Score__c, Total_Annual_Energy_Wh__c, Findings_Count__c,
+                       Efficiency_Score__c, Modeled_Energy_Wh__c, Impact_Snapshot__c, Findings_Count__c,
                        Run_Timestamp__c, CreatedDate
                 FROM Agent_Audit_Report__c
                 WHERE Target_Type__c = 'Process' AND Run_Status__c = 'Complete'
@@ -625,21 +645,18 @@ public with sharing class OhmAuditController {
             // per-agent grade history, insertion-ordered by planner first-seen
             Map<String, OhmDTO.AgentGradeHistoryDTO> perAgentByPlanner =
                 new Map<String, OhmDTO.AgentGradeHistoryDTO>();
-            // latest process report per planner (rows ascending → last write wins)
-            Map<String, Agent_Audit_Report__c> latestByPlanner =
-                new Map<String, Agent_Audit_Report__c>();
             for (Agent_Audit_Report__c r : proc) {
-                String pk = r.Target_Planner_Id__c;
+                String pk = OhmPersistenceService.logicalProcessKey(r.Target_Planner_Api_Name__c, r.Target_Planner_Id__c);
                 if (String.isBlank(pk)) { continue; }
-                latestByPlanner.put(pk, r);
                 OhmDTO.AgentGradeHistoryDTO h = perAgentByPlanner.get(pk);
                 if (h == null) {
                     h = new OhmDTO.AgentGradeHistoryDTO();
-                    h.plannerId = (Id) pk;
                     h.label = prettyProcessLabel(r.Target_Planner_Api_Name__c);
                     h.gradeHistory = new List<String>();
                     perAgentByPlanner.put(pk, h);
                 }
+                if (String.isNotBlank(r.Target_Planner_Id__c)) { h.plannerId = (Id) r.Target_Planner_Id__c; }
+                h.label = prettyProcessLabel(r.Target_Planner_Api_Name__c);
                 if (r.Efficiency_Grade__c != null) {
                     h.gradeHistory.add(r.Efficiency_Grade__c);
                     h.currentGrade = r.Efficiency_Grade__c;
@@ -647,16 +664,10 @@ public with sharing class OhmAuditController {
             }
             dto.perAgent = perAgentByPlanner.values();
 
-            // fallback org points: no Fleet reports → latest-per-planner process reports, chronological
-            if (dto.points.isEmpty() && !latestByPlanner.isEmpty()) {
-                List<Agent_Audit_Report__c> latest = latestByPlanner.values();
-                latest.sort(new ReportByCreatedAsc());
-                for (Agent_Audit_Report__c r : latest) {
-                    dto.points.add(toTrendPoint(r));
-                }
-            }
+            // Different processes are not successive measurements of the org.
 
             stampEnergyBounds(dto);
+                if (!OhmAuditImpactService.comparable(firstImpact, lastImpact)) dto.realizedSavingsWh = 0;
             return dto;
         } catch (Exception e) {
             throw new AuraHandledException('Could not load trends: ' + e.getMessage());
@@ -672,85 +683,114 @@ public with sharing class OhmAuditController {
      */
     @AuraEnabled(cacheable=false)
     public static OhmDTO.DiffDTO getDiff(Id plannerId) {
-        if (plannerId == null) {
-            throw new AuraHandledException('getDiff requires a plannerId.');
-        }
-        try {
-            List<Agent_Audit_Report__c> reps = [
-                SELECT Id, Efficiency_Grade__c, Efficiency_Score__c, Total_Annual_Energy_Wh__c,
-                       Findings_Count__c, Run_Timestamp__c, CreatedDate, Target_Planner_Api_Name__c
-                FROM Agent_Audit_Report__c
-                WHERE Target_Type__c = 'Process'
-                  AND Target_Planner_Id__c = :String.valueOf(plannerId)
-                  AND Run_Status__c = 'Complete'
-                ORDER BY CreatedDate DESC, Id DESC
-                LIMIT 2
-            ];
+        return lifecycleDiff(plannerId, null);
+    }
 
+    /** Compare the explicitly selected artifact across the same process's published versions. */
+    @AuraEnabled(cacheable=false)
+    public static OhmDTO.DiffDTO getArtifactDiff(Id plannerId, String artifactKey) {
+        return lifecycleDiff(plannerId, artifactKey);
+    }
+
+    private static OhmDTO.DiffDTO lifecycleDiff(Id plannerId, String requestedArtifactKey) {
+        if (plannerId == null) { throw new AuraHandledException('getDiff requires a plannerId.'); }
+        try {
+            List<Agent_Audit_Report__c> reports = [
+                SELECT Id, Efficiency_Grade__c, Efficiency_Score__c, Modeled_Energy_Wh__c,
+                       Impact_Snapshot__c, Findings_Count__c, Run_Timestamp__c, CreatedDate,
+                       Target_Planner_Id__c, Target_Planner_Api_Name__c
+                FROM Agent_Audit_Report__c WHERE Target_Type__c = 'Process' AND Run_Status__c = 'Complete'
+                ORDER BY Run_Timestamp__c DESC NULLS LAST, CreatedDate DESC, Id DESC
+            ];
+            String processKey;
+            for (Agent_Audit_Report__c report : reports) {
+                if (report.Target_Planner_Id__c == String.valueOf(plannerId)) {
+                    processKey = OhmPersistenceService.logicalProcessKey(report.Target_Planner_Api_Name__c, report.Target_Planner_Id__c);
+                    break;
+                }
+            }
+            List<Agent_Audit_Report__c> selected = new List<Agent_Audit_Report__c>();
+            if (String.isNotBlank(processKey)) {
+                for (Agent_Audit_Report__c report : reports) {
+                    if (OhmPersistenceService.logicalProcessKey(report.Target_Planner_Api_Name__c, report.Target_Planner_Id__c) == processKey) {
+                        selected.add(report);
+                        if (selected.size() == 2) { break; }
+                    }
+                }
+            }
             OhmDTO.DiffDTO dto = new OhmDTO.DiffDTO();
             dto.plannerId = plannerId;
-            dto.label = prettyProcessLabel(processApiNameFor(plannerId));
-
-            if (reps.isEmpty()) {
-                return dto; // nothing audited yet
-            }
-
-            Agent_Audit_Report__c after = reps[0];
+            dto.comparable = false;
+            dto.improved = false;
+            dto.comparisonReason = 'Re-audit the same process after a change to compare.';
+            if (selected.isEmpty()) { return dto; }
+            Agent_Audit_Report__c after = selected[0];
+            dto.label = prettyProcessLabel(after.Target_Planner_Api_Name__c);
             dto.afterReportId = after.Id;
             dto.afterAt = whenOf(after);
             dto.afterGrade = after.Efficiency_Grade__c;
             dto.afterScore = intOrNull(after.Efficiency_Score__c);
-            dto.afterEnergyWhCentral = after.Total_Annual_Energy_Wh__c;
+            dto.afterEnergyWhCentral = after.Modeled_Energy_Wh__c;
             dto.afterFindings = intOrNull(after.Findings_Count__c);
-            if (String.isBlank(dto.label) && String.isNotBlank(after.Target_Planner_Api_Name__c)) {
-                dto.label = prettyProcessLabel(after.Target_Planner_Api_Name__c);
-            }
-
-            Set<Id> reportIds = new Set<Id>{ after.Id };
-            if (reps.size() >= 2) {
-                Agent_Audit_Report__c before = reps[1];
+            Set<Id> ids = new Set<Id>{ after.Id };
+            if (selected.size() > 1) {
+                Agent_Audit_Report__c before = selected[1];
                 dto.beforeReportId = before.Id;
                 dto.beforeAt = whenOf(before);
                 dto.beforeGrade = before.Efficiency_Grade__c;
                 dto.beforeScore = intOrNull(before.Efficiency_Score__c);
-                dto.beforeEnergyWhCentral = before.Total_Annual_Energy_Wh__c;
+                dto.beforeEnergyWhCentral = before.Modeled_Energy_Wh__c;
                 dto.beforeFindings = intOrNull(before.Findings_Count__c);
-                reportIds.add(before.Id);
-
-                dto.energyDeltaWh = nz(dto.beforeEnergyWhCentral) - nz(dto.afterEnergyWhCentral);
-                if (dto.beforeScore != null && dto.afterScore != null) {
-                    dto.scoreDelta = dto.afterScore - dto.beforeScore;
-                    dto.improved = dto.afterScore > dto.beforeScore;
-                }
-                if (dto.beforeFindings != null && dto.afterFindings != null) {
-                    dto.findingsDelta = dto.afterFindings - dto.beforeFindings;
-                }
+                ids.add(before.Id);
             }
-
-            // instructions snapshot from the newest bloat finding of each report (one SOQL)
-            Map<Id, String> snapshotByReport = new Map<Id, String>();
-            // NB: Instructions_Snapshot__c is a Long Text Area (not filterable in WHERE) — take the
-            // newest non-blank snapshot per report in memory instead.
-            for (Finding__c f : [
-                SELECT Agent_Audit_Report__c, Instructions_Snapshot__c
-                FROM Finding__c
-                WHERE Agent_Audit_Report__c IN :reportIds
-                  AND Signal_Type__c = :InstructionBloatDetector.SIGNAL
-                ORDER BY CreatedDate DESC
-            ]) {
-                if (String.isBlank(f.Instructions_Snapshot__c)) { continue; }
-                if (!snapshotByReport.containsKey(f.Agent_Audit_Report__c)) {
-                    snapshotByReport.put(f.Agent_Audit_Report__c, f.Instructions_Snapshot__c);
+            Map<Id, Map<String, Audit_Artifact_Snapshot__c>> snapshots = OhmPersistenceService.loadSnapshots(ids);
+            Map<String, Audit_Artifact_Snapshot__c> afterByKey = snapshots.get(dto.afterReportId);
+            Map<String, Audit_Artifact_Snapshot__c> beforeByKey = snapshots.get(dto.beforeReportId);
+            if (afterByKey == null) { afterByKey = new Map<String, Audit_Artifact_Snapshot__c>(); }
+            if (beforeByKey == null) { beforeByKey = new Map<String, Audit_Artifact_Snapshot__c>(); }
+            String artifactKey = requestedArtifactKey;
+            if (String.isBlank(artifactKey)) {
+                List<String> common = new List<String>();
+                List<String> changed = new List<String>();
+                for (String key : afterByKey.keySet()) {
+                    if (afterByKey.get(key).Coverage_Status__c != 'Complete' || !beforeByKey.containsKey(key)
+                        || beforeByKey.get(key).Coverage_Status__c != 'Complete') { continue; }
+                    common.add(key);
+                    if (afterByKey.get(key).Source_Hash__c != beforeByKey.get(key).Source_Hash__c) { changed.add(key); }
                 }
+                if (changed.size() == 1) { artifactKey = changed[0]; }
+                else if (common.size() == 1) { artifactKey = common[0]; }
+                else { dto.comparisonReason = 'Select one artifact with source evidence in both reports.'; }
             }
-            dto.afterInstructions = snapshotByReport.get(dto.afterReportId);
-            if (dto.beforeReportId != null) {
-                dto.beforeInstructions = snapshotByReport.get(dto.beforeReportId);
+            dto.artifactKey = artifactKey;
+            Audit_Artifact_Snapshot__c beforeSource = beforeByKey.get(artifactKey);
+            Audit_Artifact_Snapshot__c afterSource = afterByKey.get(artifactKey);
+            if (beforeSource != null) { dto.beforeInstructions = beforeSource.Instructions__c; dto.beforeHash = beforeSource.Source_Hash__c; }
+            if (afterSource != null) {
+                dto.afterInstructions = afterSource.Instructions__c;
+                dto.afterHash = afterSource.Source_Hash__c;
+                dto.artifactLabel = afterSource.Artifact_Label__c;
             }
+            if (dto.beforeReportId == null) { return dto; }
+            if (beforeSource == null || afterSource == null || beforeSource.Coverage_Status__c != 'Complete'
+                || afterSource.Coverage_Status__c != 'Complete') {
+                dto.comparisonReason = 'The same artifact needs complete source snapshots in both reports.';
+                return dto;
+            }
+            if (!OhmAuditImpactService.comparable(selected[1].Impact_Snapshot__c, after.Impact_Snapshot__c)) {
+                dto.comparisonReason = 'Modeled workload, volume, model or methodology differs, or modeled evidence is unavailable.';
+                return dto;
+            }
+            dto.comparable = true;
+            dto.comparisonReason = 'Same artifact and modeled workload assumptions; values are estimates, not measured usage.';
+            if (dto.beforeEnergyWhCentral != null && dto.afterEnergyWhCentral != null) {
+                dto.energyDeltaWh = dto.beforeEnergyWhCentral - dto.afterEnergyWhCentral;
+                dto.improved = dto.energyDeltaWh > 0;
+            }
+            if (dto.beforeScore != null && dto.afterScore != null) { dto.scoreDelta = dto.afterScore - dto.beforeScore; }
+            if (dto.beforeFindings != null && dto.afterFindings != null) { dto.findingsDelta = dto.afterFindings - dto.beforeFindings; }
             return dto;
-        } catch (Exception e) {
-            throw new AuraHandledException('Could not load diff: ' + e.getMessage());
-        }
+        } catch (Exception e) { throw new AuraHandledException('Could not load diff: ' + e.getMessage()); }
     }
 
     // ===================== Wave 6 — "Ask Ohm" per-process assistant =====================
@@ -773,47 +813,18 @@ public with sharing class OhmAuditController {
         return OhmAssistantService.ask(plannerId, question);
     }
 
-    // ---------- Wave 5 private helpers ----------
-
-    /** Bulk-safe: write each INSTRUCTION_BLOAT finding's audited raw instructions to the snapshot. */
-    private static void captureInstructionSnapshots(OhmDTO.AgentModel graph, List<OhmDTO.Finding> findings) {
-        if (graph == null || findings == null || findings.isEmpty()) { return; }
-        // instructions by tooling id, across every node type the bloat detector inspects
-        Map<String, String> instructionsByToolingId = new Map<String, String>();
-        if (graph.topics != null) {
-            for (OhmDTO.TopicNode t : graph.topics) {
-                if (t != null && t.id != null) { instructionsByToolingId.put(t.id, t.scope); }
-            }
-        }
-        if (graph.agentsById != null) {
-            for (OhmDTO.AgentNode a : graph.agentsById.values()) {
-                if (a != null && a.id != null) {
-                    instructionsByToolingId.put(a.id, joinInstructions(a.description, a.capabilities));
-                }
-            }
-        }
-        if (graph.actions != null) {
-            for (OhmDTO.ActionNode a : graph.actions) {
-                if (a != null && a.id != null) { instructionsByToolingId.put(a.id, a.description); }
-            }
-        }
-
-        List<Finding__c> updates = new List<Finding__c>();
-        for (OhmDTO.Finding f : findings) {
-            if (f == null || f.findingRecordId == null) { continue; }
-            if (f.signalType != InstructionBloatDetector.SIGNAL) { continue; }
-            if (!instructionsByToolingId.containsKey(f.artifactToolingId)) { continue; }
-            String raw = instructionsByToolingId.get(f.artifactToolingId);
-            if (String.isBlank(raw)) { continue; }
-            updates.add(new Finding__c(
-                Id = f.findingRecordId,
-                Instructions_Snapshot__c = raw.abbreviate(131072)
-            ));
-        }
-        if (!updates.isEmpty()) {
-            update updates;
-        }
+    @AuraEnabled(cacheable=false)
+    public static OhmDTO.AssistantContextDTO getArtifactAssistantContext(Id plannerId, String artifactKey) {
+        return OhmAssistantService.getArtifactContext(plannerId, artifactKey);
     }
+
+    @AuraEnabled
+    public static OhmDTO.AssistantReplyDTO askArtifactAssistant(Id plannerId, String artifactKey,
+            String expectedSourceHash, String question, Boolean calmMode) {
+        return OhmAssistantService.askArtifact(plannerId, artifactKey, expectedSourceHash, question, calmMode);
+    }
+
+    // ---------- Wave 5 private helpers ----------
 
     private static OhmDTO.TrendPointDTO toTrendPoint(Agent_Audit_Report__c r) {
         OhmDTO.TrendPointDTO p = new OhmDTO.TrendPointDTO();
@@ -821,7 +832,7 @@ public with sharing class OhmAuditController {
         p.auditedAt = whenOf(r);
         p.grade = r.Efficiency_Grade__c;
         p.score = intOrNull(r.Efficiency_Score__c);
-        p.energyWhCentral = r.Total_Annual_Energy_Wh__c;
+        p.energyWhCentral = r.Modeled_Energy_Wh__c;
         p.findingsCount = intOrNull(r.Findings_Count__c);
         return p;
     }

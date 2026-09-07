@@ -371,3 +371,11 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* Honor both the saved Calm preference and the platform motion preference. */
+[class*="--calm"] *, [class*="--calm"] *::before, [class*="--calm"] *::after {
+    animation: none !important; transition: none !important; scroll-behavior: auto !important;
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

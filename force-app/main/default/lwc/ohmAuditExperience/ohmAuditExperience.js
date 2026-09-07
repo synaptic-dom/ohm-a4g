@@ -1,24 +1,17 @@
 import { LightningElement, track } from 'lwc';
 import startAudit from '@salesforce/apex/OhmAuditController.startAudit';
-import getAuditStatus from '@salesforce/apex/OhmAuditController.getAuditStatus';
-import getCalmModePreference from '@salesforce/apex/OhmAuditController.getCalmModePreference';
-import setCalmModePreference from '@salesforce/apex/OhmAuditController.setCalmModePreference';
-import {
-    STATES,
-    POLL_INTERVAL_MS,
-    MAX_POLLS
-} from 'c/ohmConstants';
+import { STATES } from 'c/ohmConstants';
+import { watchAudit, auditError, pendingGuidedAudit, rememberGuidedAudit, forgetGuidedAudit } from 'c/ohmAuditRun';
 
 /**
  * Root FSM + all Apex I/O for the Ohm audit experience (SPEC §L.4).
  * WELCOME -> DISCOVERING/ANALYZING -> IMPACT -> RECOMMENDATIONS (+ ERROR).
- * Owns the Calm Mode context (loaded before first paint) and the polling loop
- * (setTimeout, never setInterval; one in-flight call; hard stop after MAX_POLLS).
+ * Owns the polling loop
+ * (one in-flight call, durable report resumption, no assumed retrieval deadline).
  * Moves focus to the mounted screen's [data-focus-heading] after every transition.
  */
 export default class OhmAuditExperience extends LightningElement {
     @track state = STATES.WELCOME;
-    @track calmMode = false;
     @track isReady = false;
 
     @track reportId;
@@ -30,24 +23,22 @@ export default class OhmAuditExperience extends LightningElement {
     @track stageMessage;
     @track percentComplete = 0;
 
-    _pollHandle;
-    _pollCount = 0;
+    _stopAuditWatch;
+    _connected = false;
+    _recoverableError = false;
     _focusPending = false;
 
     // ---- lifecycle ----------------------------------------------------------
-    async connectedCallback() {
-        try {
-            const calm = await getCalmModePreference();
-            this.calmMode = !!calm;
-        } catch (e) {
-            this.calmMode = false;
-        } finally {
-            this.isReady = true;
-            this._focusPending = true;
-        }
+    connectedCallback() {
+        this._connected = true;
+        this.isReady = true;
+        this._focusPending = true;
+        const pending = pendingGuidedAudit();
+        if (pending) this._observeAudit(pending);
     }
 
     disconnectedCallback() {
+        this._connected = false;
         this._stopPoll();
     }
 
@@ -68,15 +59,6 @@ export default class OhmAuditExperience extends LightningElement {
         }
     }
 
-    // ---- presentation -------------------------------------------------------
-    // Class binding on the panel wrapper is the ONLY CSS hook the root exposes
-    // for Calm Mode: it flips the design tokens for the whole composed tree.
-    get experienceClass() {
-        return this.calmMode
-            ? 'ohm-experience ohm-experience--calm'
-            : 'ohm-experience';
-    }
-
     // ---- state getters ------------------------------------------------------
     get isWelcome() {
         return this.state === STATES.WELCOME;
@@ -95,10 +77,14 @@ export default class OhmAuditExperience extends LightningElement {
     get isError() {
         return this.state === STATES.ERROR;
     }
+    get retryLabel() { return this._recoverableError ? 'Resume checking' : 'Try again'; }
+    get errorHelp() { return this._recoverableError ? 'Your audit may still be processing in Salesforce. Resume checking this report without starting a duplicate.' : 'Start a new audit to retrieve fresh source.'; }
+    get reportUrl() { return this.reportId ? `/lightning/r/Agent_Audit_Report__c/${encodeURIComponent(this.reportId)}/view` : null; }
 
     get findings() {
         return (this.readout && this.readout.findings) || [];
     }
+    get reviewJson() { return this.readout && this.readout.reviewJson; }
     get volumeAssumption() {
         return this.readout && this.readout.volumeAssumption;
     }
@@ -115,67 +101,46 @@ export default class OhmAuditExperience extends LightningElement {
 
     // ---- transitions --------------------------------------------------------
     handleStart() {
+        if (this.isDiscoverAnalyze) return;
         this.errorMessage = undefined;
-        this._pollCount = 0;
-        this.runStatus = 'Discovering';
+        this._recoverableError = false;
+        this.runStatus = 'Queued';
         this.stageMessage = 'Starting the audit…';
         this.percentComplete = 0;
         this._setState(STATES.DISCOVERING);
         startAudit()
             .then((reportId) => {
+                if (!reportId) throw new Error('Salesforce did not return an audit record. Try again.');
                 this.reportId = reportId;
-                this._schedulePoll();
+                rememberGuidedAudit(reportId);
+                if (this._connected) this._observeAudit(reportId);
             })
             .catch((error) => this._fail(error));
     }
 
-    _schedulePoll() {
+    _observeAudit(reportId) {
         this._stopPoll();
-        this._pollHandle = setTimeout(() => {
-            this._pollHandle = undefined;
-            this.pollStatus();
-        }, POLL_INTERVAL_MS);
-    }
-
-    pollStatus() {
-        if (this._pollCount >= MAX_POLLS) {
-            this._fail({ message: 'The audit timed out. Please try again.' });
-            return;
-        }
-        this._pollCount += 1;
-        getAuditStatus({ reportId: this.reportId })
-            .then((readout) => this._applyStatus(readout))
-            .catch((error) => this._fail(error));
-    }
-
-    _applyStatus(readout) {
-        if (!readout) {
-            this._schedulePoll();
-            return;
-        }
-        this.runStatus = readout.runStatus;
-        this.stageMessage = readout.stageMessage;
-        this.percentComplete = readout.percentComplete || 0;
-
-        switch (readout.runStatus) {
-            case 'Analyzing':
-                this._setState(STATES.ANALYZING);
-                this._schedulePoll();
-                break;
-            case 'Complete':
+        this.reportId = reportId;
+        this.errorMessage = undefined;
+        this.runStatus = 'Queued';
+        this.stageMessage = 'Connecting to your audit in Salesforce.';
+        this._setState(STATES.DISCOVERING);
+        this._stopAuditWatch = watchAudit({ reportId },
+            (status) => {
+                this.runStatus = status.runStatus;
+                this.stageMessage = status.stageMessage;
+                this.percentComplete = status.percentComplete || 0;
+                this._setState(['Analyzing', 'LoadingResults'].includes(status.runStatus) ? STATES.ANALYZING : STATES.DISCOVERING);
+            },
+            (readout) => {
                 this.readout = readout;
+                forgetGuidedAudit();
                 this._setState(STATES.IMPACT);
-                this._stopPoll();
-                break;
-            case 'Failed':
-                this._fail({ message: readout.stageMessage || 'The audit failed.' });
-                break;
-            default:
-                // Queued / Discovering -> keep waiting.
-                this._setState(STATES.DISCOVERING);
-                this._schedulePoll();
-                break;
-        }
+            },
+            (status) => {
+                if (status.terminal) forgetGuidedAudit();
+                this._fail({ message: status.error }, !status.terminal);
+            });
     }
 
     handleViewRecommendations() {
@@ -185,36 +150,28 @@ export default class OhmAuditExperience extends LightningElement {
         this._setState(STATES.IMPACT);
     }
     handleRetry() {
+        if (this._recoverableError && this.reportId) {
+            this._observeAudit(this.reportId);
+            return;
+        }
         this.reportId = undefined;
         this.readout = undefined;
         this.errorMessage = undefined;
-        this._pollCount = 0;
         this._setState(STATES.WELCOME);
     }
 
-    _fail(error) {
+    _fail(error, recoverable = false) {
         this._stopPoll();
-        this.errorMessage =
-            (error && error.body && error.body.message) ||
-            (error && error.message) ||
-            'Something went wrong. Please try again.';
+        this._recoverableError = recoverable;
+        this.errorMessage = auditError(error);
         this._setState(STATES.ERROR);
     }
 
     _stopPoll() {
-        if (this._pollHandle) {
-            clearTimeout(this._pollHandle);
-            this._pollHandle = undefined;
+        if (this._stopAuditWatch) {
+            this._stopAuditWatch();
+            this._stopAuditWatch = undefined;
         }
     }
 
-    // ---- Calm Mode ----------------------------------------------------------
-    handleCalmToggle(event) {
-        const enabled = event.detail ? !!event.detail.enabled : !this.calmMode;
-        const previous = this.calmMode;
-        this.calmMode = enabled; // optimistic
-        Promise.resolve(setCalmModePreference({ enabled })).catch(() => {
-            this.calmMode = previous; // revert on reject
-        });
-    }
 }

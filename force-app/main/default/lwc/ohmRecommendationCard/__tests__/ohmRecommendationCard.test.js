@@ -55,18 +55,10 @@ describe('c-ohm-recommendation-card', () => {
         expect(text(el, 'rec-signal')).toContain('Redundant');
     });
 
-    it('shows the savings band and a W7 provenance line', () => {
-        const el = create({
-            finding: mockFinding({
-                estimatedSavingsLow: 10,
-                estimatedSavingsCentral: 20,
-                estimatedSavingsHigh: 30,
-                confidence: 'Low'
-            })
-        });
-        expect(text(el, 'rec-savings')).toBe('saves 20 Wh/yr (10–30)');
-        expect(text(el, 'rec-provenance')).toContain('Confidence: Low');
-        expect(text(el, 'rec-provenance')).toContain('50 sessions/day');
+    it('does not present modeled savings as the outcome of a recommendation', () => {
+        const el = create({ finding: mockFinding({ estimatedSavingsLow: 10, estimatedSavingsCentral: 20, estimatedSavingsHigh: 30 }) });
+        expect(text(el, 'rec-savings')).toBeNull();
+        expect(el.shadowRoot.textContent).not.toContain('Wh/yr');
     });
 
     it('badges the provenance of the phrasing as text', () => {
@@ -99,7 +91,39 @@ describe('c-ohm-recommendation-card', () => {
         expect(text(el, 'rec-error')).toContain('Could not create the task');
     });
 
-    it('is accessible in both Calm variants', async () => {
+    it('opens the saved recommendation and its exact quoted source without applying changes', async () => {
+        const recommendation = {
+            key: 'K1', plannerId: 'P1', reportId: 'R1', bundleLabel: 'Schedule Assistant',
+            nodeId: 'N1', artifactKey: 'Action:Schedule', artifactLabel: 'Generate Schedule',
+            categoryLabel: 'Call efficiency', rating: 'B', recommendation: 'Evaluate moving overlap checks into code.',
+            explanation: 'The prompt asks for a bounded calculation.', preserve: 'Keep all scheduling rules.',
+            validation: 'Compare overlapping and non-overlapping cases.',
+            evidence: [{ nodeId: 'N2', artifactKey: 'Topic:Schedule', artifactLabel: 'Schedule topic', quote: 'Calculate all overlaps.\nKeep every rule.' }]
+        };
+        const el = create({ recommendation });
+        const open = jest.fn(); el.addEventListener('openprocess', open);
+        expect(el.shadowRoot.querySelector('[data-id="rec-reasoning"]')).toBeNull();
+        el.shadowRoot.querySelector('[data-id="rec-open"]').click();
+        expect(open.mock.calls[0][0].detail).toEqual({ plannerId: 'P1', label: 'Schedule Assistant', nodeId: 'N1', artifactKey: 'Action:Schedule', intent: 'recommendation' });
+        el.shadowRoot.querySelector('[data-id="rec-details"]').click(); await Promise.resolve();
+        const detail = el.shadowRoot.querySelector('[data-id="rec-reasoning"]');
+        expect(detail.textContent).toContain('Keep all scheduling rules.');
+        expect(detail.textContent).toContain('Compare overlapping and non-overlapping cases.');
+        expect(detail.querySelector('blockquote').textContent).toBe('Calculate all overlaps.\nKeep every rule.');
+        el.shadowRoot.querySelector('[data-id="rec-evidence-open"]').click();
+        expect(open.mock.calls[1][0].detail).toMatchObject({ nodeId: 'N2', artifactKey: 'Topic:Schedule', intent: 'source' });
+        expect(el.shadowRoot.textContent).not.toMatch(/\bWh\b/);
+        await expect(el).toBeAccessible();
+    });
+
+    it('uses saved task status without implying that the source was fixed', () => {
+        const el = create({ recommendation: { key: 'K1', plannerId: 'P1', recommendation: 'Review the source.', taskId: '00T000000000001', taskStatus: 'Completed', taskClosed: true } });
+        expect(text(el, 'rec-done')).toBe('Task · Completed');
+        expect(el.shadowRoot.querySelector('[data-id="rec-create-task"]')).toBeNull();
+        expect(el.shadowRoot.textContent).not.toContain('Applied');
+    });
+
+    it('keeps the single dark interface accessible for existing callers', async () => {
         await expect(create({ calmMode: false })).toBeAccessible();
         await expect(create({ calmMode: true })).toBeAccessible();
     });

@@ -1,0 +1,23 @@
+<template>
+    <section class={rootClass} aria-label="Audit progress" aria-busy={working} data-id="audit-progress">
+        <div class="run__head">
+            <div><p class="run__eyebrow">{label}</p><h2>{title}</h2></div>
+            <span class="run__percent">{progressText}</span>
+        </div>
+        <template lwc:if={failed}><p class="run__message" role="alert">{message}</p></template>
+        <template lwc:else><p class="run__message" role="status" aria-live="polite">{message}</p></template>
+        <template lwc:if={hasPercent}>
+            <div class="run__meter" role="progressbar" aria-label="Audit completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow={percent}><span style={meterStyle}></span></div>
+        </template>
+        <template lwc:if={showSteps}>
+            <ol class="run__steps"><template for:each={steps} for:item="step"><li key={step.key} class={step.css} aria-current={step.current} aria-label={step.accessibleLabel}><span class="run__number" title={step.state} aria-hidden="true">{step.number}</span>{step.label}</li></template></ol>
+        </template>
+        <div class="run__foot">
+            <p>{footnote}</p>
+            <template lwc:if={canRetry}><button type="button" onclick={handleRetry} data-id="retry-run">{retryLabel}</button></template>
+        </div>
+        <template lwc:if={showSupport}>
+            <details class="run__support"><summary>Technical details</summary><a href={reportUrl} target="_blank" rel="noopener">Open audit record ↗</a></details>
+        </template>
+    </section>
+</template>

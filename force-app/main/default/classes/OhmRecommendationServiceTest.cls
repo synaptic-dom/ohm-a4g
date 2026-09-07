@@ -8,6 +8,7 @@ private class OhmRecommendationServiceTest {
         OhmDTO.Finding f = new OhmDTO.Finding();
         f.signalType = signal; f.artifactType = artifactType;
         f.metricValue = metric; f.recommendedTarget = recTarget;
+        if (signal == 'MODEL_RIGHTSIZING' && metric == 2.0) { f.boundModel = 'LARGE'; }
         return f;
     }
 
@@ -19,8 +20,9 @@ private class OhmRecommendationServiceTest {
         System.assertEquals('Medium', f.effort);
         System.assertEquals('Deterministic', f.generatedBy);
         System.assert(String.isNotBlank(f.recommendationText), 'text present');
-        System.assertNotEquals(null, f.savings, 'savings populated');
-        System.assert(f.savings.energyWhCentral > 0, 'positive savings');
+        System.assertEquals(null, f.savings, 'lexical metadata does not establish removable work');
+        System.assert(f.recommendationText.contains('compare outputs'), 'requires behavioral validation');
+        System.assert(!f.recommendationText.contains('exact result'), 'no equivalence claim');
     }
 
     @IsTest
@@ -31,7 +33,8 @@ private class OhmRecommendationServiceTest {
         System.assertEquals('SMALL', f.recommendedTarget, 'preserves detector target');
         System.assertEquals('Low', f.effort);
         System.assertEquals('Deterministic', f.generatedBy);
-        System.assert(f.savings.energyWhCentral > 0, 'positive savings');
+        System.assert(f.savings.energyWhCentral > 0, 'conditional modeled scenario with known tiers');
+        System.assert(f.recommendationText.contains('conditional'), 'not a guaranteed reduction');
     }
 
     @IsTest
@@ -50,7 +53,7 @@ private class OhmRecommendationServiceTest {
             finding('REDUNDANT_CALLS', 'Agent', 2, null));
         System.assertEquals('Consolidate_Calls', f.fixType);
         System.assertEquals('Medium', f.effort);
-        System.assert(f.savings.energyWhCentral > 0, 'positive savings');
+        System.assertEquals(null, f.savings, 'static repetition is not proof calls can be removed');
     }
 
     @IsTest
@@ -60,11 +63,22 @@ private class OhmRecommendationServiceTest {
     }
 
     @IsTest
-    static void test_modelRightsizing_blankTarget_derivesDefault() {
+    static void test_modelRightsizing_blankTarget_doesNotInventTarget() {
         OhmDTO.Finding f = new OhmRecommendationService().attachRecommendation(
             finding('MODEL_RIGHTSIZING', 'Action', 2.0, null));
-        System.assertEquals('Downsize_Model', f.fixType);
-        System.assert(String.isNotBlank(f.recommendedTarget), 'derives a default target when detector left it blank');
+        System.assertEquals(null, f.fixType);
+        System.assertEquals(null, f.recommendedTarget, 'missing recommendation evidence stays unknown');
+        System.assertEquals(null, f.savings);
+    }
+
+    @IsTest
+    static void test_unknownModelCannotBeDownsizedFromAMultiplier() {
+        OhmDTO.Finding candidate = finding('MODEL_RIGHTSIZING', 'Action', 2.0, 'SMALL');
+        candidate.boundModel = 'unmapped-provider-model';
+        OhmDTO.Finding f = new OhmRecommendationService().attachRecommendation(candidate);
+        System.assertEquals(null, f.fixType);
+        System.assertEquals(null, f.recommendedTarget);
+        System.assertEquals(null, f.savings);
     }
 
     @IsTest

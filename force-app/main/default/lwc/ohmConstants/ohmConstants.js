@@ -16,7 +16,7 @@ export const STATES = {
 // Canonical Signal_Type__c values (C2) -> human labels. Keys MUST be exactly these four.
 export const SIGNAL_LABELS = {
     LLM_WHERE_DETERMINISTIC: 'LLM used where deterministic code would do',
-    MODEL_RIGHTSIZING: 'Model larger than the task needs',
+    MODEL_RIGHTSIZING: 'Model sizing review',
     INSTRUCTION_BLOAT: 'Bloated instructions / scope',
     REDUNDANT_CALLS: 'Redundant LLM calls'
 };
@@ -48,6 +48,7 @@ export const TERMINAL_STATUSES = ['Complete', 'Failed'];
 
 // Efficiency grade letter -> plain word (color-independent per AC-F4).
 export const GRADE_WORDS = {
+    IN: 'Incomplete',
     A: 'Excellent',
     B: 'Good',
     C: 'Fair',

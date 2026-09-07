@@ -1,15 +1,15 @@
 import { createElement } from 'lwc';
 import OhmAskAssistant from 'c/ohmAskAssistant';
-import getAssistantContext from '@salesforce/apex/OhmAuditController.getAssistantContext';
-import askAssistant from '@salesforce/apex/OhmAuditController.askAssistant';
+import getAssistantContext from '@salesforce/apex/OhmAuditController.getArtifactAssistantContext';
+import askAssistant from '@salesforce/apex/OhmAuditController.askArtifactAssistant';
 
 jest.mock(
-    '@salesforce/apex/OhmAuditController.getAssistantContext',
+    '@salesforce/apex/OhmAuditController.getArtifactAssistantContext',
     () => ({ default: jest.fn() }),
     { virtual: true }
 );
 jest.mock(
-    '@salesforce/apex/OhmAuditController.askAssistant',
+    '@salesforce/apex/OhmAuditController.askArtifactAssistant',
     () => ({ default: jest.fn() }),
     { virtual: true }
 );
@@ -25,7 +25,7 @@ const CONTEXT = {
         { id: 'draft', label: 'Draft trimmed instructions', prompt: 'Draft a tightened…' }
     ],
     available: true,
-    modelLabel: 'GPT-4o mini · Einstein Trust Layer'
+    modelLabel: 'GPT 5.5 · Einstein Trust Layer'
 };
 
 const ANSWER = {
@@ -78,7 +78,7 @@ describe('c-ohm-ask-assistant', () => {
         const el = create();
         await flush();
 
-        expect(getAssistantContext).toHaveBeenCalledWith({ plannerId: 'P1' });
+        expect(getAssistantContext).toHaveBeenCalledWith({ plannerId: 'P1', artifactKey: null });
         expect(el.shadowRoot.querySelector('[data-id="grounding"]').textContent).toContain(
             'Grounded in'
         );
@@ -87,6 +87,45 @@ describe('c-ohm-ask-assistant', () => {
         );
         expect(el.shadowRoot.querySelectorAll('[data-id="chips"] li')).toHaveLength(2);
         expect(el.shadowRoot.querySelectorAll('[data-id="quick-prompts"] button')).toHaveLength(2);
+    });
+
+    it('prefills a recommendation for review without sending and omits model-sizing suggestions', async () => {
+        getAssistantContext.mockResolvedValue({ ...CONTEXT, quickPrompts: [CONTEXT.quickPrompts[0], { id: 'impact', label: 'Modeled impact', prompt: 'Explain modeled impact' }, { id: 'save', label: 'Review opportunities', prompt: 'Explain opportunities' }, CONTEXT.quickPrompts[1], { id: 'model', label: 'Review model fit', prompt: 'Downsize the model' }] });
+        const el = create();
+        el.prepareQuestion('Review this change and preserve escalation.');
+        await flush();
+        expect(el.shadowRoot.querySelector('[data-id="input"]').value).toBe('Review this change and preserve escalation.');
+        expect(el.shadowRoot.querySelector('[data-id="quick-prompts"]').textContent).not.toContain('model fit');
+        expect(el.shadowRoot.querySelector('[data-id="quick-prompts"]').textContent).toContain('Draft trimmed instructions');
+        expect(askAssistant).not.toHaveBeenCalled();
+        expect(el.shadowRoot.querySelector('.ohm-ask__context').open).toBe(false);
+    });
+
+    it('prefills without taking focus when entering from a recommendation, but focuses on explicit Ask', async () => {
+        getAssistantContext.mockResolvedValue(CONTEXT);
+        const el = create();
+        el.prepareQuestion('Review this recommendation.', false);
+        await flush();
+        const input = el.shadowRoot.querySelector('[data-id="input"]');
+        expect(input.value).toBe('Review this recommendation.');
+        expect(el.shadowRoot.activeElement).not.toBe(input);
+        el.prepareQuestion('Explain this source.', true);
+        await flush();
+        expect(input.value).toBe('Explain this source.');
+        expect(el.shadowRoot.activeElement).toBe(input);
+        expect(askAssistant).not.toHaveBeenCalled();
+    });
+
+    it('retries failed source context without sending a question or losing its source binding', async () => {
+        getAssistantContext.mockRejectedValueOnce({ body: { message: 'Connection interrupted' } }).mockResolvedValue(CONTEXT);
+        const el = create();
+        await flush();
+        expect(el.shadowRoot.querySelector('[data-id="ctx-error"]').textContent).toContain('Connection interrupted');
+        el.shadowRoot.querySelector('[data-id="retry-context"]').click();
+        await flush();
+        expect(getAssistantContext).toHaveBeenLastCalledWith({ plannerId: 'P1', artifactKey: null });
+        expect(el.shadowRoot.querySelector('[data-id="ctx-error"]')).toBeNull();
+        expect(askAssistant).not.toHaveBeenCalled();
     });
 
     it('sends a question and renders the grounded answer with provenance', async () => {
@@ -164,7 +203,7 @@ describe('c-ohm-ask-assistant', () => {
         getAssistantContext.mockClear();
         el.refresh();
         await flush();
-        expect(getAssistantContext).toHaveBeenCalledWith({ plannerId: 'P1' });
+        expect(getAssistantContext).toHaveBeenCalledWith({ plannerId: 'P1', artifactKey: null });
     });
 
     it('shows an unavailable state when the model is not reachable', async () => {
@@ -179,4 +218,32 @@ describe('c-ohm-ask-assistant', () => {
         expect(el.shadowRoot.querySelector('[data-id="unavailable"]')).not.toBeNull();
         expect(el.shadowRoot.querySelector('[data-id="input"]')).toBeNull();
     });
+    it('sends the selected artifact and exact source hash for a rewrite', async () => {
+        getAssistantContext.mockResolvedValue(CONTEXT);
+        askAssistant.mockResolvedValue(DRAFT);
+        const el = create();
+        el.artifactKey = 'weather-topic';
+        el.expectedSourceHash = 'source-hash';
+        await flush();
+        Array.from(el.shadowRoot.querySelectorAll('[data-id="quick-prompts"] button')).find((button) => button.dataset.prompt === 'Draft a tightened…').click();
+        await flush();
+        expect(askAssistant).toHaveBeenCalledWith({ plannerId: 'P1', artifactKey: 'weather-topic',
+            expectedSourceHash: 'source-hash', question: 'Draft a tightened…', calmMode: false });
+    });
+
+    it('discards a draft if the selected artifact changes during the model call', async () => {
+        getAssistantContext.mockResolvedValue(CONTEXT);
+        let finish;
+        askAssistant.mockImplementation(() => new Promise((resolve) => { finish = resolve; }));
+        const el = create();
+        el.artifactKey = 'first-topic'; el.expectedSourceHash = 'first-hash';
+        await flush();
+        el.shadowRoot.querySelectorAll('[data-id="quick-prompts"] button')[1].click();
+        el.artifactKey = 'second-topic'; el.expectedSourceHash = 'second-hash';
+        await flush();
+        finish(DRAFT);
+        await flush();
+        expect(el.shadowRoot.querySelector('[data-id="draft-text"]')).toBeNull();
+    });
+
 });

@@ -1,0 +1,43 @@
+{
+  "bundle": "Ohm_Support_Desk",
+  "tests": [
+    {
+      "id": "support-damaged-lantern",
+      "status": "passed",
+      "evaluations": [
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "compute_status": "COMPLETED",
+          "score": 5,
+          "is_pass": true,
+          "label": null,
+          "explainability": "The bot's response aligns with the expected response by acknowledging the damage, requesting a photo, and explaining the specialist review process. It does not promise approval or request card information, and it does not claim an email was sent. The response is clear, complete, and precise, with no irrelevant information.",
+          "error_message": null,
+          "actual_value": "Here is a draft reply for your customer:\n\nDear Customer,\n\nThank you for reaching out regarding your TrekLite lantern with the cracked lens. To proceed with your request, please send a photo of the damage. Once we receive the photo, a specialist will review it to determine eligibility for a replacement.\n\nPlease provide the following information:\n\nPhoto of the damaged lens\nOrder reference: JUN-4201\n\nWe appreciate your cooperation and look forward to resolving this matter for you.\n\nBest regards,\nJuniper Outdoor Customer Support\n\nWould you like to make any changes to this draft before sending it?",
+          "expected_value": "Acknowledge the damage, ask the customer to provide a photo, and explain specialist replacement review without promising approval or requesting card information. Do not claim that an email was sent."
+        }
+      ],
+      "response": "Here is a draft reply for your customer:\n\nDear Customer,\n\nThank you for reaching out regarding your TrekLite lantern with the cracked lens. To proceed with your request, please send a photo of the damage. Once we receive the photo, a specialist will review it to determine eligibility for a replacement.\n\nPlease provide the following information:\n\nPhoto of the damaged lens\nOrder reference: JUN-4201\n\nWe appreciate your cooperation and look forward to resolving this matter for you.\n\nBest regards,\nJuniper Outdoor Customer Support\n\nWould you like to make any changes to this draft before sending it?"
+    },
+    {
+      "id": "support-missing-message",
+      "status": "passed",
+      "evaluations": [
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "compute_status": "COMPLETED",
+          "score": 5,
+          "is_pass": true,
+          "label": null,
+          "explainability": "The bot's response appropriately asks for the customer's message or issue details, aligning with the expected response's instruction to gather necessary information before drafting a reply. The response is clear, precise, and contains no irrelevant information.",
+          "error_message": null,
+          "actual_value": "I can help you draft a reply. Please provide the customer's message or describe their issue so I can create an appropriate response. What did the customer say?",
+          "expected_value": "Ask for the customer message or details of the issue rather than inventing a customer or order."
+        }
+      ],
+      "response": "I can help you draft a reply. Please provide the customer's message or describe their issue so I can create an appropriate response. What did the customer say?"
+    }
+  ]
+}

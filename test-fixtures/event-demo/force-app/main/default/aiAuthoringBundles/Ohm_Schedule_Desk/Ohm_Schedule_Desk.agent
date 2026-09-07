@@ -1,0 +1,70 @@
+# Adapted from Salesforce Agent Script Recipes prompt actions and action chaining. See PROVENANCE.json.
+config:
+    developer_name: "Ohm_Schedule_Desk"
+    agent_label: "Efficient Schedule Desk"
+    agent_type: "AgentforceServiceAgent"
+    default_agent_user: "ohm.fixture.agent@orgfarm-08e0e83a93.ohm"
+    description: "Prepare a deterministic day plan in Apex, then present the validated plan to the guest."
+
+variables:
+    validated_plan: mutable string = ""
+        description: "The schedule preparation result returned by Apex."
+    guest_message: mutable string = ""
+        description: "The final message returned by the presentation prompt."
+
+system:
+    instructions: "You are a guest coordinator at Cedar Bay Retreat. Use the configured schedule preparation and presentation actions. Do not create bookings or change records."
+    messages:
+        welcome: "Share activity rows as HH:MM|duration minutes|activity name|location, and I will prepare your day plan."
+        error: "The plan could not be prepared. Please try again."
+
+start_agent agent_router:
+    description: "Route day-planning requests to the schedule desk."
+    reasoning:
+        instructions:|
+            Route guest day-planning requests to the schedule desk. Briefly explain the scope for unrelated requests.
+        actions:
+            begin_planning: @utils.transition to @subagent.schedule_desk
+                description: "Prepare a schedule from activity rows."
+
+subagent schedule_desk:
+    description: "Prepare and present a guest day plan from supplied activity rows."
+    actions:
+        prepare_schedule:
+            description: "Use Apex to validate activity rows, sort by time, and select the earliest compatible activities with the minimum gap."
+            inputs:
+                activities: string
+                    description: "Activity rows from the user, forwarded unchanged. Each line is HH:MM|duration minutes|activity name|location."
+                    is_required: True
+            outputs:
+                scheduleText: string
+                    description: "The validated schedule or a request to correct invalid input."
+                valid: boolean
+                    description: "Whether the input rows passed validation."
+            target: "apex://OhmDemoScheduleService"
+        present_schedule:
+            description: "Present the prepared output as one concise guest message while preserving all facts."
+            inputs:
+                "Input:validatedPlan": string
+                    description: "The unmodified schedule preparation result."
+                    is_required: True
+            outputs:
+                promptResponse: string
+                    description: "The guest-facing message."
+                    is_used_by_planner: True
+                    is_displayable: True
+            target: "generatePromptResponse://Ohm_Present_Validated_Plan"
+    reasoning:
+        instructions: ->
+            | Ask for activity rows if none are supplied. Forward those rows unchanged to the preparation action; all time calculations and validation belong to that action.
+            | Use {!@actions.prepare_schedule} for supplied rows. The configured action chain prepares the schedule and then produces its presentation.
+            | Show the returned guest message for review. If the guest corrects the rows, use the action again with those corrections. Do not retry automatically.
+            if @variables.guest_message:
+                | Prepared guest message: {!@variables.guest_message}
+        actions:
+            prepare_schedule: @actions.prepare_schedule
+                with activities=...
+                set @variables.validated_plan = @outputs.scheduleText
+                run @actions.present_schedule
+                    with "Input:validatedPlan" = @variables.validated_plan
+                    set @variables.guest_message = @outputs.promptResponse

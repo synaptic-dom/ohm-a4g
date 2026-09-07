@@ -9,7 +9,7 @@ public with sharing class DiscoverAgenticWork {
 
     @InvocableMethod(
         label='Discover Agentic Work'
-        description='Inventories every Agentforce agent, topic, and action in this org and saves the discovery graph onto an Agent Audit Report. Pass an existing report Id to reuse a report, or leave it blank to start a new audit. Returns the report Id, inventory counts, and the discovery graph JSON.'
+        description='Inventories published Agent Script bundle candidates, their topics, actions, and linked prompt references. Saves the discovery graph onto an Agent Audit Report. Pass an existing report Id to reuse a report, or leave it blank to create one. Exact bundle publication is verified during source retrieval.'
     )
     public static List<Response> run(List<Request> requests) {
         List<Response> out = new List<Response>();

@@ -1,0 +1,45 @@
+{
+  "bundle": "Ohm_Schedule_Planner",
+  "promptModel": "sfdc_ai__DefaultGPT55",
+  "cliStatus": 0,
+  "tests": [
+    {
+      "id": "schedule-day",
+      "status": "passed",
+      "evaluations": [
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "compute_status": "COMPLETED",
+          "score": 5,
+          "is_pass": true,
+          "label": null,
+          "explainability": "The bot's response aligns with the expected response by including the correct activities in the specified order and omitting the Clay studio activity due to insufficient gap. The bot also avoids claiming any booking was created, as instructed. The response is clear, precise, and contains all relevant information, with no irrelevant details or omissions.",
+          "error_message": null,
+          "actual_value": "Here is a draft guest day plan based on your activities and required 60-minute free-time gap between included activities:\n\nSchedule:\n\nKayaking: 09:00\u201309:45, Boathouse (45 minutes)\nGarden tour: 10:45\u201311:30, Garden (45 minutes)\nForest walk: 13:00\u201314:00, Trailhead (60 minutes)\n\nOmitted activity:\n\nClay studio: 10:30\u201311:00, Art room (30 minutes). This was omitted because it starts before the required 60-minute gap after Kayaking and overlaps with the Garden tour.\n\nWould you like to revise any activities or adjust the schedule?",
+          "expected_value": "Include Kayaking at 09:00\u201309:45, Garden tour at 10:45\u201311:30, and Forest walk at 13:00\u201314:00, in that order. Omit Clay studio because the gap after Kayaking is too short. Do not claim any booking was created."
+        }
+      ],
+      "response": "Here is a draft guest day plan based on your activities and required 60-minute free-time gap between included activities:\n\nSchedule:\n\nKayaking: 09:00\u201309:45, Boathouse (45 minutes)\nGarden tour: 10:45\u201311:30, Garden (45 minutes)\nForest walk: 13:00\u201314:00, Trailhead (60 minutes)\n\nOmitted activity:\n\nClay studio: 10:30\u201311:00, Art room (30 minutes). This was omitted because it starts before the required 60-minute gap after Kayaking and overlaps with the Garden tour.\n\nWould you like to revise any activities or adjust the schedule?"
+    },
+    {
+      "id": "schedule-invalid",
+      "status": "passed",
+      "evaluations": [
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "compute_status": "COMPLETED",
+          "score": 5,
+          "is_pass": true,
+          "label": null,
+          "explainability": "The bot correctly identifies the invalid time and asks the user to provide a corrected time, aligning with the expected response. The response is precise, relevant, and clear, with no unnecessary information.",
+          "error_message": null,
+          "actual_value": "The start time \"25:00\" is not valid, as it is beyond the 24-hour day. Could you provide the correct start time for the Evening yoga activity? Once you provide that, I can prepare your day plan draft.",
+          "expected_value": "Ask for a corrected time rather than inventing a valid time or a reservation."
+        }
+      ],
+      "response": "The start time \"25:00\" is not valid, as it is beyond the 24-hour day. Could you provide the correct start time for the Evening yoga activity? Once you provide that, I can prepare your day plan draft."
+    }
+  ]
+}

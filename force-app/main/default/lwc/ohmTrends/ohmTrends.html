@@ -72,9 +72,9 @@
                 <div class="ohm-trends__empty" data-id="empty" role="status">
                     <div class="ohm-trends__empty-badge">No datapoints yet</div>
                     <p class="ohm-trends__empty-body">
-                        No audits recorded for this scope yet. Audit a process
-                        from the Fleet, then re-audit after a change — each run
-                        drops a point here.
+                        No modeled audit history for this scope. Select a process
+                        above to view its runs; org-wide history requires an
+                        org-wide audit.
                     </p>
                 </div>
             </template>
@@ -84,7 +84,7 @@
                 <section class="ohm-trends__card" data-id="chart-card">
                     <div class="ohm-trends__card-head">
                         <span class="ohm-trends__card-label"
-                            >{scopeLabel} energy (Wh/yr)</span
+                            >{scopeLabel} instruction input (Wh/yr)</span
                         >
                     </div>
 
@@ -146,7 +146,7 @@
                             {realizedSavingsText}
                         </div>
                         <div class="ohm-trends__savings-caption">
-                            realized savings · {firstEnergyText} →
+                            modeled reduction · {firstEnergyText} →
                             {lastEnergyText} Wh/yr since the first audit
                         </div>
                     </section>

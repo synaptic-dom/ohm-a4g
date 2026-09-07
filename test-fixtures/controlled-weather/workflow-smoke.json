@@ -1,0 +1,129 @@
+{
+  "tests": [
+    {
+      "id": "missing-location",
+      "steps": [
+        {
+          "type": "agent.create_session",
+          "id": "cs",
+          "use_agent_api": true
+        },
+        {
+          "type": "agent.send_message",
+          "id": "sm",
+          "session_id": "{cs.session_id}",
+          "utterance": "What's the weather like right now?"
+        },
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "utterance": "What's the weather like right now?",
+          "expected": "Ask the user which city or location they want weather for; do not invent a city.",
+          "actual": "{sm.response}",
+          "threshold": 3.0
+        }
+      ]
+    },
+    {
+      "id": "current-weather",
+      "steps": [
+        {
+          "type": "agent.create_session",
+          "id": "cs",
+          "use_agent_api": true
+        },
+        {
+          "type": "agent.send_message",
+          "id": "sm",
+          "session_id": "{cs.session_id}",
+          "utterance": "What is the current weather in San Francisco, in Fahrenheit?"
+        },
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "utterance": "What is the current weather in San Francisco, in Fahrenheit?",
+          "expected": "San Francisco is sunny, with a temperature of 72.5 degrees Fahrenheit, humidity of 45 percent, and wind speed of 10 mph.",
+          "actual": "{sm.response}",
+          "threshold": 3.0
+        }
+      ]
+    },
+    {
+      "id": "forecast",
+      "steps": [
+        {
+          "type": "agent.create_session",
+          "id": "cs",
+          "use_agent_api": true
+        },
+        {
+          "type": "agent.send_message",
+          "id": "sm",
+          "session_id": "{cs.session_id}",
+          "utterance": "Please show the five-day weather forecast for San Francisco."
+        },
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "utterance": "Please show the five-day weather forecast for San Francisco.",
+          "expected": "Monday partly cloudy 67 F, Tuesday sunny 70 F, Wednesday cloudy 64 F, Thursday rain 61 F, Friday partly cloudy 66 F.",
+          "actual": "{sm.response}",
+          "threshold": 3.0
+        }
+      ]
+    },
+    {
+      "id": "out-of-scope",
+      "steps": [
+        {
+          "type": "agent.create_session",
+          "id": "cs",
+          "use_agent_api": true
+        },
+        {
+          "type": "agent.send_message",
+          "id": "sm",
+          "session_id": "{cs.session_id}",
+          "utterance": "Write a JavaScript sorting algorithm for me."
+        },
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "utterance": "Write a JavaScript sorting algorithm for me.",
+          "expected": "Decline the programming request and explain that the assistant helps with weather questions.",
+          "actual": "{sm.response}",
+          "threshold": 3.0
+        }
+      ]
+    },
+    {
+      "id": "weather-alert",
+      "steps": [
+        {
+          "type": "agent.create_session",
+          "id": "cs",
+          "use_agent_api": true
+        },
+        {
+          "type": "agent.send_message",
+          "id": "sm",
+          "session_id": "{cs.session_id}",
+          "utterance": "Please issue a low severity weather alert with the exact message 'Light rain expected in San Francisco'."
+        },
+        {
+          "type": "agent.get_state",
+          "id": "gs",
+          "session_id": "{cs.session_id}"
+        },
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "utterance": "Please issue a low severity weather alert with the exact message 'Light rain expected in San Francisco'.",
+          "expected": "Confirm the low severity weather alert was processed with the exact message Light rain expected in San Francisco.",
+          "actual": "{sm.response}",
+          "threshold": 3.0
+        }
+      ]
+    }
+  ]
+}

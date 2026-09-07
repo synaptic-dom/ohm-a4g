@@ -15,7 +15,7 @@
     --ohm-cool: #4fd1c5; /* efficiency / good / cooled state */
     --ohm-hairline: #2a3b42; /* dividers */
 
-    /* behavioural tokens (Calm flips these off) ----------------------------- */
+    /* Shared presentation tokens -------------------------------------------- */
     --ohm-glow: 0 0 18px rgba(255, 178, 76, 0.45), 0 0 4px rgba(255, 178, 76, 0.6);
     --ohm-glow-cool: 0 0 14px rgba(79, 209, 197, 0.4);
     --ohm-ring-width: 3px;
@@ -23,7 +23,7 @@
     --ohm-ring-glow-blur: 24px;
     --ohm-ring-track: var(--ohm-hairline);
     --ohm-line: 1.55;
-    --ohm-hero-anim: ohm-pulse 3.6s ease-in-out infinite; /* the ONE ambient effect */
+    --ohm-hero-anim: none;
     --ohm-card-bg: var(--ohm-panel-2);
     --ohm-device-accent: linear-gradient(
         90deg,
@@ -83,17 +83,14 @@
     box-sizing: border-box;
 }
 
-.ohm-experience__toolbar {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: var(--ohm-s3);
-}
-
 .ohm-experience__recs {
     display: flex;
     flex-direction: column;
     gap: var(--ohm-s3);
 }
+.ohm-experience__supporting { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--ohm-hairline); }
+.ohm-experience__supporting summary { font-size: 13px; color: var(--ohm-muted); cursor: pointer; padding: 5px 0; }
+.ohm-experience__supporting summary:focus-visible { outline: 2px solid var(--ohm-cool); outline-offset: 3px; }
 
 /* Error screen -------------------------------------------------------------- */
 .ohm-experience__error {
@@ -113,7 +110,11 @@
     margin: 0 0 var(--ohm-s3);
     color: var(--ohm-filament);
     font-family: var(--ohm-font-data);
+    overflow-wrap: anywhere;
 }
+.ohm-experience__error a { color: var(--ohm-cool); }
+.ohm-experience__error a:focus-visible { outline: 2px solid var(--ohm-cool); outline-offset: 3px; }
+.ohm-experience__progress-note { margin: 20px 0 0; color: var(--ohm-muted); font-size: 12px; }
 .ohm-experience__error [data-focus-heading]:focus-visible {
     outline: 2px solid var(--ohm-cool);
     outline-offset: 3px;
@@ -148,52 +149,4 @@
     --slds-c-progress-bar-color-background-fill: var(--ohm-filament);
     --slds-c-progress-bar-sizing-height: 6px;
     --slds-c-progress-bar-radius-border: 999px;
-}
-
-/* ============================================================================
-   CALM MODE — the accessibility beat. Panel inverts to LIGHT + quiet. All
-   meaning-bearing colours collapse to ink so NO meaning rides on colour alone;
-   glow / pulse / gauge-ring are switched off. Structure is untouched.
-   ========================================================================== */
-.ohm-experience--calm {
-    --ohm-panel: #f7f9f9;
-    --ohm-panel-2: #ffffff;
-    --ohm-ink: #14242a;
-    --ohm-muted: #4c5f65;
-    --ohm-filament: #14242a; /* meaning stripped -> ink */
-    --ohm-filament-hot: #14242a;
-    --ohm-cool: #14242a;
-    --ohm-hairline: #d3dede;
-
-    --ohm-glow: none;
-    --ohm-glow-cool: none;
-    --ohm-ring-width: 0px;
-    --ohm-ring-radius: 0px;
-    --ohm-ring-glow-blur: 0px;
-    --ohm-ring-track: transparent;
-    --ohm-line: 1.7;
-    --ohm-hero-anim: none;
-    --ohm-card-bg: #ffffff;
-    --ohm-device-accent: var(--ohm-hairline);
-
-    background: var(--ohm-panel);
-    color: var(--ohm-ink);
-    border-color: var(--ohm-hairline);
-    box-shadow: 0 1px 3px rgba(20, 36, 42, 0.12);
-}
-.ohm-experience--calm::before {
-    opacity: 0.35;
-}
-/* Calm keeps a readable focus ring using the ink colour (cool == ink here). */
-.ohm-experience--calm {
-    --slds-c-button-brand-color-background: #14242a;
-    --slds-c-button-brand-color-background-hover: #29414a;
-    --slds-c-button-brand-color-border: #14242a;
-    --slds-c-button-brand-text-color: #ffffff;
-    --slds-c-button-brand-text-color-hover: #ffffff;
-    --slds-c-button-neutral-color-background: #ffffff;
-    --slds-c-button-neutral-color-border: #b7c6c6;
-    --slds-c-button-text-color: #14242a;
-    --slds-c-progress-bar-color-background-fill: #14242a;
-    --slds-c-progress-bar-color-background: #d3dede;
 }

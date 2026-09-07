@@ -1,0 +1,45 @@
+:host { display: block; color: var(--ohm-ink, #f4f1e8); font-family: var(--ohm-font-head, "Avenir Next", "Segoe UI", sans-serif); }
+* { box-sizing: border-box; }
+.how__head { max-width: 720px; margin: 0 0 34px; }
+.how__eyebrow { margin: 0 0 14px; font: 500 11px var(--ohm-font-data, "SF Mono", Consolas, monospace); letter-spacing: 1.4px; text-transform: uppercase; color: var(--ohm-muted, #a4b4ab); }
+.how__title { margin: 0 0 14px; font-size: clamp(34px, 3.6vw, 52px); font-weight: 500; line-height: 1.05; letter-spacing: -2px; }
+.how__lede { margin: 0; font-size: 16px; line-height: 1.7; color: #b3c0b9; max-width: 60ch; }
+.how__block { border: 1px solid var(--ohm-hairline, #2c3833); border-radius: 14px; background: var(--ohm-panel-2, #121b1b); padding: 26px 28px 22px; margin: 0 0 20px; }
+.how__block h2 { margin: 0 0 8px; font-size: 20px; font-weight: 600; letter-spacing: -.4px; }
+.how__intro { margin: 0 0 18px; color: var(--ohm-muted, #a4b4ab); font-size: 13px; line-height: 1.7; max-width: 78ch; }
+.diagram { display: block; width: 100%; height: auto; }
+.diagram--math { max-width: 1200px; }
+.d-boundary { fill: none; stroke: #35442c; stroke-width: 1.5; stroke-dasharray: 6 6; }
+.d-band { fill: #0f1716; stroke: var(--ohm-hairline, #2c3833); stroke-width: 1; }
+.d-accent { fill: var(--ohm-muted, #a4b4ab); }
+.d-accent--cool { fill: var(--ohm-cool, #b8f36b); }
+.d-accent--warm { fill: var(--ohm-filament, #efb86a); }
+.d-accent--muted { fill: #52694d; }
+.d-node { fill: #172220; stroke: #3a4a41; stroke-width: 1.2; }
+.d-node--strong { stroke: var(--ohm-cool, #b8f36b); }
+.d-gate { fill: #16241a; stroke: var(--ohm-cool, #b8f36b); stroke-width: 2; }
+.d-chip { fill: #172220; stroke: #2f3d37; stroke-width: 1; }
+.d-chip-text { fill: var(--ohm-ink, #f4f1e8); font: 500 13px var(--ohm-font-head, "Avenir Next", "Segoe UI", sans-serif); text-anchor: middle; }
+.d-title { fill: var(--ohm-ink, #f4f1e8); font: 500 16px var(--ohm-font-head, "Avenir Next", "Segoe UI", sans-serif); text-anchor: middle; }
+.d-title--gate { fill: var(--ohm-cool, #b8f36b); font-weight: 600; }
+.d-title--small { font-size: 14px; }
+.d-label { fill: var(--ohm-muted, #a4b4ab); font: 11.5px var(--ohm-font-data, "SF Mono", Consolas, monospace); }
+.d-label--center { text-anchor: middle; }
+.d-label--fail { fill: var(--ohm-filament-hot, #ff9179); }
+.d-op { fill: var(--ohm-cool, #b8f36b); font: 500 22px var(--ohm-font-head, "Avenir Next", "Segoe UI", sans-serif); text-anchor: middle; }
+.d-line { fill: none; stroke: #6f8a72; stroke-width: 1.6; }
+.d-line--loop { stroke: #4f6552; stroke-dasharray: 5 5; }
+.d-line--fail { stroke: var(--ohm-filament-hot, #ff9179); }
+.d-arrow { fill: #6f8a72; }
+.d-arrow--loop { fill: #4f6552; }
+.d-arrow--fail { fill: var(--ohm-filament-hot, #ff9179); }
+.how__steps { margin: 18px 0 0; padding-left: 22px; color: #c0cec3; font-size: 13px; line-height: 1.7; columns: 2; column-gap: 40px; }
+.how__steps li { break-inside: avoid; margin-bottom: 8px; }
+.how__steps b { color: var(--ohm-ink, #f4f1e8); font-weight: 600; }
+.how__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 14px 0 16px; }
+.how__card { border: 1px solid var(--ohm-hairline, #2c3833); border-radius: 12px; padding: 16px 18px; background: #0f1716; }
+.how__card h3 { margin: 0 0 6px; font-size: 15px; font-weight: 600; color: var(--ohm-cool, #b8f36b); }
+.how__card p { margin: 0; font-size: 13px; line-height: 1.65; color: #b3c0b9; }
+.how__legend { margin: 0; font-size: 13px; color: var(--ohm-muted, #a4b4ab); line-height: 1.7; }
+.how__legend b { color: var(--ohm-ink, #f4f1e8); font-weight: 600; margin-right: 2px; }
+@media (max-width: 900px) { .how__steps { columns: 1; } .how__grid { grid-template-columns: 1fr; } .how__block { padding: 20px 18px; } }

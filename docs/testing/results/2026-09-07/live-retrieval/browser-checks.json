@@ -1,0 +1,20 @@
+{
+  "verifiedAt": "2026-09-07",
+  "orgId": "00DEc00000kvSbNMAU",
+  "route": "/lightning/n/Ohm_Audit",
+  "checks": {
+    "failedRunKeepsPriorReport": true,
+    "retryCreatesFreshRun": true,
+    "reloadResumesSameReportId": "a00Ec00000lsytlIAA",
+    "completedFleetMatchesRun": true,
+    "promptInstructionsCharacters": 832,
+    "exactPromptVersion": "ul8eo8Wmi00b0AAaWZ5z5Q0cwb3Wq2HdIrEhx41Dtl4=_1",
+    "sourceProvenancePanel": "Retrieved from Salesforce",
+    "modelSuitabilityCoverage": "Covered",
+    "executionGraphCoverage": "Unknown",
+    "responsiveInspector580px": "No horizontal overflow observed; long identity and hash wrap",
+    "freshBaselineReportId": "a00Ec00000lsiAmIAI",
+    "duplicateWarningRemoved": true,
+    "freshBaselineFindingCount": 1
+  }
+}

@@ -18,6 +18,8 @@ private class OhmFootprintServiceTest {
         f.artifactType = artifactType;
         f.metricValue = metric;
         f.recommendedTarget = recTarget;
+        f.reviewRequired = false; // explicit hypothetical confirmed-fix scenario for engine math
+        if (signal == 'MODEL_RIGHTSIZING') f.boundModel = 'LARGE';
         return f;
     }
 

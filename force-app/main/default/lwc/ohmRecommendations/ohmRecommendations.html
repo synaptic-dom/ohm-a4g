@@ -1,113 +1,52 @@
 <template>
-    <!-- v2 standalone: the RECOMMENDATIONS tab — ranked quick-win cards ----- -->
     <template lwc:if={standalone}>
-        <div class={hostClass} data-id="recs2-root">
-            <template lwc:if={isLoading}>
-                <div class="ohm-recs2__loading" data-id="loading" role="status">
-                    <span class="ohm-recs2__spinner" aria-hidden="true"></span>
-                    Ranking the quick wins…
+        <section class="ohm-recs" data-id="recs2-root" aria-label="Recommendations">
+            <header class="ohm-recs__header">
+                <div><p class="ohm-recs__eyebrow">Make the next change count</p><h2 data-focus-heading tabindex="-1">Recommendations</h2><p class="ohm-recs__intro">Clear changes from your saved reviews. Check the evidence, preserve the behavior, then test.</p></div>
+                <button type="button" class="ohm-recs__button" data-id="refresh" disabled={isLoading} onclick={handleRetry}>Refresh</button>
+            </header>
+            <template lwc:if={isLoading}><c-ohm-loading-state data-id="loading" heading="Finding your next improvement" detail="Checking the latest reviews against your published source."></c-ohm-loading-state></template>
+            <template lwc:if={loadError}><div class="ohm-recs__state ohm-recs__state--error" data-id="load-error" role="alert"><p>{loadError}</p><button type="button" class="ohm-recs__button" onclick={handleRetry}>Try again</button></div></template>
+            <template lwc:if={hasFootprint}><c-ohm-footprint-strip class="ohm-recs__footprint" heading={footprintHeading} scope={footprintScope} footprints={footprints} factors={footprintFactors} assumption-summary={footprintSummary} data-id="footprint"></c-ohm-footprint-strip></template>
+            <template lwc:if={hasFilters}>
+                <div class="ohm-recs__controls">
+                    <p class="ohm-recs__coverage" data-id="coverage">{coverageText}</p>
+                    <div class="ohm-recs__filters" role="group" aria-label="Filter recommendations">
+                        <label><span class="ohm-recs__sr">Bundle</span><select data-id="filter-bundle" onchange={handleBundleFilter}><template for:each={bundleOptions} for:item="option"><option key={option.value} value={option.value} selected={option.selected}>{option.label}</option></template></select></label>
+                        <label><span class="ohm-recs__sr">Category</span><select data-id="filter-category" onchange={handleCategoryFilter}><template for:each={categoryOptions} for:item="option"><option key={option.value} value={option.value} selected={option.selected}>{option.label}</option></template></select></label>
+                    </div>
                 </div>
             </template>
-
-            <template lwc:if={loadError}>
-                <div class="ohm-recs2__error" data-id="load-error" role="alert">
-                    <p>{loadError}</p>
-                    <button type="button" class="ohm-recs2__btn" onclick={handleRetry}>
-                        Retry
-                    </button>
-                </div>
-            </template>
-
-            <template lwc:if={hasQuickWins}>
-                <ul class="ohm-recs2__grid" data-id="cards">
-                    <template for:each={quickWins} for:item="card">
-                        <li key={card.key} class="ohm-recs2__card" data-id="card">
-                            <div class="ohm-recs2__rank" data-id="rank" aria-label="Rank">
-                                #{card.rank}
-                            </div>
-                            <div class="ohm-recs2__head">
-                                <span class="ohm-recs2__signal">{card.signalLabel}</span>
-                                <span class="ohm-recs2__process">{card.processText}</span>
-                            </div>
-                            <p class="ohm-recs2__change" data-id="change">{card.changeText}</p>
-                            <div class="ohm-recs2__meta">
-                                <span class="ohm-recs2__savings" data-id="savings">{card.savingsText}</span>
-                                <span class={card.effortClass} data-id="effort">{card.effortText}</span>
-                                <span class="ohm-recs2__severity">Severity: {card.severityText}</span>
-                            </div>
-
-                            <template lwc:if={card.error}>
-                                <p class="ohm-recs2__card-error" data-id="card-error" role="alert">
-                                    {card.error}
-                                </p>
-                            </template>
-
-                            <div class="ohm-recs2__actions">
-                                <template lwc:if={card.created}>
-                                    <span class="ohm-recs2__created" data-id="created">✓ Task created</span>
-                                </template>
-                                <template lwc:else>
-                                    <button
-                                        type="button"
-                                        class="ohm-recs2__btn ohm-recs2__btn--primary"
-                                        data-id="create-task"
-                                        data-finding={card.findingId}
-                                        disabled={card.isBusy}
-                                        onclick={handleCreateQuickTask}
-                                    >
-                                        <template lwc:if={card.isBusy}>Creating…</template>
-                                        <template lwc:else>Create task</template>
-                                    </button>
-                                </template>
-                            </div>
-                        </li>
-                    </template>
+            <template lwc:if={hasCards}>
+                <ul class="ohm-recs__cards" data-id="cards">
+                    <template for:each={visibleCards} for:item="card"><li key={card.key} data-id="card"><c-ohm-recommendation-card recommendation={card.item} busy={card.busy} error-message={card.error} oncreatetask={handleCreateReviewTask}></c-ohm-recommendation-card></li></template>
                 </ul>
             </template>
-
-            <template lwc:if={isEmptyStandalone}>
-                <div class="ohm-recs2__empty" data-id="empty">
-                    No quick wins yet — audit a process from the Fleet tab to surface
-                    savings you can bank.
+            <template lwc:if={isEmpty}>
+                <div class="ohm-recs__state" data-id="empty">
+                    <template lwc:if={isFiltered}><h3>No recommendations match these filters.</h3><button type="button" class="ohm-recs__button" onclick={handleClearFilters}>Clear filters</button></template>
+                    <template lwc:elseif={hasCurrentReviews}><h3>No input, output or call changes were proposed.</h3><p>Open a bundle to see its category ratings and any areas with insufficient evidence.</p><p class="ohm-recs__coverage">{coverageText}</p></template>
+                    <template lwc:elseif={hasBundles}><h3>Your next step is a fresh review.</h3><p>Open a bundle below and run an audit to produce recommendations.</p></template>
+                    <template lwc:else><h3>Start with an Agent Script bundle.</h3><p>Discover your bundles, then run an audit from Bundles.</p></template>
                 </div>
             </template>
-        </div>
+            <template lwc:if={hasUnavailable}>
+                <section class="ohm-recs__unavailable" aria-label="Bundles needing a review">
+                    <h3>Still to review</h3>
+                    <ul><template for:each={unavailablePages} for:item="page"><li key={page.plannerId} data-id="unavailable-bundle"><div><p class="ohm-recs__bundle-name">{page.bundleLabel}<span>{page.statusLabel}</span></p><p class="ohm-recs__reason">{page.reason}</p></div><button type="button" class="ohm-recs__button" data-planner={page.plannerId} onclick={handleOpenBundle}>Open bundle <span aria-hidden="true">↗</span></button></li></template></ul>
+                </section>
+            </template>
+            <section class="ohm-recs__tracked" aria-label="Tracked supporting checks">
+                <button type="button" class="ohm-recs__disclosure" data-id="tracked-toggle" aria-expanded={showTrackedWork} onclick={handleToggleTrackedWork}><span>{trackedWorkLabel}</span><span aria-hidden="true">＋</span></button>
+                <template lwc:if={showTrackedWork}><p class="ohm-recs__tracked-note">Existing detector findings and their assigned tasks. Review recommendations are tracked on their cards above.</p><c-ohm-findings-worklist></c-ohm-findings-worklist></template>
+            </section>
+        </section>
     </template>
-
-    <!-- v1 container: fed `findings` by ohmAuditExperience ------------------ -->
     <template lwc:else>
-        <section class="ohm-recs" aria-labelledby="ohm-recs-heading">
-            <h2
-                id="ohm-recs-heading"
-                class="ohm-recs__heading"
-                data-focus-heading
-                tabindex="-1"
-            >
-                Recommended changes
-            </h2>
-
-            <template lwc:if={hasFindings}>
-                <ul class="ohm-recs__list" data-id="rec-list">
-                    <template for:each={cards} for:item="card">
-                        <li key={card.key} class="ohm-recs__item">
-                            <c-ohm-recommendation-card
-                                finding={card.finding}
-                                calm-mode={calmMode}
-                                volume-assumption={volumeAssumption}
-                                telemetry-backed={telemetryBacked}
-                                error-message={card.error}
-                                oncreatetask={handleCreateTask}
-                                data-id="rec-card"
-                            ></c-ohm-recommendation-card>
-                        </li>
-                    </template>
-                </ul>
-            </template>
-            <template lwc:else>
-                <p class="ohm-recs__empty" data-id="rec-empty">
-                    No findings — this org's agents are already running lean.
-                </p>
-            </template>
+        <section class="ohm-recs ohm-recs--embedded">
+            <h2 data-focus-heading tabindex="-1">Supporting checks</h2>
+            <template lwc:if={hasFindings}><ul class="ohm-recs__cards"><template for:each={cards} for:item="card"><li key={card.key}><c-ohm-recommendation-card finding={card.finding} busy={card.busy} error-message={card.error} oncreatetask={handleCreateTask} data-id="rec-card"></c-ohm-recommendation-card></li></template></ul></template>
+            <template lwc:else><p class="ohm-recs__state" data-id="rec-empty">No supporting check findings were recorded in this report.</p></template>
         </section>
     </template>
 </template>

@@ -1,0 +1,206 @@
+Browser tab: 1, Title: "Ohm Audit | Salesforce", URL: "https://innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/n/Ohm_Audit".
+0 AXWebArea Ohm Audit | Salesforce, URL: innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/n/Ohm_Audit
+	1 container
+		2 container
+			3 container oneHeader
+				4 link Description: Skip to Navigation, Value: javascript:void(0);
+				5 link Description: Skip to Main Content, Value: javascript:void(0);
+				6 container
+					7 button (collapsed) Description: Toggle Panel, Secondary Actions: Expand
+						8 text Menu
+					9 text Scratch Org
+					10 pop up button (collapsed) Show menu, Secondary Actions: Expand
+						11 text Show menu
+				12 button Search
+				13 container Global Header
+					14 content list
+						15 container
+							16 checkbox Description: Add favorite, Value: 0
+								17 container
+									18 container Add favorite, ID: tt-for-6:203;a
+										19 text Add favorite
+							20 button Favorites list
+								21 container
+									22 container Favorites list, ID: tt-for-30:203;a
+										23 text Favorites list
+						24 pop up button (collapsed) Global Actions, Secondary Actions: Expand
+							25 container
+								26 container Global Actions, ID: tt-for-7:606;a
+									27 text Global Actions
+						28 pop up button Guidance Center
+							29 container
+								30 container Guidance Center, ID: tt-for-490:0
+									31 text Guidance Center
+						32 pop up button Salesforce Help
+							33 container
+								34 container Salesforce Help, ID: tt-for-116:203;a
+									35 text Salesforce Help
+						36 pop up button (collapsed) Setup, Secondary Actions: Expand
+							37 container
+								38 container Setup, ID: tt-for-159:203;a
+									39 text Setup
+						40 container
+							41 pop up button 1 Notifications
+								42 container
+									43 text 1
+									44 container Notifications, ID: tt-for-64:203;a
+										45 text Notifications
+							46 text 1 new notifications
+						47 pop up button View profile
+							48 container
+								49 container View profile, ID: tt-for-90:203;a
+									50 text View profile
+			51 container
+				52 container App
+					53 pop up button (collapsed) App Launcher, Secondary Actions: Expand
+						54 container
+							55 text App Launcher
+				56 heading Ohm, Value: 1
+					57 text Ohm
+				58 container Global
+					59 content list
+						60 link Description: Ohm Audit, Value: innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/n/Ohm_Audit
+						61 button Edit nav items, Help: Personalize your nav bar
+			62 container
+				63 heading Ohm Audit, Value: 1
+					64 text Ohm Audit
+				65 container
+					66 text Ohm FLEET WORKBENCH
+					67 tab group Workbench sections
+						68 tab (selected, settable, boolean) FLEET, Value: 1
+						69 tab (selectable, settable, boolean) FINDINGS, Value: 0
+						70 tab (selectable, settable, boolean) RECOMMENDATIONS, Value: 0
+						71 tab (selectable, settable, boolean) TRENDS, Value: 0
+					72 switch Calm Mode ON, Value: 1
+				73 text Fleet › Controlled Weather Demo
+				74 container
+					75 button ‹ Back to fleet
+					76 heading Controlled Weather Demo, Value: 1
+						77 text Controlled Weather Demo
+					78 text INTERNAL
+					79 container Incomplete
+						80 text IN Incomplete
+					81 text 63,742 Wh/yr
+					82 button Re-audit
+					83 container Audit scope and evidence
+						84 text Audit coverage: Incomplete
+						85 content list
+							86 text Instructions: Covered
+							87 text Repeated calls: Unknown
+							88 text Model suitability: Covered
+							89 text Action review: Covered
+						90 text Imported Agent Script is versioned static source; conditional branches are retained. Source size is not measured rendered prompt usage.
+						91 text Execution graph unavailable; redundant-call coverage is unknown.
+						92 container
+							93 text Modeled instruction-source scenario  · Range 56,660–70,825 Wh/year · Low confidence
+						94 text 109500 modeled calls/year per source block; source characters / 4 approximate tokens. Conditional branches and dynamic outputs are not executed. Unknown models use standard multiplier 1.0; reference cost is 0.27 Wh per 500 tokens. Low confidence. Excludes output tokens, tool compute and actual runtime frequency. Potential savings cover instruction trimming only.
+					95 container Call graph
+						96 text CALL GRAPH
+						97 container
+							98 checkbox Description: Controlled Weather Demo, Agent, clean, Value: 0
+							99 checkbox Description: Weather Lookup, Topic, flagged wasteful — Bloated instructions / scope, Value: 1
+							100 checkbox Description: Agent Router, Topic, clean, Value: 0
+							101 checkbox Description: Get Current Weather, Action, clean, Value: 0
+							102 checkbox Description: Get Forecast, Action, clean, Value: 0
+							103 checkbox Description: Send Weather Alert, Action, clean, Value: 0
+					104 container Node inspector
+						105 text INSPECTOR
+						122 container
+							123 heading Weather Lookup, Value: 3
+								124 text Weather Lookup
+							125 text TOPIC weather_lookup_16jEc000000PAPB · 1,022 tokens
+						126 container Editable instruction source
+							127 container
+								128 text Selected source  · ImportedAgentScript
+							129 text /Users/dom/Documents/ohm-a4g/test-fixtures/controlled-weather/before/force-app/main/default/aiAuthoringBundles/Ohm_Weather_Demo/Ohm_Weather_Demo.agent#weather_lookup
+							130 text Version: controlled-weather-before:6946581b3aef7b33c52b21ef90c9f080ad1de8705a94a42d87d2fcbb29a4dbc0
+							131 button (collapsed) Source fingerprint, Secondary Actions: Expand
+								132 text Source fingerprint
+							133 text Review the draft against this source. Apply the edit manually, publish the agent if required, then refresh its source import and re-audit.
+						134 container
+							135 text ⚠ Bloated instructions / scope High Instruction block ≈ 1022 tokens vs soft budget 500 (excess 522). Review a shorter version that preserves required behavior. Any modeled reduction assumes this instruction input is sent at the stated usage volume. ESTIMATED SAVINGS 30,866 Wh/yr (27,436–34,295)
+						136 container
+							137 text INSTRUCTIONS | Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations a nd send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+
+  Current data:
+
+if @variables.location:
+   | - Location: {!@variables.location}
+else:
+   | - Location: None specified
+
+if @variables.current_temperature > 0:
+   | - Temperature: {!@variables.current_temperature}
+else:
+   | - Temperature: Not fetched
+
+if @variables.conditions:
+   | - Conditions: {!@variables.conditions}
+else:
+   | - Conditions: Not fetched
+
+| When a user asks about weather:
+  1. Identify the location they're asking about
+  2. Use {!@actions.get_current_weather} to fetch current conditions
+  3. Store the results in variables
+  4. Report the weather clearly to the user
+
+| If the user asks to send a weather alert, use {!@actions.send_alert} to send the alert 522 tokens over the modeled instruction budget
+						138 button Trim instructions
+					107 button (collapsed) Compare last two audits, Secondary Actions: Expand
+					108 text Before / after — the two most recent audits of this process.
+					109 container Ask Ohm assistant
+						110 container
+							111 text Ask Ohm GPT-4o mini · Einstein Trust Layer
+						112 text Grounded in Controlled Weather Demo · coverage Incomplete · 63,742 modeled Wh/yr
+						113 content list
+							114 text Coverage: Incomplete
+							139 text Weather Lookup · 4,085 chars
+							140 text Source controlled-weather-before:6946581b3aef7b33c52b21ef90c9f080ad1de8705a94a42d87d2fcbb29a4dbc0
+							115 text Modeled instruction-source scenario
+						141 container
+							142 text Explain the available modeled impact, its scope and usage assumptions. Process baseline: 63,742.14 Wh/yr (Modeled instruction-source scenario). Selected artifact potential trim reduction: 30,865.86 Wh/yr, conditional on a validated trim at the same usage assumptions. Coverage: Incomplete. These are modeled scenarios, not measured or realized savings. Verified audit data · deterministic calculation
+							143 button Explain the evidence
+							144 button Modeled impact
+							145 button Review opportunities
+							146 button Draft trimmed instructions
+						120 text entry area (settable) Ask Ohm a question about this process
+						121 button (disabled) Ask
+
+The focused UI element is 120 text entry area (settable) Ask Ohm a question about this process

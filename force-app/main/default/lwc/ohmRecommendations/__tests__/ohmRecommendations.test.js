@@ -1,10 +1,10 @@
 import { createElement } from 'lwc';
 import OhmRecommendations from 'c/ohmRecommendations';
-import createRemediationTask from '@salesforce/apex/OhmAuditController.createRemediationTask';
+import createRemediationTask from '@salesforce/apex/OhmAuditController.createFindingRemediationTask';
 import { mockFindings, mockVolumeAssumption } from 'c/ohmTestData';
 
 jest.mock(
-    '@salesforce/apex/OhmAuditController.createRemediationTask',
+    '@salesforce/apex/OhmAuditController.createFindingRemediationTask',
     () => ({ default: jest.fn() }),
     { virtual: true }
 );
@@ -51,7 +51,7 @@ describe('c-ohm-recommendations', () => {
         ).toBe(1);
     });
 
-    it('create-task flow calls createRemediationTask with the C12 DTO and flips the card', async () => {
+    it('create-task flow sends only the saved finding identity and flips the card', async () => {
         createRemediationTask.mockResolvedValue('00T000000000009');
         const findings = mockFindings().map((f, i) =>
             Object.assign({}, f, { id: `FIND-${i}` })
@@ -66,11 +66,7 @@ describe('c-ohm-recommendations', () => {
         await flush();
 
         expect(createRemediationTask).toHaveBeenCalledTimes(1);
-        const arg = createRemediationTask.mock.calls[0][0].input;
-        expect(arg.findingId).toBe('FIND-0');
-        expect(arg.reportId).toBe('AUDIT-1');
-        expect(arg.fixType).toBe('Replace_With_Flow');
-        expect(arg).toHaveProperty('estimatedSavingsCentralWh');
+        expect(createRemediationTask).toHaveBeenCalledWith({ findingId: 'FIND-0', note: null });
 
         // Card now reflects the created task.
         const card = el.shadowRoot.querySelector('[data-id="rec-card"]');
@@ -103,7 +99,7 @@ describe('c-ohm-recommendations', () => {
         expect(el.shadowRoot.querySelector('[data-id="rec-empty"]')).not.toBeNull();
     });
 
-    it('is accessible in both Calm variants', async () => {
+    it('keeps the single dark interface accessible for existing callers', async () => {
         await expect(create({ calmMode: false })).toBeAccessible();
         await expect(create({ calmMode: true })).toBeAccessible();
     });

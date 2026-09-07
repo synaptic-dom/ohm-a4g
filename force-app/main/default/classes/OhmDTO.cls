@@ -15,6 +15,11 @@ public with sharing class OhmDTO {
         @AuraEnabled public Map<String, List<ActionNode>> actionsByPlanner;
         @AuraEnabled public List<String> discoveryErrors;
         @AuraEnabled public Integer promptTemplateCount;
+        @AuraEnabled public Boolean coverageComplete;
+        @AuraEnabled public List<String> coverageWarnings;
+        @AuraEnabled public Map<String, String> detectorCoverage;
+        @AuraEnabled public Integer instructionSourceCount;
+        @AuraEnabled public String metadataFingerprint;
 
         public AgentModel() {
             this.agentsById = new Map<String, AgentNode>();
@@ -25,10 +30,17 @@ public with sharing class OhmDTO {
             this.actionsByPlanner = new Map<String, List<ActionNode>>();
             this.discoveryErrors = new List<String>();
             this.promptTemplateCount = 0;
+            this.coverageComplete = false;
+            this.coverageWarnings = new List<String>();
+            this.detectorCoverage = new Map<String, String>();
+            this.instructionSourceCount = 0;
         }
     }
 
     public class AgentNode {
+        @AuraEnabled public String configurationSource;
+        @AuraEnabled public String configurationSourcePath;
+        @AuraEnabled public String configurationSourceHash;
         @AuraEnabled public String id;
         @AuraEnabled public String developerName;
         @AuraEnabled public String masterLabel;
@@ -36,6 +48,15 @@ public with sharing class OhmDTO {
         @AuraEnabled public String plannerType;
         @AuraEnabled public String capabilities;
         @AuraEnabled public String agentGraphJson;
+        @AuraEnabled public String instructions;
+        @AuraEnabled public String sourceKind;
+        @AuraEnabled public String sourceVersion;
+        @AuraEnabled public String sourceHash;
+        @AuraEnabled public String sourcePath;
+        @AuraEnabled public String sourceApiName;
+        @AuraEnabled public String sourceVersionIdentifier;
+        @AuraEnabled public Datetime sourceRetrievedAt;
+        @AuraEnabled public Boolean sourceBindingVerified;
     }
 
     public class TopicNode {
@@ -48,6 +69,15 @@ public with sharing class OhmDTO {
         @AuraEnabled public String plannerId;
         @AuraEnabled public String parentId;
         @AuraEnabled public Boolean isLocal;
+        @AuraEnabled public String instructions;
+        @AuraEnabled public String sourceKind;
+        @AuraEnabled public String sourceVersion;
+        @AuraEnabled public String sourceHash;
+        @AuraEnabled public String sourcePath;
+        @AuraEnabled public String sourceApiName;
+        @AuraEnabled public String sourceVersionIdentifier;
+        @AuraEnabled public Datetime sourceRetrievedAt;
+        @AuraEnabled public Boolean sourceBindingVerified;
     }
 
     public class ActionNode {
@@ -62,6 +92,15 @@ public with sharing class OhmDTO {
         @AuraEnabled public Boolean isLocal;
         @AuraEnabled public String boundModel;
         @AuraEnabled public Boolean modelAssumed;
+        @AuraEnabled public String instructions;
+        @AuraEnabled public String sourceKind;
+        @AuraEnabled public String sourceVersion;
+        @AuraEnabled public String sourceHash;
+        @AuraEnabled public String sourcePath;
+        @AuraEnabled public String sourceApiName;
+        @AuraEnabled public String sourceVersionIdentifier;
+        @AuraEnabled public Datetime sourceRetrievedAt;
+        @AuraEnabled public Boolean sourceBindingVerified;
     }
 
     // ----- Finding (service-internal, maps 1:1 to Finding__c) -----
@@ -88,6 +127,8 @@ public with sharing class OhmDTO {
         @AuraEnabled public String generatedBy;
         @AuraEnabled public String effort;
         @AuraEnabled public Id findingRecordId;
+        @AuraEnabled public String boundModel;
+        @AuraEnabled public Boolean reviewRequired;
     }
 
     // ----- Footprint -----
@@ -135,10 +176,13 @@ public with sharing class OhmDTO {
         @AuraEnabled public Decimal maxPossible;
         @AuraEnabled public Integer deterministicActionCount;
         @AuraEnabled public Integer withinBudgetInstructionCount;
+        @AuraEnabled public String coverageStatus;
     }
 
     // ----- Cross-boundary contract DTOs -----
     public class AuditReadoutDTO {
+        @AuraEnabled public String reviewJson;
+        @AuraEnabled public String coverageStatus;
         @AuraEnabled public Id reportId;
         @AuraEnabled public String runStatus;
         @AuraEnabled public String stageMessage;
@@ -232,6 +276,7 @@ public with sharing class OhmDTO {
 
     /** Fleet-table row: cheap discovery counts, joined with the latest process report (if any). */
     public class ProcessSummaryDTO {
+        @AuraEnabled public String reviewJson;
         @AuraEnabled public Id plannerId;
         @AuraEnabled public String plannerApiName;
         @AuraEnabled public String label;
@@ -244,10 +289,27 @@ public with sharing class OhmDTO {
         @AuraEnabled public Decimal energyWhCentral;
         @AuraEnabled public Id latestReportId;
         @AuraEnabled public Datetime lastAudited;
+        // Modeled footprint bands from the latest report's Impact snapshot (never measured).
+        @AuraEnabled public Decimal energyWhLow;
+        @AuraEnabled public Decimal energyWhHigh;
+        @AuraEnabled public Decimal savingsWhLow;
+        @AuraEnabled public Decimal savingsWhCentral;
+        @AuraEnabled public Decimal savingsWhHigh;
+        @AuraEnabled public Decimal co2eGLow;
+        @AuraEnabled public Decimal co2eGCentral;
+        @AuraEnabled public Decimal co2eGHigh;
+        @AuraEnabled public Decimal waterMlLow;
+        @AuraEnabled public Decimal waterMlCentral;
+        @AuraEnabled public Decimal waterMlHigh;
+        @AuraEnabled public Decimal annualCalls;          // requests/year the review modeled
+        @AuraEnabled public String impactAssumptions;
+        @AuraEnabled public Map<String, Object> impactFactors;
     }
 
     /** Process page payload: latest report findings + the agent/topic/action node list. */
     public class ProcessDetailDTO {
+        @AuraEnabled public String reviewJson;
+        @AuraEnabled public Boolean sourceCurrent;
         @AuraEnabled public Id plannerId;
         @AuraEnabled public String plannerApiName;
         @AuraEnabled public String label;
@@ -258,10 +320,38 @@ public with sharing class OhmDTO {
         @AuraEnabled public Id reportId;
         @AuraEnabled public List<FindingDTO> findings;   // reuse existing FindingDTO
         @AuraEnabled public List<NodeDTO> nodes;         // graph nodes (agent/topic/action)
+        @AuraEnabled public String coverageStatus;
+        @AuraEnabled public List<String> coverageWarnings;
+        @AuraEnabled public Map<String, String> detectorCoverage;
+        @AuraEnabled public String impactScope;
+        @AuraEnabled public String impactAssumptions;
+        @AuraEnabled public Decimal energyWhLow;
+        @AuraEnabled public Decimal energyWhHigh;
+        // Modeled footprint bands from the Impact snapshot (never measured).
+        @AuraEnabled public Decimal savingsWhLow;
+        @AuraEnabled public Decimal savingsWhCentral;
+        @AuraEnabled public Decimal savingsWhHigh;
+        @AuraEnabled public Decimal co2eGLow;
+        @AuraEnabled public Decimal co2eGCentral;
+        @AuraEnabled public Decimal co2eGHigh;
+        @AuraEnabled public Decimal waterMlLow;
+        @AuraEnabled public Decimal waterMlCentral;
+        @AuraEnabled public Decimal waterMlHigh;
+        @AuraEnabled public Decimal annualCalls;          // requests/year the review modeled
+        @AuraEnabled public Map<String, Object> impactFactors;
     }
 
     /** One graph node in a process subtree (agent, topic, or action). */
     public class NodeDTO {
+        @AuraEnabled public String artifactKey;
+        @AuraEnabled public String sourceKind;
+        @AuraEnabled public String sourceVersion;
+        @AuraEnabled public String sourceHash;
+        @AuraEnabled public String sourcePath;
+        @AuraEnabled public String sourceApiName;
+        @AuraEnabled public String sourceVersionIdentifier;
+        @AuraEnabled public Datetime sourceRetrievedAt;
+        @AuraEnabled public Boolean sourceBindingVerified;
         @AuraEnabled public String id;
         @AuraEnabled public String nodeType;             // 'Agent' | 'Topic' | 'Action'
         @AuraEnabled public String apiName;
@@ -333,6 +423,12 @@ public with sharing class OhmDTO {
 
     /** Before/after comparison of the two most recent process reports for a planner. */
     public class DiffDTO {
+        @AuraEnabled public Boolean comparable;
+        @AuraEnabled public String comparisonReason;
+        @AuraEnabled public String artifactKey;
+        @AuraEnabled public String artifactLabel;
+        @AuraEnabled public String beforeHash;
+        @AuraEnabled public String afterHash;
         @AuraEnabled public Id plannerId;
         @AuraEnabled public String label;
         @AuraEnabled public Id beforeReportId;
@@ -370,6 +466,13 @@ public with sharing class OhmDTO {
      * quick prompts, and whether the Trust-Layer model is reachable at all.
      */
     public class AssistantContextDTO {
+        @AuraEnabled public String artifactKey;
+        @AuraEnabled public String sourceHash;
+        @AuraEnabled public String sourceVersion;
+        @AuraEnabled public String sourcePath;
+        @AuraEnabled public Boolean rewriteSupported;
+        @AuraEnabled public String rewriteUnavailableReason;
+        @AuraEnabled public Boolean calmMode;
         @AuraEnabled public Id plannerId;
         @AuraEnabled public String processLabel;
         @AuraEnabled public String greeting;            // Ohm's opening line
@@ -378,7 +481,7 @@ public with sharing class OhmDTO {
         @AuraEnabled public List<AssistantPromptDTO> quickPrompts;
         @AuraEnabled public Boolean available;           // Models API usable on this org
         @AuraEnabled public String unavailableReason;    // set when available=false
-        @AuraEnabled public String modelLabel;           // provenance, e.g. "GPT-4o mini · Einstein Trust Layer"
+        @AuraEnabled public String modelLabel;           // provenance, e.g. "GPT 5.5 · Einstein Trust Layer"
     }
 
     /**
@@ -387,6 +490,11 @@ public with sharing class OhmDTO {
      * instructions and beforeChars/afterChars/tokenDelta drive a before→after readout.
      */
     public class AssistantReplyDTO {
+        @AuraEnabled public String artifactKey;
+        @AuraEnabled public String sourceHash;
+        @AuraEnabled public String sourceVersion;
+        @AuraEnabled public String sourcePath;
+        @AuraEnabled public Boolean rewriteSupported;
         @AuraEnabled public String answer;
         @AuraEnabled public Boolean isDraft;             // true when a trimmed rewrite is attached
         @AuraEnabled public String draftText;            // the proposed instruction rewrite (nullable)

@@ -1,0 +1,43 @@
+{
+  "bundle": "Ohm_Sales_Follow_Up",
+  "tests": [
+    {
+      "id": "sales-follow-up",
+      "status": "passed",
+      "evaluations": [
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "compute_status": "COMPLETED",
+          "score": 5,
+          "is_pass": true,
+          "label": null,
+          "explainability": "The bot's response aligns with the expected outcome by drafting a follow-up email based on the meeting notes, offering a twenty-minute call next Tuesday without inventing pricing or promises, and not claiming the email was sent. The response is clear, complete, and contains all relevant information from the meeting notes.",
+          "error_message": null,
+          "actual_value": "Here is a draft follow-up email based on your meeting notes:\n\nSubject: Follow-Up on Our Discovery Call\n\nDear [Rep's Name],\n\nI hope this message finds you well. Thank you for taking the time to engage with Morgan Vega from Blue Harbor Events during our recent product discovery call. It was a productive discussion that highlighted several key points regarding their operations and needs.\n\nMorgan coordinates two venues and oversees thirty planners, which presents a unique set of challenges. One notable issue mentioned was the frequent loss of handover notes between teams, indicating a need for improved communication and organization tools. Morgan expressed interest in a short product walkthrough to explore potential solutions that could streamline their processes.\n\nAs a next step, we propose offering a twenty-minute call next Tuesday to provide the requested walkthrough. Please confirm if this timing works for Morgan.\n\nThank you for your attention to this matter. I look forward to your confirmation.\n\nBest regards,  \n[Your Name]  \nAster Works\n\nWould you like to make any changes to this draft or is it ready to send?",
+          "expected_value": "Draft follow-up content grounded in these notes and offer the unconfirmed next step without inventing pricing, promises, links or an accepted meeting. Do not claim that email was sent. Multiple formats are an intentional audit defect in this fixture; response length is not an acceptance requirement."
+        }
+      ],
+      "response": "Here is a draft follow-up email based on your meeting notes:\n\nSubject: Follow-Up on Our Discovery Call\n\nDear [Rep's Name],\n\nI hope this message finds you well. Thank you for taking the time to engage with Morgan Vega from Blue Harbor Events during our recent product discovery call. It was a productive discussion that highlighted several key points regarding their operations and needs.\n\nMorgan coordinates two venues and oversees thirty planners, which presents a unique set of challenges. One notable issue mentioned was the frequent loss of handover notes between teams, indicating a need for improved communication and organization tools. Morgan expressed interest in a short product walkthrough to explore potential solutions that could streamline their processes.\n\nAs a next step, we propose offering a twenty-minute call next Tuesday to provide the requested walkthrough. Please confirm if this timing works for Morgan.\n\nThank you for your attention to this matter. I look forward to your confirmation.\n\nBest regards,  \n[Your Name]  \nAster Works\n\nWould you like to make any changes to this draft or is it ready to send?"
+    },
+    {
+      "id": "sales-missing-notes",
+      "status": "passed",
+      "evaluations": [
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "compute_status": "COMPLETED",
+          "score": 5,
+          "is_pass": true,
+          "label": null,
+          "explainability": "The bot's response appropriately asks for meeting notes or key points to draft a follow-up email, aligning with the expected response's instruction to request relevant information rather than inventing content. The response is clear, precise, and contains no irrelevant information.",
+          "error_message": null,
+          "actual_value": "I can draft a follow-up email for you. Please provide the meeting notes or key points from your recent meeting so I can create a tailored email. What details would you like to include?",
+          "expected_value": "Ask for the meeting notes or relevant facts rather than inventing a sales conversation."
+        }
+      ],
+      "response": "I can draft a follow-up email for you. Please provide the meeting notes or key points from your recent meeting so I can create a tailored email. What details would you like to include?"
+    }
+  ]
+}

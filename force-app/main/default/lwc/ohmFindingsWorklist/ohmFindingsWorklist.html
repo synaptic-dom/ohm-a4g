@@ -1,7 +1,7 @@
 <template>
     <div class={hostClass} data-id="worklist-root">
         <!-- Controls ------------------------------------------------------- -->
-        <div class="ohm-work__controls" role="group" aria-label="Findings filters">
+        <div class="ohm-work__controls" role="group" aria-label="Supporting check filters">
             <label class="ohm-work__control">
                 <span class="ohm-work__control-label">Status</span>
                 <select
@@ -31,9 +31,9 @@
             <button
                 type="button"
                 class="ohm-work__sort"
-                data-id="sort-savings"
+                data-id="sort-priority"
                 onclick={handleSortToggle}
-                aria-label="Sort by savings"
+                aria-label="Sort by check priority"
             >
                 Sort: {sortLabel}
             </button>
@@ -43,7 +43,7 @@
         <template lwc:if={isLoading}>
             <div class="ohm-work__loading" data-id="loading" role="status">
                 <span class="ohm-work__spinner" aria-hidden="true"></span>
-                Loading the worklist…
+                Loading tracked checks…
             </div>
         </template>
 
@@ -64,12 +64,11 @@
                     <thead>
                         <tr>
                             <th scope="col" class="ohm-work__th">Severity</th>
-                            <th scope="col" class="ohm-work__th">Process</th>
-                            <th scope="col" class="ohm-work__th">Signal</th>
-                            <th scope="col" class="ohm-work__th ohm-work__th--num">Savings</th>
+                            <th scope="col" class="ohm-work__th">Bundle / source</th>
+                            <th scope="col" class="ohm-work__th">Check</th>
                             <th scope="col" class="ohm-work__th">Assignee</th>
                             <th scope="col" class="ohm-work__th">Due</th>
-                            <th scope="col" class="ohm-work__th">Status</th>
+                            <th scope="col" class="ohm-work__th">Finding status</th>
                             <th scope="col" class="ohm-work__th"><span class="ohm-work__sr">Actions</span></th>
                         </tr>
                     </thead>
@@ -88,9 +87,6 @@
                                     </template>
                                 </td>
                                 <td class="ohm-work__td">{row.signalLabel}</td>
-                                <td class="ohm-work__td ohm-work__td--num" data-id="savings">
-                                    {row.savingsText}
-                                </td>
                                 <td class="ohm-work__td" data-id="assignee">{row.assigneeText}</td>
                                 <td class="ohm-work__td ohm-work__td--num" data-id="due">{row.dueText}</td>
                                 <td class="ohm-work__td">
@@ -114,7 +110,7 @@
                                 <td class="ohm-work__td ohm-work__td--actions">
                                     <div class="ohm-work__actions">
                                         <template lwc:if={row.assigned}>
-                                            <span class="ohm-work__assigned" title="Assigned">✓ Yours</span>
+                                            <a class="ohm-work__assigned" href={row.taskUrl} title="Open task to edit owner or due date">{row.assignmentLabel} · Open task</a>
                                         </template>
                                         <template lwc:else>
                                             <button
@@ -147,7 +143,7 @@
                             <!-- Assign inline form ---------------------------------- -->
                             <template lwc:if={row.assignOpen}>
                                 <tr key={row.assignKey} class="ohm-work__subrow" data-id="assign-row">
-                                    <td class="ohm-work__td ohm-work__td--sub" colspan="8">
+                                    <td class="ohm-work__td ohm-work__td--sub" colspan="7">
                                         <div class="ohm-work__assign">
                                             <label class="ohm-work__control">
                                                 <span class="ohm-work__control-label">Due date</span>
@@ -179,7 +175,7 @@
                             <!-- Recommendation detail ------------------------------- -->
                             <template lwc:if={row.isExpanded}>
                                 <tr key={row.detailKey} class="ohm-work__subrow" data-id="detail-row">
-                                    <td class="ohm-work__td ohm-work__td--sub" colspan="8">
+                                    <td class="ohm-work__td ohm-work__td--sub" colspan="7">
                                         <p class="ohm-work__reco" data-id="reco">
                                             {row.recommendationText}
                                         </p>
@@ -190,7 +186,7 @@
                             <!-- Row error ------------------------------------------- -->
                             <template lwc:if={row.rowError}>
                                 <tr key={row.errKey} class="ohm-work__subrow">
-                                    <td class="ohm-work__td ohm-work__td--sub" colspan="8">
+                                    <td class="ohm-work__td ohm-work__td--sub" colspan="7">
                                         <p class="ohm-work__row-error" data-id="row-error" role="alert">
                                             {row.rowError}
                                         </p>
@@ -207,10 +203,10 @@
         <template lwc:if={isEmpty}>
             <div class="ohm-work__empty" data-id="empty">
                 <template lwc:if={isFiltered}>
-                    No findings match these filters.
+                    No supporting checks match these filters.
                 </template>
                 <template lwc:else>
-                    No findings yet — audit a process from the Fleet tab.
+                    No supporting check findings are waiting here. Current review recommendations appear above.
                 </template>
             </div>
         </template>

@@ -1,0 +1,216 @@
+Browser tab: 1, Title: "Ohm Audit | Salesforce", URL: "https://innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/n/Ohm_Audit".
+1 AXWebArea Ohm Audit | Salesforce, URL: innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/n/Ohm_Audit
+	2 container
+		3 container
+			4 container oneHeader
+				5 link Description: Skip to Navigation, Value: javascript:void(0);
+				6 link Description: Skip to Main Content, Value: javascript:void(0);
+				7 container
+					8 text Debug mode enabled for Lightning Web Components.  Salesforce is slower in debug mode.
+					9 link Description: Learn more, Value: innovation-inspiration-231-dev-ed.scratch.lightning.force.com/HelpAndTrainingDoor?version=2&resource=https%3A%2F%2Fhelp.salesforce.com%2FarticleView%3Fid%3Daura_debug_mode.htm
+					10 link Description: Close, Value: javascript:void(0);
+				11 container
+					12 button (collapsed) Description: Toggle Panel, Secondary Actions: Expand
+						13 text Menu
+					14 text Scratch Org
+					15 pop up button (collapsed) Show menu, Secondary Actions: Expand
+						16 text Show menu
+				17 button Search
+				18 container Global Header
+					19 content list
+						20 container
+							21 text EPT:
+							22 link Description: 1.19 s, Help: EPT, Value: javascript:void(0);
+							23 container
+								24 text ART 0 s
+							25 link Description: 11462.78 KB, Value: javascript:void(0);
+						26 container
+							27 checkbox Description: Add favorite, Value: 0
+								28 container
+									29 container Add favorite, ID: tt-for-6:201;a
+										30 text Add favorite
+							31 button Favorites list
+								32 container
+									33 container Favorites list, ID: tt-for-30:201;a
+										34 text Favorites list
+						35 pop up button (collapsed) Global Actions, Secondary Actions: Expand
+							36 container
+								37 container Global Actions, ID: tt-for-7:614;a
+									38 text Global Actions
+						39 pop up button Guidance Center
+							40 container
+								41 container Guidance Center, ID: tt-for-504:0
+									42 text Guidance Center
+						43 pop up button Salesforce Help
+							44 container
+								45 container Salesforce Help, ID: tt-for-116:201;a
+									46 text Salesforce Help
+						47 pop up button (collapsed) Setup, Secondary Actions: Expand
+							48 container
+								49 container Setup, ID: tt-for-159:201;a
+									50 text Setup
+						51 container
+							52 pop up button 1 Notifications
+								53 container
+									54 text 1
+									55 container Notifications, ID: tt-for-64:201;a
+										56 text Notifications
+							57 text 1 new notifications
+						58 pop up button View profile
+							59 container
+								60 container View profile, ID: tt-for-90:201;a
+									61 text View profile
+			62 container
+				63 container App
+					64 pop up button (collapsed) App Launcher, Secondary Actions: Expand
+						65 container
+							66 text App Launcher
+				67 heading Ohm, Value: 1
+					68 text Ohm
+				69 container Global
+					70 content list
+						71 link Description: Ohm Audit, Value: innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/n/Ohm_Audit
+						72 button Edit nav items, Help: Personalize your nav bar
+			73 container
+				74 heading Ohm Audit, Value: 1
+					75 text Ohm Audit
+				76 container
+					77 text Ohm FLEET WORKBENCH
+					78 tab group Workbench sections
+						79 tab (selected, settable, boolean) FLEET, Value: 1
+						80 tab (selectable, settable, boolean) FINDINGS, Value: 0
+						81 tab (selectable, settable, boolean) RECOMMENDATIONS, Value: 0
+						82 tab (selectable, settable, boolean) TRENDS, Value: 0
+					83 switch Calm Mode ON, Value: 1
+				84 text Fleet › Controlled Weather Demo
+				85 container
+					86 button ‹ Back to fleet
+					87 heading Controlled Weather Demo, Value: 1
+						88 text Controlled Weather Demo
+					89 text INTERNAL
+					90 container Incomplete
+						91 text IN Incomplete
+					92 text 63,742 Wh/yr
+					93 button Re-audit
+					94 container Audit scope and evidence
+						95 text Audit coverage: Incomplete
+						96 content list
+							97 text Instructions: Covered
+							98 text Repeated calls: Unknown
+							99 text Model suitability: Covered
+							100 text Action review: Covered
+						101 text Imported Agent Script is versioned static source; conditional branches are retained. Source size is not measured rendered prompt usage.
+						102 text Execution graph unavailable; redundant-call coverage is unknown.
+						103 container
+							104 text Modeled instruction-source scenario  · Range 56,660–70,825 Wh/year · Low confidence
+						105 text 109500 modeled calls/year per source block; source characters / 4 approximate tokens. Conditional branches and dynamic outputs are not executed. Unknown models use standard multiplier 1.0; reference cost is 0.27 Wh per 500 tokens. Low confidence. Excludes output tokens, tool compute and actual runtime frequency. Potential savings cover instruction trimming only.
+					106 container Call graph
+						107 text CALL GRAPH
+						108 container
+							109 checkbox Description: Controlled Weather Demo, Agent, no findings in available evidence, Value: 0
+							110 checkbox Description: Weather Lookup, Topic, flagged wasteful — Bloated instructions / scope, Value: 1
+							111 checkbox Description: Agent Router, Topic, no findings in available evidence, Value: 0
+							112 checkbox Description: Get Current Weather, Action, no findings in available evidence, Value: 0
+							113 checkbox Description: Get Forecast, Action, no findings in available evidence, Value: 0
+							114 checkbox Description: Send Weather Alert, Action, no findings in available evidence, Value: 0
+					115 container Node inspector
+						116 text INSPECTOR
+						133 container
+							134 heading Weather Lookup, Value: 3
+								135 text Weather Lookup
+							136 text TOPIC weather_lookup_16jEc000000PAPB · 1,022 tokens
+						137 container Editable instruction source
+							138 container
+								139 text Selected source  · ImportedAgentScript
+							140 text /Users/dom/Documents/ohm-a4g/test-fixtures/controlled-weather/before/force-app/main/default/aiAuthoringBundles/Ohm_Weather_Demo/Ohm_Weather_Demo.agent#weather_lookup
+							141 text Version: controlled-weather-before:6946581b3aef7b33c52b21ef90c9f080ad1de8705a94a42d87d2fcbb29a4dbc0
+							142 button (collapsed) Source fingerprint, Secondary Actions: Expand
+								143 text Source fingerprint
+							144 text Review the draft against this source. Apply the edit manually, publish the agent if required, then refresh its source import and re-audit.
+						145 container
+							146 text ⚠ Bloated instructions / scope High Instruction block ≈ 1022 tokens vs soft budget 500 (excess 522). Review a shorter version that preserves required behavior. Any modeled reduction assumes this instruction input is sent at the stated usage volume. ESTIMATED SAVINGS 30,866 Wh/yr (27,436–34,295)
+						147 container
+							148 text INSTRUCTIONS | Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations a nd send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+
+  Current data:
+
+if @variables.location:
+   | - Location: {!@variables.location}
+else:
+   | - Location: None specified
+
+if @variables.current_temperature > 0:
+   | - Temperature: {!@variables.current_temperature}
+else:
+   | - Temperature: Not fetched
+
+if @variables.conditions:
+   | - Conditions: {!@variables.conditions}
+else:
+   | - Conditions: Not fetched
+
+| When a user asks about weather:
+  1. Identify the location they're asking about
+  2. Use {!@actions.get_current_weather} to fetch current conditions
+  3. Store the results in variables
+  4. Report the weather clearly to the user
+
+| If the user asks to send a weather alert, use {!@actions.send_alert} to send the alert 522 tokens over the modeled instruction budget
+						149 button Trim instructions
+					118 button (collapsed) Compare last two audits, Secondary Actions: Expand
+					119 text Before / after — the two most recent audits of this process.
+					120 container Ask Ohm assistant
+						121 container
+							122 text Ask Ohm GPT-4o mini · Einstein Trust Layer
+						123 text Grounded in Controlled Weather Demo · coverage Incomplete · 63,742 modeled Wh/yr
+						124 content list
+							125 text Coverage: Incomplete
+							150 text Weather Lookup · 4,085 chars
+							151 text Source controlled-weather-before:6946581b3aef7b33c52b21ef90c9f080ad1de8705a94a42d87d2fcbb29a4dbc0
+							126 text Modeled instruction-source scenario
+						152 container
+							153 text Draft shorter instructions for this selected artifact, preserving required rules and action branches. The proposed draft changed Agent Script structure or an action/variable reference. No draft is available to apply. Retry with duplicate prose removal only, or edit the full source manually while preserving every directive, conditional, reference and indentation level. GPT-4o mini · Einstein Trust Layer
+							154 button Explain the evidence
+							155 button Modeled impact
+							156 button Review opportunities
+							157 button Draft trimmed instructions
+						131 text entry area (settable) Ask Ohm a question about this process
+						132 button (disabled) Ask
+
+The focused UI element is 131 text entry area (settable) Ask Ohm a question about this process

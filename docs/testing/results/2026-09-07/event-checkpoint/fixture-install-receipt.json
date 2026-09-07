@@ -1,0 +1,527 @@
+{
+  "recordedAt": "2026-09-07T20:30:00Z",
+  "targetOrg": {
+    "alias": "ohm-hackathon",
+    "orgId": "00Daj000013wTtpEAE",
+    "edition": "Enterprise (trial, orgfarm)"
+  },
+  "fixtureProject": "test-fixtures/event-demo",
+  "runtimeCopy": "/tmp/ohm-event-fixtures-runtime",
+  "deployments": [
+    {
+      "id": "0Afaj00000jVrVxCAK",
+      "scope": "classes + genAiPromptTemplates + permissionsets",
+      "status": "Succeeded",
+      "components": "7/7",
+      "tests": "OhmDemoScheduleServiceTest 4/4 passed",
+      "localProof": "/tmp/ohm-event-fixture-deps-deploy.json"
+    },
+    {
+      "id": "0Afaj00000jUrOOCA0",
+      "scope": "aiAuthoringBundles (validate-only)",
+      "status": "Succeeded",
+      "checkOnly": true,
+      "components": "4/4"
+    },
+    {
+      "id": "0Afaj00000jVvbBCAS",
+      "scope": "aiAuthoringBundles (Employee type)",
+      "status": "Succeeded",
+      "components": "4/4",
+      "note": "stored source only; no BotDefinition created"
+    },
+    {
+      "id": "0Afaj00000jW1wjCAC",
+      "scope": "aiAuthoringBundles (Service type)",
+      "status": "Succeeded",
+      "components": "4/4"
+    }
+  ],
+  "promptTemplates": {
+    "Ohm_Support_Reply": "31QM9vZYaYGCYPXHuMnRtW+weKTVFFx+hcNF+0lbong=_1",
+    "Ohm_Sales_Follow_Up_Email": "idRnqeRNdIt+HAaNMKSN8f/HV1Axqun4xLtFTqte6do=_1",
+    "Ohm_Plan_Day": "L1PNBZ6TQ9eEd55V7vLGp3/nCjcpAye+Zd078e8PLGY=_1",
+    "Ohm_Present_Validated_Plan": "KOgTdSzVM2/3z2KU2t/XM9yiO7qX46j5hEljCJFkikc=_1",
+    "primaryModel": "sfdc_ai__DefaultGPT55",
+    "note": "GPT 5.5 versions active (verified by retrieve after deploy 0Afaj00000jW7cLCAS); earlier GPT-4o mini versions superseded",
+    "previousVersions": {
+      "Ohm_Support_Reply": "opHac2i3kePxHpLyGunHDZzoI1EZtc/9GjkheHFMSm8=_1",
+      "Ohm_Sales_Follow_Up_Email": "1NWgVGuP/P4L9GgM4ksqvmo4FhfLfWopnL53BUS0BI4=_1",
+      "Ohm_Plan_Day": "RjYWqS5407SJkIso5OsiRgDX4BtDXULuZOLGwySSivQ=_1",
+      "Ohm_Present_Validated_Plan": "nddsbVLRGZWqI9ukSuUpe6apaPE5e+EAQj/pAXK8ulk=_1"
+    }
+  },
+  "permissionSetAssignments": {
+    "admin epic.f1c1977a25ca@orgfarm.salesforce.com": [
+      "Ohm_Event_Fixture_Access",
+      "EinsteinGPTPromptTemplateUser",
+      "EinsteinGPTPromptTemplateManager"
+    ],
+    "agent user ohm.fixture.agent@orgfarm-08e0e83a93.ohm (005aj00000dVdUrAAK)": [
+      "AgentforceServiceAgentBase",
+      "AgentforceServiceAgentUser",
+      "EinsteinGPTPromptTemplateUser",
+      "Ohm_Event_Fixture_Access"
+    ]
+  },
+  "publishBlockerRootCause": {
+    "symptomFromCli": "FetchError: request to https://test.api.salesforce.com/einstein/ai-agent/v1.1/authoring/agents failed, reason: (empty)",
+    "actualResponse": "HTTP 401 from https://api.salesforce.com/einstein/ai-agent/v1.1/authoring/agents: no access to agent templates associated with the AgentforceEmployeeAgent agent type",
+    "maskingChain": "401 -> jsforce session refresh + retry with org token -> bare 404 -> requestWithEndpointFallback to test.api.salesforce.com -> TCP connect timeout from this network",
+    "resolution": "publish as AgentforceServiceAgent with dedicated Einstein Agent User"
+  },
+  "agents": [
+    {
+      "bundle": "Ohm_Schedule_Desk",
+      "botDefinitionId": "0Xxaj000004AwzhCAC",
+      "botVersionId": "0X9aj0000073iEzCAI",
+      "version": 1,
+      "status": "Active",
+      "planner": "Ohm_Schedule_Desk_v1",
+      "plannerId": "16jaj000003G45xAAC",
+      "orgBundleName": "Ohm_Schedule_Desk_1"
+    },
+    {
+      "bundle": "Ohm_Support_Desk",
+      "botDefinitionId": "0Xxaj000004Ax1JCAS",
+      "botVersionId": "0X9aj0000073iGbCAI",
+      "version": 1,
+      "status": "Active",
+      "planner": "Ohm_Support_Desk_v1",
+      "plannerId": "16jaj000003G47ZAAS",
+      "orgBundleName": "Ohm_Support_Desk_1"
+    },
+    {
+      "bundle": "Ohm_Sales_Follow_Up",
+      "botDefinitionId": "0Xxaj000004Ax2vCAC",
+      "botVersionId": "0X9aj0000073iIDCAY",
+      "version": 1,
+      "status": "Active",
+      "planner": "Ohm_Sales_Follow_Up_v1",
+      "plannerId": "16jaj000003G49BAAS",
+      "orgBundleName": "Ohm_Sales_Follow_Up_1"
+    },
+    {
+      "bundle": "Ohm_Schedule_Planner",
+      "botDefinitionId": "0Xxaj000004Ax4XCAS",
+      "botVersionId": "0X9aj0000073iJpCAI",
+      "version": 1,
+      "status": "Active",
+      "planner": "Ohm_Schedule_Planner_v1",
+      "plannerId": "16jaj000003G4AnAAK",
+      "orgBundleName": "Ohm_Schedule_Planner_1"
+    }
+  ],
+  "notDone": [
+    "demo rehearsal"
+  ],
+  "coreAppDeployments": [
+    {
+      "id": "0Afaj00000jW409CAC",
+      "kind": "validate (checkOnly, RunLocalTests)",
+      "status": "Failed",
+      "components": "213/213, 0 component errors",
+      "tests": "282/283 passed",
+      "onlyFailure": "OhmDiscoveryServiceTest.test_listFleetReturnsProcessesWithCountsAndDomainsNoGrade: domainsSeen.size() >= 2 (all Ohm_* fixtures derive Internal)",
+      "fix": "test-only: assert each fleet domain is in the documented keyword-map set",
+      "sourceDirs": [
+        "classes",
+        "objects",
+        "lwc",
+        "staticresources",
+        "applications",
+        "tabs",
+        "flexipages",
+        "permissionsets",
+        "genAiPromptTemplates"
+      ],
+      "excluded": [
+        "settings",
+        "genAiPlannerBundles",
+        "genAiPlugins",
+        "genAiFunctions"
+      ]
+    },
+    {
+      "id": "0Afaj00000jW4o9CAC",
+      "kind": "deploy (RunLocalTests)",
+      "status": "Succeeded",
+      "components": "212/212, 0 component errors",
+      "tests": "283/283 passed",
+      "localProof": "/tmp/ohm-event-app-deploy-final.json"
+    }
+  ],
+  "sourceConnection": {
+    "status": "Configured",
+    "mode": "create",
+    "runAs": "epic.f1c1977a25ca@orgfarm.salesforce.com",
+    "auditUsersGrantedPrincipalAccess": [
+      "epic.f1c1977a25ca@orgfarm.salesforce.com"
+    ],
+    "originalSettingsRestored": true,
+    "temporarySetupPermissionRemoved": true,
+    "deploymentSteps": [
+      {
+        "step": "Create temporary setup permission",
+        "deploymentId": "0Afaj00000jW0uECAS"
+      },
+      {
+        "step": "Create external client app",
+        "deploymentId": "0Afaj00000jW5p3CAC"
+      },
+      {
+        "step": "Configure fixed integration user",
+        "deploymentId": "0Afaj00000jVoMoCAK"
+      },
+      {
+        "step": "Create source connection and principal permission",
+        "deploymentId": "0Afaj00000jW5ttCAC"
+      },
+      {
+        "step": "Temporarily enable REST consumer secret access",
+        "deploymentId": "0Afaj00000jW5vVCAS"
+      },
+      {
+        "step": "Restore original REST consumer secret access",
+        "deploymentId": "0Afaj00000jW60LCAS"
+      }
+    ],
+    "credentialValuesPrinted": false
+  },
+  "reviewerTemplate": {
+    "developerName": "Ohm_Bundle_Environmental_Review",
+    "activeVersionIdentifier": "WCyeBTg2NZWRDVRViggPve0yyaQfI6t9+0AlEdZ1LCQ=_1",
+    "primaryModel": "sfdc_ai__DefaultGPT55",
+    "status": "Published",
+    "verifiedBy": "retrieve after deploy 0Afaj00000jW4o9CAC"
+  },
+  "fleetSmokeTest": {
+    "method": "anonymous Apex OhmAuditController.getFleet()",
+    "rows": 4,
+    "planners": [
+      "Ohm_Support_Desk_v1",
+      "Ohm_Schedule_Desk_v1",
+      "Ohm_Sales_Follow_Up_v1",
+      "Ohm_Schedule_Planner_v1"
+    ]
+  },
+  "ohmAudits": {
+    "startedVia": "anonymous Apex OhmAuditController.auditProcess(plannerId)",
+    "reviewerModel": "sfdc_ai__DefaultGPT55",
+    "reviewerVersion": "WCyeBTg2NZWRDVRViggPve0yyaQfI6t9+0AlEdZ1LCQ=_1",
+    "independentVerification": "docs/testing/results/2026-09-07/event-org/review-results.json (allVerified true)",
+    "reports": [
+      {
+        "planner": "Ohm_Schedule_Desk_v1",
+        "reportId": "a00aj00003WVjPtAAL",
+        "status": "Complete",
+        "input": "A",
+        "output": "A",
+        "calls": "A",
+        "modelFit": "UNRATED",
+        "issues": []
+      },
+      {
+        "planner": "Ohm_Support_Desk_v1",
+        "reportId": "a00aj00003WVjcnAAD",
+        "status": "Complete",
+        "input": "C",
+        "output": "A",
+        "calls": "A",
+        "modelFit": "UNRATED",
+        "issues": [
+          "INPUT_REDUNDANCY",
+          "INPUT_HARD_BUDGET"
+        ]
+      },
+      {
+        "planner": "Ohm_Sales_Follow_Up_v1",
+        "reportId": "a00aj00003WVjcoAAD",
+        "status": "Complete",
+        "input": "A",
+        "output": "B",
+        "calls": "A",
+        "modelFit": "UNRATED",
+        "issues": [
+          "OUTPUT_UNNECESSARY_VERBOSITY",
+          "OUTPUT_FORMAT_MISMATCH"
+        ]
+      },
+      {
+        "planner": "Ohm_Schedule_Planner_v1",
+        "reportId": "a00aj00003WVjcpAAD",
+        "status": "Complete",
+        "input": "A",
+        "output": "A",
+        "calls": "B",
+        "modelFit": "UNRATED",
+        "issues": [
+          "CALLS_DETERMINISTIC_ALTERNATIVE"
+        ]
+      }
+    ]
+  },
+  "fixtureEvals": {
+    "command": "sf agent test run-eval --spec evals/<bundle>.json (Agent API sessions, bot_response_rating threshold 3.0)",
+    "summary": "7/8 cases passed; Ohm_Schedule_Planner schedule-day scored 2/5: the prompt-computed plan kept the overlapping Clay studio row that the Apex control correctly omitted",
+    "results": {
+      "Ohm_Schedule_Desk": [
+        {
+          "test": "control-day",
+          "status": "passed",
+          "scores": [
+            {
+              "id": "check_outcome",
+              "score": 5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "test": "control-invalid",
+          "status": "passed",
+          "scores": [
+            {
+              "id": "check_outcome",
+              "score": 5,
+              "pass": true
+            }
+          ]
+        }
+      ],
+      "Ohm_Support_Desk": [
+        {
+          "test": "support-damaged-lantern",
+          "status": "passed",
+          "scores": [
+            {
+              "id": "check_outcome",
+              "score": 5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "test": "support-missing-message",
+          "status": "passed",
+          "scores": [
+            {
+              "id": "check_outcome",
+              "score": 5,
+              "pass": true
+            }
+          ]
+        }
+      ],
+      "Ohm_Sales_Follow_Up": [
+        {
+          "test": "sales-follow-up",
+          "status": "passed",
+          "scores": [
+            {
+              "id": "check_outcome",
+              "score": 5,
+              "pass": true
+            }
+          ]
+        },
+        {
+          "test": "sales-missing-notes",
+          "status": "passed",
+          "scores": [
+            {
+              "id": "check_outcome",
+              "score": 5,
+              "pass": true
+            }
+          ]
+        }
+      ],
+      "Ohm_Schedule_Planner": [
+        {
+          "test": "schedule-day",
+          "status": "failed",
+          "scores": [
+            {
+              "id": "check_outcome",
+              "score": 2,
+              "pass": false
+            }
+          ]
+        },
+        {
+          "test": "schedule-invalid",
+          "status": "passed",
+          "scores": [
+            {
+              "id": "check_outcome",
+              "score": 5,
+              "pass": true
+            }
+          ]
+        }
+      ]
+    },
+    "localProofs": "/tmp/ohm-evals/<bundle>.json"
+  },
+  "modelDecision": {
+    "decision": "no GPT-4o mini; latest model = sfdc_ai__DefaultGPT55 for Ask Ohm and the four linked prompts",
+    "probeWorking": [
+      "sfdc_ai__DefaultGPT55",
+      "sfdc_ai__DefaultGPT5",
+      "sfdc_ai__DefaultGPT5Mini",
+      "sfdc_ai__DefaultGPT41",
+      "sfdc_ai__DefaultGPT41Mini",
+      "sfdc_ai__DefaultOpenAIGPT5",
+      "sfdc_ai__DefaultVertexAIGemini25Flash001",
+      "sfdc_ai__DefaultBedrockAnthropicClaude4Sonnet",
+      "sfdc_ai__DefaultBedrockAnthropicClaude45Sonnet",
+      "sfdc_ai__DefaultGPT4Omni",
+      "sfdc_ai__DefaultGPT4OmniMini"
+    ],
+    "probeFailing": [
+      "sfdc_ai__DefaultGPT55Mini",
+      "sfdc_ai__DefaultVertexAIGemini25Pro001",
+      "sfdc_ai__DefaultVertexAIGemini30Pro"
+    ],
+    "askOhmDeploy": {
+      "id": "0Afaj00000jW7ajCAC",
+      "status": "Succeeded",
+      "tests": "OhmAssistantServiceTest 27/27"
+    },
+    "promptTemplateDeploy": {
+      "id": "0Afaj00000jW7cLCAS",
+      "status": "Succeeded",
+      "components": "4/4"
+    }
+  },
+  "ohmAuditsAfterModelChange": {
+    "reason": "linked prompt versions changed to GPT 5.5, so saved reviews were refreshed",
+    "reviewerModel": "sfdc_ai__DefaultGPT55",
+    "reports": [
+      {
+        "planner": "Ohm_Schedule_Desk_v1",
+        "reportId": "a00aj00003WVl57AAD",
+        "status": "Complete",
+        "input": "A",
+        "output": "A",
+        "calls": "A"
+      },
+      {
+        "planner": "Ohm_Support_Desk_v1",
+        "reportId": "a00aj00003WVlczAAD",
+        "status": "Complete",
+        "input": "C",
+        "output": "A",
+        "calls": "A",
+        "note": "first attempt a00aj00003WVl58AAD Failed atomically: 'Reviewer evidence does not match the exact published source'; retry succeeded"
+      },
+      {
+        "planner": "Ohm_Sales_Follow_Up_v1",
+        "reportId": "a00aj00003WVl59AAD",
+        "status": "Complete",
+        "input": "A",
+        "output": "B",
+        "calls": "A",
+        "issues": [
+          "OUTPUT_UNNECESSARY_VERBOSITY"
+        ]
+      },
+      {
+        "planner": "Ohm_Schedule_Planner_v1",
+        "reportId": "a00aj00003WVl5AAAT",
+        "status": "Complete",
+        "input": "A",
+        "output": "A",
+        "calls": "B",
+        "issues": [
+          "CALLS_DETERMINISTIC_ALTERNATIVE"
+        ]
+      }
+    ],
+    "independentVerification": "docs/testing/results/2026-09-07/event-org/review-results-gpt55.json"
+  },
+  "askOhmLiveTest": {
+    "planner": "Ohm_Sales_Follow_Up_v1",
+    "artifact": "Draft Follow Up",
+    "context": "available=true rewriteSupported=true model='GPT 5.5 \u00b7 Einstein Trust Layer'",
+    "savedReviewAnswer": "returned without a model call (label 'Verified audit data \u00b7 deterministic calculation')",
+    "liveDraft": "GPT 5.5 call succeeded; rewrite was 900->1106 chars and the app reported 'not shorter \u2026 No improvement is established' (designed honesty)"
+  },
+  "fixtureEvalsGpt55": {
+    "summary": "7/8: all passed including Ohm_Schedule_Planner schedule-day (5/5, which had failed on GPT-4o mini); Ohm_Support_Desk support-damaged-lantern errored before producing a response (no evaluation recorded)",
+    "evidence": "docs/testing/results/2026-09-07/event-org/evals-gpt55/"
+  },
+  "footprintFeature": {
+    "decision": "claim energy and environmental impact transparently with assumptions; make the app environmentally focused (user, Sept 7 evening)",
+    "deploys": [
+      {
+        "id": "0Afaj00000jWHtRCAW",
+        "scope": "OhmDTO, OhmAuditImpactService, OhmAuditController + tests; lwc ohmFootprintStrip, ohmDisplay, ohmOverview, ohmProcessPage, ohmRecommendations",
+        "status": "Succeeded",
+        "tests": "285/285 (RunLocalTests)"
+      },
+      {
+        "id": "0Afaj00000jWBGACA4",
+        "scope": "ohmFootprintStrip (recoverable share rounded to whole percent)",
+        "status": "Succeeded"
+      },
+      {
+        "id": "0Afaj00000jWIZNCA4",
+        "scope": "ohmFootprintStrip, ohmOverview, ohmProcessPage, ohmRecommendations: strip moved to the top of Overview and above the ratings; savings-led framing; environmental hero copy",
+        "status": "Succeeded",
+        "jest": "27 suites / 217 tests green"
+      }
+    ],
+    "jest": "27 suites / 216 tests green (6 new)",
+    "surfaces": [
+      "Overview: first element on the page (fleet)",
+      "Bundle page: above the three ratings",
+      "Recommendations: top, follows the bundle filter"
+    ],
+    "labeling": "badge 'Modeled, not measured' on every render; Assumptions disclosure lists energy 0.27 Wh per 500-token prompt (0.24-0.30), grid 0.30 g CO2e/Wh (0.125-0.475), water 1.08 mL/Wh (0.8-1.4), chars/4 tokens, volume, methodology 1.0, Low confidence",
+    "volumeSelector": [
+      300,
+      1000,
+      10000,
+      100000
+    ],
+    "orgVerification": {
+      "method": "anonymous Apex getFleet()/getProcessDetail()",
+      "fleetAt300PerDay": {
+        "Ohm_Support_Desk_v1": {
+          "energyWh": 37784.07,
+          "savingsWh": 19217.25,
+          "co2eG": 11335.22,
+          "waterMl": 40806.8
+        },
+        "Ohm_Schedule_Desk_v1": {
+          "energyWh": 23001.57,
+          "savingsWh": 2187.81
+        },
+        "Ohm_Sales_Follow_Up_v1": {
+          "energyWh": 22765.05,
+          "savingsWh": 4434.75
+        },
+        "Ohm_Schedule_Planner_v1": {
+          "energyWh": 24479.82,
+          "savingsWh": 6090.39
+        }
+      },
+      "annualCallsModeled": 109500
+    }
+  },
+  "howItWorksTab": {
+    "deploy": "0Afaj00000jWSGzCAO",
+    "components": [
+      "ohmHowItWorks (new)",
+      "ohmApp"
+    ],
+    "jest": "28 suites / 218 tests green",
+    "diagrams": [
+      "loop",
+      "stack",
+      "footprint math"
+    ]
+  }
+}

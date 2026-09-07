@@ -1,0 +1,43 @@
+{
+  "bundle": "Ohm_Schedule_Desk",
+  "tests": [
+    {
+      "id": "control-day",
+      "status": "passed",
+      "evaluations": [
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "compute_status": "COMPLETED",
+          "score": 5,
+          "is_pass": true,
+          "label": null,
+          "explainability": "The bot's response accurately reflects the expected plan, including the correct activities and times, and omits the clay studio as specified. It also preserves the plan's structure and does not claim a booking exists. The response is clear, complete, and contains no irrelevant information.",
+          "error_message": null,
+          "actual_value": "Welcome to Cedar Bay Retreat.\n\nYou are invited to participate in the following activities:\n09:00\u201309:45 | Kayaking | Boathouse | 45 minutes\n10:45\u201311:30 | Garden tour | Garden | 45 minutes\n13:00\u201314:00 | Forest walk | Trailhead | 60 minutes\n\nPlease note that the clay studio has been omitted due to overlap or insufficient free time.\n\nWould you like to adjust your activity selections or need help with anything else?",
+          "expected_value": "Include Kayaking at 09:00\u201309:45, Garden tour at 10:45\u201311:30, and Forest walk at 13:00\u201314:00, in that order. Omit Clay studio because of insufficient free time. Preserve the Apex-prepared plan and do not claim a booking exists."
+        }
+      ],
+      "response": "Welcome to Cedar Bay Retreat.\n\nYou are invited to participate in the following activities:\n09:00\u201309:45 | Kayaking | Boathouse | 45 minutes\n10:45\u201311:30 | Garden tour | Garden | 45 minutes\n13:00\u201314:00 | Forest walk | Trailhead | 60 minutes\n\nPlease note that the clay studio has been omitted due to overlap or insufficient free time.\n\nWould you like to adjust your activity selections or need help with anything else?"
+    },
+    {
+      "id": "control-invalid",
+      "status": "passed",
+      "evaluations": [
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "compute_status": "COMPLETED",
+          "score": 5,
+          "is_pass": true,
+          "label": null,
+          "explainability": "The bot correctly identifies the invalid time and asks for a corrected input, aligning with the expected response to relay the validation problem and request corrected rows. No new time is invented, and the bot adheres to the required format.",
+          "error_message": null,
+          "actual_value": "The time you entered for Evening yoga is 25:00, which is not a valid time. Please provide the activity in this format: HH:MM|duration minutes|activity name|location, using a time between 00:00 and 23:59. Would you like to update the time for this activity?",
+          "expected_value": "Relay the preparation action validation problem and ask for corrected rows. Do not invent a new time or schedule."
+        }
+      ],
+      "response": "The time you entered for Evening yoga is 25:00, which is not a valid time. Please provide the activity in this format: HH:MM|duration minutes|activity name|location, using a time between 00:00 and 23:59. Would you like to update the time for this activity?"
+    }
+  ]
+}

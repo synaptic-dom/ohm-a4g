@@ -1,8 +1,7 @@
 /**
- * Signal (a) LLM_WHERE_DETERMINISTIC — CONFIRMED, protected (SPEC §S.6a, canon C7a).
- * For each prompt-typed action, classify intent against the deterministic lexicon.
- * Fire when hitCount >= 1. score = min(1, 0.4 + 0.15 × hitCount). Confidence = Medium.
- * flow/apex actions are never flagged. Savings = full per-inference footprint (call removed).
+ * Signal (a) LLM_WHERE_DETERMINISTIC — metadata-based review candidate.
+ * Whole-word intent matches suggest a place to investigate a rule-based alternative.
+ * They do not establish equivalence, removable calls, or savings. Confidence = Low.
  */
 public with sharing class LlmWhereDeterministicDetector implements SignalDetector {
 
@@ -15,14 +14,6 @@ public with sharing class LlmWhereDeterministicDetector implements SignalDetecto
         'yes-no', 'yes/no', 'yes or no'
     };
 
-    // Invocation-target types that invoke an LLM/prompt (deterministic-replaceable).
-    // This platform (API v67) emits 'generatePromptResponse' for prompt-backed actions;
-    // GenAiFunctionDefinition.InvocationTargetType has NO 'prompt' value. 'prompt' is
-    // retained for forward/other-org compatibility so the detector fires on either.
-    private static final Set<String> LLM_INVOKING_TYPES = new Set<String>{
-        'prompt', 'generatepromptresponse'
-    };
-
     public List<OhmDTO.Finding> detect(OhmDTO.AgentModel g) {
         List<OhmDTO.Finding> out = new List<OhmDTO.Finding>();
         if (g == null || g.actions == null) {
@@ -32,8 +23,7 @@ public with sharing class LlmWhereDeterministicDetector implements SignalDetecto
             if (a == null) {
                 continue;
             }
-            String targetType = (a.invocationTargetType == null) ? '' : a.invocationTargetType.toLowerCase();
-            if (!LLM_INVOKING_TYPES.contains(targetType)) {
+            if (!OhmActionTypes.isPrompt(a.invocationTargetType)) {
                 continue; // flow/apex/standardInvocableAction/etc. never flagged
             }
             Integer hits = countHits(a);
@@ -43,9 +33,11 @@ public with sharing class LlmWhereDeterministicDetector implements SignalDetecto
             Decimal score = min1(0.4 + 0.15 * hits);
             OhmDTO.Finding f = new OhmDTO.Finding();
             f.signalType = SIGNAL;
+            f.reviewRequired = true;
+            f.boundModel = a.boundModel;
             f.severityScore = score;
             f.severity = OhmSeverity.band(score);
-            f.confidence = 'Medium';
+            f.confidence = 'Low';
             f.artifactType = 'Action';
             f.artifactApiName = a.developerName;
             f.artifactLabel = a.masterLabel;
@@ -53,20 +45,20 @@ public with sharing class LlmWhereDeterministicDetector implements SignalDetecto
             f.parentTopicApiName = null;
             f.metricValue = hits;
             f.metricUnit = 'lexicon-hits';
-            f.evidence = 'Prompt-typed action performs deterministic work (' + hits +
-                ' lexicon hit' + (hits == 1 ? '' : 's') + '): a rule/flow/apex path would be exact and token-free.';
+            f.evidence = 'Prompt action metadata contains ' + hits +
+                ' whole-word intent match' + (hits == 1 ? '' : 'es') +
+                '. Review whether explicit rules can cover the inputs and edge cases. ' +
+                'Metadata alone does not establish an equivalent replacement or removable inference.';
             out.add(f);
         }
         return out;
     }
 
     private Integer countHits(OhmDTO.ActionNode a) {
-        String text = ((a.masterLabel == null ? '' : a.masterLabel) + ' ' +
-                       (a.developerName == null ? '' : a.developerName) + ' ' +
-                       (a.description == null ? '' : a.description)).toLowerCase();
+        String text = OhmIntentEvidence.actionText(a);
         Integer hits = 0;
         for (String term : LEXICON) {
-            if (text.contains(term)) {
+            if (OhmIntentEvidence.containsTerm(text, term)) {
                 hits++;
             }
         }

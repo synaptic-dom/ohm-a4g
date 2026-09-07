@@ -1,0 +1,144 @@
+<template>
+    <section class="how" aria-label="How Ohm works" data-id="how-root">
+        <header class="how__head">
+            <p class="how__eyebrow">Under the hood</p>
+            <h1 class="how__title">How Ohm works</h1>
+            <p class="how__lede">Native Salesforce from discovery to task. Nothing leaves your org, and nothing is saved without proof.</p>
+        </header>
+
+        <article class="how__block" data-id="loop">
+            <h2>The loop</h2>
+            <p class="how__intro">Every audit runs the same six steps against what is actually published. The gate in the middle is the point: a review that cannot be verified against the source is thrown away.</p>
+            <svg class="diagram" viewBox="0 0 1200 380" role="img" aria-label="The Ohm loop: discover published bundles, retrieve pinned source, review with Prompt Builder on GPT 5.5, verify every quote in Apex, recommend, act with a Salesforce task, then re-audit the new published source. A failed verification saves nothing." data-id="diagram-loop">
+                <title>The Ohm loop</title>
+                <rect x="20" y="20" width="1160" height="340" rx="18" class="d-boundary"></rect>
+                <text x="40" y="46" class="d-label">Your Salesforce org</text>
+
+                <path d="M1075 110 V78 H325 V104" class="d-line d-line--loop"></path>
+                <polygon points="319,100 331,100 325,110" class="d-arrow d-arrow--loop"></polygon>
+                <text x="700" y="66" class="d-label d-label--center">Re-audit reads the new published source</text>
+
+                <rect x="60" y="110" width="150" height="64" rx="12" class="d-node"></rect>
+                <text x="135" y="148" class="d-title">Discover</text>
+                <text x="135" y="200" class="d-label d-label--center">Published Agent Script</text>
+                <text x="135" y="216" class="d-label d-label--center">bundles and their prompts</text>
+
+                <path d="M210 142 H242" class="d-line"></path><polygon points="242,136 250,142 242,148" class="d-arrow"></polygon>
+
+                <rect x="250" y="110" width="150" height="64" rx="12" class="d-node"></rect>
+                <text x="325" y="148" class="d-title">Retrieve</text>
+                <text x="325" y="200" class="d-label d-label--center">Metadata API, own credential,</text>
+                <text x="325" y="216" class="d-label d-label--center">every artifact pinned by hash</text>
+
+                <path d="M400 142 H432" class="d-line"></path><polygon points="432,136 440,142 432,148" class="d-arrow"></polygon>
+
+                <rect x="440" y="110" width="150" height="64" rx="12" class="d-node"></rect>
+                <text x="515" y="148" class="d-title">Review</text>
+                <text x="515" y="200" class="d-label d-label--center">Prompt Builder on GPT 5.5</text>
+                <text x="515" y="216" class="d-label d-label--center">returns findings with exact quotes</text>
+
+                <path d="M590 142 H648" class="d-line"></path><polygon points="648,136 656,142 648,148" class="d-arrow"></polygon>
+
+                <polygon points="700,98 744,142 700,186 656,142" class="d-gate"></polygon>
+                <text x="700" y="147" class="d-title d-title--gate">Verify</text>
+                <path d="M700 186 V236" class="d-line d-line--fail"></path><polygon points="694,236 706,236 700,246" class="d-arrow d-arrow--fail"></polygon>
+                <text x="700" y="266" class="d-label d-label--center d-label--fail">No match: nothing is saved</text>
+                <text x="700" y="292" class="d-label d-label--center">Apex checks every quote against the pinned source,</text>
+                <text x="700" y="308" class="d-label d-label--center">confirms freshness, applies the rating rules, saves once</text>
+
+                <path d="M744 142 H802" class="d-line"></path><polygon points="802,136 810,142 802,148" class="d-arrow"></polygon>
+
+                <rect x="810" y="110" width="150" height="64" rx="12" class="d-node"></rect>
+                <text x="885" y="148" class="d-title">Recommend</text>
+                <text x="885" y="200" class="d-label d-label--center">Input, Output and Calls ratings</text>
+                <text x="885" y="216" class="d-label d-label--center">with the change, keep and test</text>
+
+                <path d="M960 142 H992" class="d-line"></path><polygon points="992,136 1000,142 992,148" class="d-arrow"></polygon>
+
+                <rect x="1000" y="110" width="150" height="64" rx="12" class="d-node"></rect>
+                <text x="1075" y="148" class="d-title">Act</text>
+                <text x="1075" y="200" class="d-label d-label--center">A real Salesforce Task</text>
+                <text x="1075" y="216" class="d-label d-label--center">keyed to the review, never duplicated</text>
+            </svg>
+            <ol class="how__steps">
+                <li><b>Discover.</b> Ohm reads the published Agent Script bundles in the org and the prompt templates their actions call.</li>
+                <li><b>Retrieve.</b> The exact published source comes back through the Metadata API using Ohm's own connected app and named credential, and every artifact is pinned by hash.</li>
+                <li><b>Review.</b> A Prompt Builder template running GPT 5.5 reads the source and returns findings that quote it.</li>
+                <li><b>Verify.</b> Apex checks each quote against the pinned source, confirms nothing changed since retrieval, applies the rating rules, and saves the review in one transaction. If any check fails, nothing is saved.</li>
+                <li><b>Recommend.</b> Recommendations are generated from the saved review, each with what to change, what to keep, and how to test.</li>
+                <li><b>Act.</b> One click creates a standard Salesforce Task keyed to the review. Re-audit reads the new published source and starts the loop again.</li>
+            </ol>
+        </article>
+
+        <article class="how__block" data-id="stack">
+            <h2>The stack</h2>
+            <p class="how__intro">One package, three layers, all inside Salesforce.</p>
+            <svg class="diagram" viewBox="0 0 1200 330" role="img" aria-label="Three layers. Experience, built as Lightning Web Components: Overview, Bundles, Recommendations, How it works, Ask Ohm, Footprint strip. Services, built in Apex: Discovery, Source retrieval, Review and verification, Recommendations and Tasks, Footprint engine, Assistant. Platform: Agent Script bundles, Prompt Builder on GPT 5.5, Models API, Metadata API, Named Credential with External Client App, custom objects and Task." data-id="diagram-stack">
+                <title>The Ohm stack</title>
+                <rect x="20" y="20" width="1160" height="92" rx="14" class="d-band"></rect>
+                <rect x="20" y="20" width="6" height="92" rx="3" class="d-accent d-accent--cool"></rect>
+                <text x="44" y="46" class="d-label">Experience · Lightning Web Components</text>
+                <rect x="44" y="60" width="176" height="40" rx="10" class="d-chip"></rect><text x="132" y="85" class="d-chip-text">Overview</text>
+                <rect x="232" y="60" width="176" height="40" rx="10" class="d-chip"></rect><text x="320" y="85" class="d-chip-text">Bundles</text>
+                <rect x="420" y="60" width="176" height="40" rx="10" class="d-chip"></rect><text x="508" y="85" class="d-chip-text">Recommendations</text>
+                <rect x="608" y="60" width="176" height="40" rx="10" class="d-chip"></rect><text x="696" y="85" class="d-chip-text">How it works</text>
+                <rect x="796" y="60" width="176" height="40" rx="10" class="d-chip"></rect><text x="884" y="85" class="d-chip-text">Ask Ohm</text>
+                <rect x="984" y="60" width="176" height="40" rx="10" class="d-chip"></rect><text x="1072" y="85" class="d-chip-text">Footprint strip</text>
+
+                <rect x="20" y="124" width="1160" height="92" rx="14" class="d-band"></rect>
+                <rect x="20" y="124" width="6" height="92" rx="3" class="d-accent d-accent--warm"></rect>
+                <text x="44" y="150" class="d-label">Services · Apex</text>
+                <rect x="44" y="164" width="176" height="40" rx="10" class="d-chip"></rect><text x="132" y="189" class="d-chip-text">Discovery</text>
+                <rect x="232" y="164" width="176" height="40" rx="10" class="d-chip"></rect><text x="320" y="189" class="d-chip-text">Source retrieval</text>
+                <rect x="420" y="164" width="176" height="40" rx="10" class="d-chip"></rect><text x="508" y="189" class="d-chip-text">Review + verification</text>
+                <rect x="608" y="164" width="176" height="40" rx="10" class="d-chip"></rect><text x="696" y="189" class="d-chip-text">Recommendations + Tasks</text>
+                <rect x="796" y="164" width="176" height="40" rx="10" class="d-chip"></rect><text x="884" y="189" class="d-chip-text">Footprint engine</text>
+                <rect x="984" y="164" width="176" height="40" rx="10" class="d-chip"></rect><text x="1072" y="189" class="d-chip-text">Assistant</text>
+
+                <rect x="20" y="228" width="1160" height="92" rx="14" class="d-band"></rect>
+                <rect x="20" y="228" width="6" height="92" rx="3" class="d-accent d-accent--muted"></rect>
+                <text x="44" y="254" class="d-label">Platform · Salesforce and Agentforce</text>
+                <rect x="44" y="268" width="176" height="40" rx="10" class="d-chip"></rect><text x="132" y="293" class="d-chip-text">Agent Script bundles</text>
+                <rect x="232" y="268" width="176" height="40" rx="10" class="d-chip"></rect><text x="320" y="293" class="d-chip-text">Prompt Builder · GPT 5.5</text>
+                <rect x="420" y="268" width="176" height="40" rx="10" class="d-chip"></rect><text x="508" y="293" class="d-chip-text">Models API</text>
+                <rect x="608" y="268" width="176" height="40" rx="10" class="d-chip"></rect><text x="696" y="293" class="d-chip-text">Metadata API</text>
+                <rect x="796" y="268" width="176" height="40" rx="10" class="d-chip"></rect><text x="884" y="293" class="d-chip-text">Named Credential + ECA</text>
+                <rect x="984" y="268" width="176" height="40" rx="10" class="d-chip"></rect><text x="1072" y="293" class="d-chip-text">Custom objects + Task</text>
+            </svg>
+        </article>
+
+        <article class="how__block" data-id="math">
+            <h2>The footprint math</h2>
+            <p class="how__intro">Source tokens become energy, energy becomes carbon and water, and the volume you choose scales all of it. The savings are the share the recommended changes remove.</p>
+            <svg class="diagram diagram--math" viewBox="0 0 1200 210" role="img" aria-label="Source tokens times energy per prompt gives energy per request. Times requests a day times 365 gives energy a year. Times the grid factor gives CO2e; times the water factor gives water. Savings are the share the recommended changes remove." data-id="diagram-math">
+                <title>The footprint math</title>
+                <rect x="30" y="66" width="160" height="56" rx="12" class="d-node"></rect><text x="110" y="100" class="d-title d-title--small">Source tokens</text>
+                <text x="212" y="102" class="d-op">×</text>
+                <rect x="236" y="66" width="170" height="56" rx="12" class="d-node"></rect><text x="321" y="100" class="d-title d-title--small">Energy per prompt</text>
+                <path d="M406 94 H438" class="d-line"></path><polygon points="438,88 446,94 438,100" class="d-arrow"></polygon>
+                <rect x="446" y="66" width="170" height="56" rx="12" class="d-node d-node--strong"></rect><text x="531" y="100" class="d-title d-title--small">Energy per request</text>
+                <text x="638" y="102" class="d-op">×</text>
+                <rect x="662" y="66" width="190" height="56" rx="12" class="d-node"></rect><text x="757" y="93" class="d-title d-title--small">Requests a day</text><text x="757" y="111" class="d-label d-label--center">× 365</text>
+                <path d="M852 94 H884" class="d-line"></path><polygon points="884,88 892,94 884,100" class="d-arrow"></polygon>
+                <rect x="892" y="66" width="140" height="56" rx="12" class="d-node d-node--strong"></rect><text x="962" y="100" class="d-title d-title--small">Energy a year</text>
+                <path d="M1032 84 H1060 V44 H1082" class="d-line"></path><polygon points="1082,38 1090,44 1082,50" class="d-arrow"></polygon>
+                <text x="1064" y="36" class="d-label d-label--center">× grid</text>
+                <rect x="1090" y="22" width="90" height="44" rx="10" class="d-node"></rect><text x="1135" y="49" class="d-title d-title--small">CO2e</text>
+                <path d="M1032 104 H1060 V144 H1082" class="d-line"></path><polygon points="1082,138 1090,144 1082,150" class="d-arrow"></polygon>
+                <text x="1064" y="166" class="d-label d-label--center">× water</text>
+                <rect x="1090" y="122" width="90" height="44" rx="10" class="d-node"></rect><text x="1135" y="149" class="d-title d-title--small">Water</text>
+                <text x="30" y="176" class="d-label">Savings = the share of those tokens the recommended changes remove. Every factor sits under Assumptions on the footprint strip.</text>
+            </svg>
+        </article>
+
+        <article class="how__block how__block--grades" data-id="grades">
+            <h2>Three questions, three grades</h2>
+            <div class="how__grid">
+                <div class="how__card"><h3>Input</h3><p>Is the model reading more than it needs? Repeated policy, padded context, instructions nobody uses.</p></div>
+                <div class="how__card"><h3>Output</h3><p>Is it writing more than anyone asked for? Extra variants, extra formats, explanations no system consumes.</p></div>
+                <div class="how__card"><h3>Calls</h3><p>Is it doing work plain code should do? Arithmetic, sorting, validation, retries that should be deterministic.</p></div>
+            </div>
+            <p class="how__legend"><b>A</b> clean in the reviewed evidence. <b>B</b> a change worth making. <b>C</b> a budget is being blown. <b>Unrated</b> evidence is missing, and it stays visible.</p>
+        </article>
+    </section>
+</template>

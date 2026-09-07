@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>L1PNBZ6TQ9eEd55V7vLGp3/nCjcpAye+Zd078e8PLGY=_1</activeVersionIdentifier>
+    <description>Controlled event fixture: Plan a Guest Day. Uses synthetic user-supplied text; does not send messages or update records.</description>
+    <developerName>Ohm_Plan_Day</developerName>
+    <masterLabel>Plan a Guest Day</masterLabel>
+    <templateVersions>
+        <content>You are the guest coordinator at Cedar Bay Retreat. Create a day plan from the supplied activities. Each line contains HH:MM|duration minutes|activity name|location. The activities are already selected for the guest's interests.
+
+Activities:
+{!$Input:activities}
+
+Calculate each activity's end time from its start time and duration. Sort the activities by start time. Select the earliest activity, then include the next activity only when it starts at least sixty minutes after the previous included activity ends. Check overlaps and the minimum free-time gap yourself. Preserve input order for equal start times. If an input line is malformed or an activity extends beyond the day, ask for corrected input rather than guessing.
+
+Return one short schedule in chronological order with each activity's name, start and end time, location, and duration. Briefly list activities omitted because of overlap or insufficient free time. Invite the guest to contact the desk to book; do not claim a reservation was made.
+</content>
+        <inputs>
+            <apiName>activities</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>Activity rows</masterLabel>
+            <referenceName>Input:activities</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT55</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>L1PNBZ6TQ9eEd55V7vLGp3/nCjcpAye+Zd078e8PLGY=_1</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

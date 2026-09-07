@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label>Ohm App Access</label>
-    <hasActivationRequired>false</hasActivationRequired>
     <applicationVisibilities>
         <application>Ohm</application>
         <visible>true</visible>
     </applicationVisibilities>
+    <classAccesses>
+        <apexClass>OhmAuditController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses><apexClass>OhmAuditCoordinator</apexClass><enabled>true</enabled></classAccesses>
+    <classAccesses><apexClass>OhmAuditJob</apexClass><enabled>true</enabled></classAccesses>
+    <classAccesses><apexClass>OhmAuditRunService</apexClass><enabled>true</enabled></classAccesses>
+    <classAccesses><apexClass>OhmSourceRetrievalService</apexClass><enabled>true</enabled></classAccesses>
+    <classAccesses><apexClass>OhmSourceParser</apexClass><enabled>true</enabled></classAccesses>
+    <classAccesses><apexClass>OhmSalesforceApi</apexClass><enabled>true</enabled></classAccesses>
+    <classAccesses><apexClass>OhmReviewService</apexClass><enabled>true</enabled></classAccesses>
+    <classAccesses><apexClass>OhmReviewRecommendationService</apexClass><enabled>true</enabled></classAccesses>
+    <classAccesses><apexClass>OhmReviewTemplate</apexClass><enabled>true</enabled></classAccesses>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Ohm App Access</label>
     <tabSettings>
         <tab>Ohm_Audit</tab>
         <visibility>Visible</visibility>

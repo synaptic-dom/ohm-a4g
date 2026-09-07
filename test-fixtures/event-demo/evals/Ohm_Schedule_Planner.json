@@ -1,0 +1,62 @@
+{
+  "tests": [
+    {
+      "id": "schedule-day",
+      "steps": [
+        {
+          "type": "agent.create_session",
+          "id": "cs",
+          "use_agent_api": true
+        },
+        {
+          "type": "agent.send_message",
+          "id": "sm",
+          "session_id": "{cs.session_id}",
+          "utterance": "Create a guest day plan from these activity rows:\n13:00|60|Forest walk|Trailhead\n09:00|45|Kayaking|Boathouse\n10:30|30|Clay studio|Art room\n10:45|45|Garden tour|Garden"
+        },
+        {
+          "type": "agent.get_state",
+          "id": "state",
+          "session_id": "{cs.session_id}"
+        },
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "utterance": "Create a guest day plan from these activity rows:\n13:00|60|Forest walk|Trailhead\n09:00|45|Kayaking|Boathouse\n10:30|30|Clay studio|Art room\n10:45|45|Garden tour|Garden",
+          "expected": "Include Kayaking at 09:00–09:45, Garden tour at 10:45–11:30, and Forest walk at 13:00–14:00, in that order. Omit Clay studio because the gap after Kayaking is too short. Do not claim any booking was created.",
+          "actual": "{sm.response}",
+          "threshold": 3.0
+        }
+      ]
+    },
+    {
+      "id": "schedule-invalid",
+      "steps": [
+        {
+          "type": "agent.create_session",
+          "id": "cs",
+          "use_agent_api": true
+        },
+        {
+          "type": "agent.send_message",
+          "id": "sm",
+          "session_id": "{cs.session_id}",
+          "utterance": "Plan this activity: 25:00|30|Evening yoga|Studio"
+        },
+        {
+          "type": "agent.get_state",
+          "id": "state",
+          "session_id": "{cs.session_id}"
+        },
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "utterance": "Plan this activity: 25:00|30|Evening yoga|Studio",
+          "expected": "Ask for a corrected time rather than inventing a valid time or a reservation.",
+          "actual": "{sm.response}",
+          "threshold": 3.0
+        }
+      ]
+    }
+  ]
+}

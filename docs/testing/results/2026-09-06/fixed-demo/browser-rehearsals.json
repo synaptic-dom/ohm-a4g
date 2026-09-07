@@ -1,0 +1,49 @@
+{
+  "orgAlias": "ohm-audit-lab",
+  "completedLoops": 2,
+  "beforeCharacters": 4085,
+  "afterCharacters": 773,
+  "beforeApproximateTokens": 1022,
+  "afterApproximateTokens": 194,
+  "modeledBaselineWh": 63742.14,
+  "modeledAfterWh": 14782.5,
+  "modeledReductionWh": 48959.64,
+  "coverage": "Incomplete",
+  "sameTaskId": "00TEc00000a9bLNMAY",
+  "preservedDueDate": "2026-09-08",
+  "finalTaskStatus": "Completed",
+  "finalPublishedPlanner": "Ohm_Weather_Demo_v4",
+  "loops": [
+    {
+      "beforeReportId": "a00Ec00000lpuukIAA",
+      "afterReportId": "a00Ec00000lpeoWIAQ",
+      "beforeVersion": 1,
+      "afterVersion": 2
+    },
+    {
+      "beforeReportId": "a00Ec00000lq00rIAA",
+      "afterReportId": "a00Ec00000lpk2aIAA",
+      "beforeVersion": 3,
+      "afterVersion": 4
+    }
+  ],
+  "checks": [
+    "artifact-bound explanation and full draft",
+    "draft byte-identical to reviewed reference repair",
+    "manual scoped publish, activation and fresh source import",
+    "UI audit of each new publication",
+    "matching logical artifact and comparable assumptions in diff",
+    "finding removal from latest worklist",
+    "task completion, reopening, duplicate-create reuse and completion",
+    "owner and due-date preservation",
+    "cross-version process trends",
+    "saved Calm Mode with no graph animation",
+    "correct model-review labels after cache refresh",
+    "normal runtime and original cache/debug settings restored"
+  ],
+  "limitations": [
+    "Instruction energy is a modeled source-input scenario, not measured or realized savings.",
+    "Live browser persona is scratch administrator; minimum-access persona validated in Apex tests.",
+    "Behavior checks execute fixture weather/forecast/alert stubs."
+  ]
+}

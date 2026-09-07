@@ -1,0 +1,32 @@
+[
+  {
+    "animation": "none",
+    "label": "Controlled Weather Demo, Agent, no findings in available evidence",
+    "transition": "0s"
+  },
+  {
+    "animation": "none",
+    "label": "Weather Lookup, Topic, flagged wasteful — Bloated instructions / scope",
+    "transition": "0s"
+  },
+  {
+    "animation": "none",
+    "label": "Agent Router, Topic, no findings in available evidence",
+    "transition": "0s"
+  },
+  {
+    "animation": "none",
+    "label": "Get Current Weather, Action, no findings in available evidence",
+    "transition": "0s"
+  },
+  {
+    "animation": "none",
+    "label": "Get Forecast, Action, no findings in available evidence",
+    "transition": "0s"
+  },
+  {
+    "animation": "none",
+    "label": "Send Weather Alert, Action, no findings in available evidence",
+    "transition": "0s"
+  }
+]

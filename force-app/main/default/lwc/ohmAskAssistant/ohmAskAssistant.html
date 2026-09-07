@@ -6,16 +6,14 @@
                 <span class="ohm-ask__spark" aria-hidden="true">◈</span>
                 <span class="ohm-ask__title">Ask Ohm</span>
             </div>
-            <template lwc:if={modelLabel}>
-                <span class="ohm-ask__model" data-id="model-label">{modelLabel}</span>
-            </template>
+
         </header>
 
         <!-- Loading -------------------------------------------------------- -->
         <template lwc:if={isLoadingContext}>
             <div class="ohm-ask__loading" role="status">
                 <span class="ohm-ask__spinner" aria-hidden="true"></span>
-                Grounding on this process…
+                Loading source context…
             </div>
         </template>
 
@@ -24,9 +22,13 @@
             <div class="ohm-ask__unavailable" data-id="ctx-error" role="alert">
                 {contextError}
             </div>
+            <button type="button" class="ohm-ask__prompt" data-id="retry-context" onclick={handleContextRetry}>Retry source context</button>
         </template>
 
         <template lwc:if={context}>
+            <details class="ohm-ask__context"><summary>Grounded in this audit</summary>            <template lwc:if={modelLabel}>
+                <span class="ohm-ask__model" data-id="model-label">{modelLabel}</span>
+            </template>
             <!-- Grounding line + chips ------------------------------------ -->
             <template lwc:if={groundingSummary}>
                 <p class="ohm-ask__grounding" data-id="grounding">
@@ -41,6 +43,7 @@
                 </ul>
             </template>
 
+            </details>
             <template lwc:if={available}>
                 <!-- Transcript -------------------------------------------- -->
                 <div
@@ -62,6 +65,7 @@
 
                                 <!-- Draft rewrite block ------------------ -->
                                 <template lwc:if={turn.isDraft}>
+                                    <p class="ohm-ask__source">Draft for review. Apply and publish in Salesforce, then re-audit.</p><details class="ohm-ask__context"><summary>Draft source</summary><p class="ohm-ask__source" data-id="draft-source">{turn.sourcePath}</p></details>
                                     <div class="ohm-ask__delta" data-id="draft-delta">
                                         <span class={turn.deltaClass}>{turn.reductionText}</span>
                                         <span class="ohm-ask__delta-metric">{turn.charDeltaText}</span>
@@ -75,15 +79,8 @@
                                         data-text={turn.draftText}
                                         onclick={handleCopyDraft}
                                     >
-                                        Copy trimmed instructions
+                                        Copy draft
                                     </button>
-                                </template>
-
-                                <!-- Provenance under Ohm bubbles --------- -->
-                                <template lwc:if={turn.isOhm}>
-                                    <template lwc:if={turn.modelLabel}>
-                                        <span class="ohm-ask__prov">{turn.modelLabel}</span>
-                                    </template>
                                 </template>
 
                                 <!-- Follow-up chips ---------------------- -->
@@ -110,10 +107,7 @@
                     <template lwc:if={isThinking}>
                         <div class="ohm-ask__row" data-id="thinking" role="status">
                             <div class="ohm-ask__bubble ohm-ask__bubble--ohm ohm-ask__thinking">
-                                <span class="ohm-ask__sr">Ohm is thinking…</span>
-                                <span class="ohm-ask__dot" aria-hidden="true"></span>
-                                <span class="ohm-ask__dot" aria-hidden="true"></span>
-                                <span class="ohm-ask__dot" aria-hidden="true"></span>
+                                <span>Reviewing your question…</span>
                             </div>
                         </div>
                     </template>
@@ -141,13 +135,12 @@
                     <textarea
                         class="ohm-ask__input"
                         data-id="input"
-                        rows="1"
-                        placeholder="Ask about this process…"
-                        value={draftInput}
+                        rows="3"
+                        placeholder="Ask about the selected source…"
                         oninput={handleInput}
                         onkeydown={handleKeydown}
                         disabled={inputDisabled}
-                        aria-label="Ask Ohm a question about this process"
+                        aria-label="Ask Ohm about this source"
                     ></textarea>
                     <button
                         type="button"

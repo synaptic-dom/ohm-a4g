@@ -1,0 +1,3114 @@
+{
+  "apex": {
+    "cliDetailedRecordCount": 215,
+    "complete": true,
+    "detailReconciliation": {
+      "additionalRecordCount": 2,
+      "note": "Tooling ApexTestResult includes setup executions omitted by the CLI detailed test array. No new test run was started.",
+      "toolingJobId": "707Ec00002XgeKi",
+      "toolingResultCount": 217
+    },
+    "input": {
+      "file": "ohm-demo-apex-final-2-complete.json",
+      "modifiedAt": "2026-09-07T01:25:54.966570+00:00",
+      "sha256": "98c967d544bf077eeb98103094f90ec62080e8c2bcde8c5829e1bd2ce19cdb80",
+      "state": "present"
+    },
+    "ordinaryTestMethodCount": 215,
+    "setupExecutionCount": 2,
+    "summary": {
+      "failing": 0,
+      "outcome": "Passed",
+      "passing": 217,
+      "skipped": 0,
+      "testExecutionTime": "14761 ms",
+      "testRunId": "707Ec00002XgeKi",
+      "testStartTime": "2026-09-07T01:18:47.000Z",
+      "testsRan": 217
+    },
+    "tests": [
+      {
+        "class": "ExperienceControllerTest",
+        "id": "07MEc00000hzIgwMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testGetExperiencesSuccess",
+        "outcome": "Pass",
+        "runTimeMs": 34
+      },
+      {
+        "class": "OhmDTOTest",
+        "id": "07MEc00000hzNGHMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_C3_vocabularyRoundTrip",
+        "outcome": "Pass",
+        "runTimeMs": 19
+      },
+      {
+        "class": "OhmDTOTest",
+        "id": "07MEc00000hzNGIMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_agentModel_defaults",
+        "outcome": "Pass",
+        "runTimeMs": 5
+      },
+      {
+        "class": "OhmDTOTest",
+        "id": "07MEc00000hzNGJMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_remediationInput_shape",
+        "outcome": "Pass",
+        "runTimeMs": 5
+      },
+      {
+        "class": "SiteRegisterControllerTest",
+        "id": "07MEc00000hzOXxMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testRegistration",
+        "outcome": "Pass",
+        "runTimeMs": 17
+      },
+      {
+        "class": "ModelRegistryTest",
+        "id": "07MEc00000hzOXyMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_embeddedSizeWordsAreNotModelEvidence",
+        "outcome": "Pass",
+        "runTimeMs": 15
+      },
+      {
+        "class": "ModelRegistryTest",
+        "id": "07MEc00000hzOXzMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_knownModelName",
+        "outcome": "Pass",
+        "runTimeMs": 5
+      },
+      {
+        "class": "ModelRegistryTest",
+        "id": "07MEc00000hzOY0MAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_knownTiers",
+        "outcome": "Pass",
+        "runTimeMs": 5
+      },
+      {
+        "class": "ModelRegistryTest",
+        "id": "07MEc00000hzOY1MAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_recommendedFor",
+        "outcome": "Pass",
+        "runTimeMs": 5
+      },
+      {
+        "class": "ModelRegistryTest",
+        "id": "07MEc00000hzOY2MAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_specificSmallVariantsWinOverFamily",
+        "outcome": "Pass",
+        "runTimeMs": 5
+      },
+      {
+        "class": "ModelRegistryTest",
+        "id": "07MEc00000hzOY3MAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_unknownModelBaseline",
+        "outcome": "Pass",
+        "runTimeMs": 5
+      },
+      {
+        "class": "OhmAuditLifecycleAcceptanceTest",
+        "id": "07MEc00000hzP4cMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "cleanReauditRemovesStaleRecommendations",
+        "outcome": "Pass",
+        "runTimeMs": 311
+      },
+      {
+        "class": "OhmAuditLifecycleAcceptanceTest",
+        "id": "07MEc00000hzP4dMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "differentAgentsDoNotCreateRealizedSavings",
+        "outcome": "Pass",
+        "runTimeMs": 135
+      },
+      {
+        "class": "OhmAuditLifecycleAcceptanceTest",
+        "id": "07MEc00000hzP4eMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "missingCoverageMustNotReceiveAnA",
+        "outcome": "Pass",
+        "runTimeMs": 26
+      },
+      {
+        "class": "OhmAuditLifecycleAcceptanceTest",
+        "id": "07MEc00000hzP4fMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "unchangedIssueKeepsItsTaskAndStatus",
+        "outcome": "Pass",
+        "runTimeMs": 319
+      },
+      {
+        "class": "OhmAuditLifecycleAcceptanceTest",
+        "id": "07MEc00000hzP4gMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "unknownModelDoesNotPromiseSavings",
+        "outcome": "Pass",
+        "runTimeMs": 78
+      },
+      {
+        "class": "OhmPersistenceServiceTest",
+        "id": "07MEc00000hzPNyMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "legacyReadoutDoesNotPretendFindingCostIsTotalWorkload",
+        "outcome": "Pass",
+        "runTimeMs": 239
+      },
+      {
+        "class": "OhmPersistenceServiceTest",
+        "id": "07MEc00000hzPNzMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testCreateRemediationTaskInsertsTaskAndWritesBackId",
+        "outcome": "Pass",
+        "runTimeMs": 198
+      },
+      {
+        "class": "OhmPersistenceServiceTest",
+        "id": "07MEc00000hzPO0MAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testCreateRemediationTaskRequiresFindingId",
+        "outcome": "Pass",
+        "runTimeMs": 6
+      },
+      {
+        "class": "OhmPersistenceServiceTest",
+        "id": "07MEc00000hzPO1MAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testCreateReportInsertsQueuedAndUpdateProgressAdvances",
+        "outcome": "Pass",
+        "runTimeMs": 40
+      },
+      {
+        "class": "OhmPersistenceServiceTest",
+        "id": "07MEc00000hzPO2MAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testLoadReadoutMapsEveryField",
+        "outcome": "Pass",
+        "runTimeMs": 163
+      },
+      {
+        "class": "OhmPersistenceServiceTest",
+        "id": "07MEc00000hzPO3MAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testPersistFindingsInsertsChildrenAndComputesRollups",
+        "outcome": "Pass",
+        "runTimeMs": 122
+      },
+      {
+        "class": "OhmPersistenceServiceTest",
+        "id": "07MEc00000hzPO4MAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testPersistFindingsWithNoFindingsStillCompletesReport",
+        "outcome": "Pass",
+        "runTimeMs": 82
+      },
+      {
+        "class": "OhmPersistenceServiceTest",
+        "id": "07MEc00000hzPO5MAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testSaveDiscoveryGraphSerializesModel",
+        "outcome": "Pass",
+        "runTimeMs": 43
+      },
+      {
+        "class": "OhmPersistenceServiceTest",
+        "id": "07MEc00000hzPO6MAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testWriteAgentNarrativesEmptyOrForeignIdsReturnsZero",
+        "outcome": "Pass",
+        "runTimeMs": 127
+      },
+      {
+        "class": "OhmPersistenceServiceTest",
+        "id": "07MEc00000hzPO7MAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testWriteAgentNarrativesUpdatesMatchingFindings",
+        "outcome": "Pass",
+        "runTimeMs": 157
+      },
+      {
+        "class": "OhmSeverityTest",
+        "id": "07MEc00000hzPPiMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_bandCutoffs",
+        "outcome": "Pass",
+        "runTimeMs": 9
+      },
+      {
+        "class": "OhmSpikeActionTest",
+        "id": "07MEc00000hzQY0MAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "ping_echoesInputWithPongPrefix",
+        "outcome": "Pass",
+        "runTimeMs": 26
+      },
+      {
+        "class": "OhmSpikeActionTest",
+        "id": "07MEc00000hzQY1MAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "ping_handlesBulkRequests",
+        "outcome": "Pass",
+        "runTimeMs": 8
+      },
+      {
+        "class": "MyProfilePageControllerTest",
+        "id": "07MEc00000hzRXhMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testSave",
+        "outcome": "Pass",
+        "runTimeMs": 204
+      },
+      {
+        "class": "OhmDiscoveryContractTest",
+        "id": "07MEc00000hzTCYMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "conflictingRelationshipsDoNotInventOwnership",
+        "outcome": "Pass",
+        "runTimeMs": 23
+      },
+      {
+        "class": "OhmDiscoveryContractTest",
+        "id": "07MEc00000hzTCZMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "currentImportedSourceCarriesProvenanceAndStaleSourceIsIgnored",
+        "outcome": "Pass",
+        "runTimeMs": 63
+      },
+      {
+        "class": "OhmDiscoveryContractTest",
+        "id": "07MEc00000hzTCaMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "legacyNameInferenceIsExplicitlyIncomplete",
+        "outcome": "Pass",
+        "runTimeMs": 5
+      },
+      {
+        "class": "OhmDiscoveryContractTest",
+        "id": "07MEc00000hzTCbMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "promptActionAliasesNormalize",
+        "outcome": "Pass",
+        "runTimeMs": 7
+      },
+      {
+        "class": "OhmDiscoveryContractTest",
+        "id": "07MEc00000hzTCcMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "realRelationshipsOverrideMisleadingNames",
+        "outcome": "Pass",
+        "runTimeMs": 4
+      },
+      {
+        "class": "OhmDiscoveryContractTest",
+        "id": "07MEc00000hzTCdMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "sourceFingerprintIsStableAndDetectsMetadataChange",
+        "outcome": "Pass",
+        "runTimeMs": 4
+      },
+      {
+        "class": "OhmDiscoveryContractTest",
+        "id": "07MEc00000hzTCeMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "unresolvedExplicitParentNeverFallsBackToName",
+        "outcome": "Pass",
+        "runTimeMs": 4
+      },
+      {
+        "class": "OhmAuditControllerTest",
+        "id": "07MEc00000hzTbgMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testAssignFindingCreatesTaskWithOwnerAndDue",
+        "outcome": "Pass",
+        "runTimeMs": 328
+      },
+      {
+        "class": "OhmAuditControllerTest",
+        "id": "07MEc00000hzTbhMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testAuditProcessCapturesInstructionSnapshotForBloatFinding",
+        "outcome": "Pass",
+        "runTimeMs": 344
+      },
+      {
+        "class": "OhmAuditControllerTest",
+        "id": "07MEc00000hzTbiMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testAuditProcessPersistsScopedReportAndFleetReflectsGrade",
+        "outcome": "Pass",
+        "runTimeMs": 190
+      },
+      {
+        "class": "OhmAuditControllerTest",
+        "id": "07MEc00000hzTbjMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testCalmModePreferenceRoundTrip",
+        "outcome": "Pass",
+        "runTimeMs": 79
+      },
+      {
+        "class": "OhmAuditControllerTest",
+        "id": "07MEc00000hzTbkMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testCreateRemediationTaskDoorDelegatesToPersistence",
+        "outcome": "Pass",
+        "runTimeMs": 127
+      },
+      {
+        "class": "OhmAuditControllerTest",
+        "id": "07MEc00000hzTblMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testEstimateFootprintPerElement",
+        "outcome": "Pass",
+        "runTimeMs": 18
+      },
+      {
+        "class": "OhmAuditControllerTest",
+        "id": "07MEc00000hzTbmMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testGetAuditStatusBadIdThrowsAuraHandled",
+        "outcome": "Pass",
+        "runTimeMs": 22
+      },
+      {
+        "class": "OhmAuditControllerTest",
+        "id": "07MEc00000hzTbnMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testGetAuditStatusReflectsInProgressReport",
+        "outcome": "Pass",
+        "runTimeMs": 64
+      },
+      {
+        "class": "OhmAuditControllerTest",
+        "id": "07MEc00000hzTboMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testGetDiffAfterTwoAuditsReturnsBeforeAfterWithDeltas",
+        "outcome": "Pass",
+        "runTimeMs": 403
+      },
+      {
+        "class": "OhmAuditControllerTest",
+        "id": "07MEc00000hzTbpMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testGetDiffSingleAuditReturnsAfterOnly",
+        "outcome": "Pass",
+        "runTimeMs": 235
+      },
+      {
+        "class": "OhmAuditControllerTest",
+        "id": "07MEc00000hzTbqMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testGetFindingsAppliesStatusAndSeverityFilters",
+        "outcome": "Pass",
+        "runTimeMs": 149
+      },
+      {
+        "class": "OhmAuditControllerTest",
+        "id": "07MEc00000hzTbrMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testGetFindingsDedupsAcrossReAudits",
+        "outcome": "Pass",
+        "runTimeMs": 390
+      },
+      {
+        "class": "OhmAuditControllerTest",
+        "id": "07MEc00000hzTbsMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testGetFleetReturnsUnauditedFleet",
+        "outcome": "Pass",
+        "runTimeMs": 41
+      },
+      {
+        "class": "OhmAuditControllerTest",
+        "id": "07MEc00000hzTbtMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testGetProcessDetailMarksBloatedTopicWasteful",
+        "outcome": "Pass",
+        "runTimeMs": 264
+      },
+      {
+        "class": "OhmAuditControllerTest",
+        "id": "07MEc00000hzTbuMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testGetRecommendationsRanksQuickWinsBySavingsPerEffort",
+        "outcome": "Pass",
+        "runTimeMs": 109
+      },
+      {
+        "class": "OhmAuditControllerTest",
+        "id": "07MEc00000hzTbvMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testGetTrendsOrgReturnsPointsAndPerAgentHistory",
+        "outcome": "Pass",
+        "runTimeMs": 244
+      },
+      {
+        "class": "OhmAuditControllerTest",
+        "id": "07MEc00000hzTbwMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testGetTrendsPerProcessReturnsChronologicalPoints",
+        "outcome": "Pass",
+        "runTimeMs": 390
+      },
+      {
+        "class": "OhmAuditControllerTest",
+        "id": "07MEc00000hzTbxMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testPrimitiveTaskDoorUsesSavedEvidenceAndPreservesAssignment",
+        "outcome": "Pass",
+        "runTimeMs": 194
+      },
+      {
+        "class": "OhmAuditControllerTest",
+        "id": "07MEc00000hzTbyMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testStartAuditReturnsCompleteReportWithReadout",
+        "outcome": "Pass",
+        "runTimeMs": 343
+      },
+      {
+        "class": "OhmAuditControllerTest",
+        "id": "07MEc00000hzTbzMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testUpdateFindingStatusPersistsAndMirrorsTask",
+        "outcome": "Pass",
+        "runTimeMs": 231
+      },
+      {
+        "class": "TokenEstimatorTest",
+        "id": "07MEc00000hzUOfMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_approxTokens",
+        "outcome": "Pass",
+        "runTimeMs": 16
+      },
+      {
+        "class": "TokenEstimatorTest",
+        "id": "07MEc00000hzUOgMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_canonical5200",
+        "outcome": "Pass",
+        "runTimeMs": 4
+      },
+      {
+        "class": "TokenEstimatorTest",
+        "id": "07MEc00000hzUOhMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_promptTurnTokens_noThrow",
+        "outcome": "Pass",
+        "runTimeMs": 13
+      },
+      {
+        "class": "WeatherAlertServiceTest",
+        "id": "07MEc00000hzVsZMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testSendAlertBulkRequests",
+        "outcome": "Pass",
+        "runTimeMs": 11
+      },
+      {
+        "class": "WeatherAlertServiceTest",
+        "id": "07MEc00000hzVsaMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testSendAlertSingleRequest",
+        "outcome": "Pass",
+        "runTimeMs": 3
+      },
+      {
+        "class": "WeatherAlertServiceTest",
+        "id": "07MEc00000hzVsbMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testSendAlertWithEmptyMessage",
+        "outcome": "Pass",
+        "runTimeMs": 3
+      },
+      {
+        "class": "CommunitiesLandingControllerTest",
+        "id": "07MEc00000hzVscMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testCommunitiesLandingController",
+        "outcome": "Pass",
+        "runTimeMs": 8
+      },
+      {
+        "class": "OhmAuditImpactServiceTest",
+        "id": "07MEc00000hzWDaMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "changedVolumeOrScopeBlocksComparison",
+        "outcome": "Pass",
+        "runTimeMs": 34
+      },
+      {
+        "class": "OhmAuditImpactServiceTest",
+        "id": "07MEc00000hzWDbMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "cleanInstructionsRetainResidualFootprint",
+        "outcome": "Pass",
+        "runTimeMs": 9
+      },
+      {
+        "class": "OhmAuditImpactServiceTest",
+        "id": "07MEc00000hzWDcMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "duplicateFlagsDoNotDuplicateCostOrSavings",
+        "outcome": "Pass",
+        "runTimeMs": 9
+      },
+      {
+        "class": "OhmAuditImpactServiceTest",
+        "id": "07MEc00000hzWDdMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "unavailableSourceHasNoDisplayedZeroEstimate",
+        "outcome": "Pass",
+        "runTimeMs": 61
+      },
+      {
+        "class": "ChangePasswordControllerTest",
+        "id": "07MEc00000hzWIOMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testChangePasswordController",
+        "outcome": "Pass",
+        "runTimeMs": 14
+      },
+      {
+        "class": "SiteLoginControllerTest",
+        "id": "07MEc00000hzWx1MAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testSiteLoginController",
+        "outcome": "Pass",
+        "runTimeMs": 17
+      },
+      {
+        "class": "OhmFleetVersionTest",
+        "id": "07MEc00000hzXQVMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "highestNumericVersionWinsAndOldArtifactsLeaveFleetScope",
+        "outcome": "Pass",
+        "runTimeMs": 17
+      },
+      {
+        "class": "OhmFleetVersionTest",
+        "id": "07MEc00000hzXQWMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "missingRelationshipsRemainUnknownWhileOldOwnedActionsAreRemoved",
+        "outcome": "Pass",
+        "runTimeMs": 2
+      },
+      {
+        "class": "OhmFleetVersionTest",
+        "id": "07MEc00000hzXQXMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "sameLabelsAndSimilarNamesDoNotMergeDifferentProcesses",
+        "outcome": "Pass",
+        "runTimeMs": 2
+      },
+      {
+        "class": "OhmFootprintServiceTest",
+        "id": "07MEc00000hzXcgMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_C3_vocabulary",
+        "outcome": "Pass",
+        "runTimeMs": 27
+      },
+      {
+        "class": "OhmFootprintServiceTest",
+        "id": "07MEc00000hzXchMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_assumptions_disclosed",
+        "outcome": "Pass",
+        "runTimeMs": 5
+      },
+      {
+        "class": "OhmFootprintServiceTest",
+        "id": "07MEc00000hzXciMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_bandOrdering",
+        "outcome": "Pass",
+        "runTimeMs": 5
+      },
+      {
+        "class": "OhmFootprintServiceTest",
+        "id": "07MEc00000hzXcjMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_estimate_centralPin",
+        "outcome": "Pass",
+        "runTimeMs": 4
+      },
+      {
+        "class": "OhmFootprintServiceTest",
+        "id": "07MEc00000hzXckMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_savings_a_fullBaseline",
+        "outcome": "Pass",
+        "runTimeMs": 14
+      },
+      {
+        "class": "OhmFootprintServiceTest",
+        "id": "07MEc00000hzXclMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_savings_b_multiplierRatio",
+        "outcome": "Pass",
+        "runTimeMs": 9
+      },
+      {
+        "class": "OhmFootprintServiceTest",
+        "id": "07MEc00000hzXcmMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_savings_c_tokenDelta",
+        "outcome": "Pass",
+        "runTimeMs": 7
+      },
+      {
+        "class": "OhmFootprintServiceTest",
+        "id": "07MEc00000hzXcnMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_savings_d_callDelta",
+        "outcome": "Pass",
+        "runTimeMs": 5
+      },
+      {
+        "class": "OhmFootprintServiceTest",
+        "id": "07MEc00000hzXcoMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_sumAll_orgWide",
+        "outcome": "Pass",
+        "runTimeMs": 6
+      },
+      {
+        "class": "OhmFootprintServiceTest",
+        "id": "07MEc00000hzXcpMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_tokenAndMultiplierScaling",
+        "outcome": "Pass",
+        "runTimeMs": 7
+      },
+      {
+        "class": "OhmFootprintServiceTest",
+        "id": "07MEc00000hzXcqMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_unknownModel_assumed",
+        "outcome": "Pass",
+        "runTimeMs": 9
+      },
+      {
+        "class": "OhmFootprintServiceTest",
+        "id": "07MEc00000hzXcrMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_zeroCalls_noDivideByZero",
+        "outcome": "Pass",
+        "runTimeMs": 6
+      },
+      {
+        "class": "ForgotPasswordControllerTest",
+        "id": "07MEc00000hzXiIMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testForgotPasswordController",
+        "outcome": "Pass",
+        "runTimeMs": 20
+      },
+      {
+        "class": "CurrentDateTest",
+        "id": "07MEc00000hzXiJMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testGetCurrentDate",
+        "outcome": "Pass",
+        "runTimeMs": 9
+      },
+      {
+        "class": "OhmRemediationLifecycleTest",
+        "id": "07MEc00000hzYFPMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "assignmentIsIdempotentAndOpenClearsTaskCompletion",
+        "outcome": "Pass",
+        "runTimeMs": 383
+      },
+      {
+        "class": "OhmRemediationLifecycleTest",
+        "id": "07MEc00000hzYFQMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "changedScenarioWithholdsDeltaButRetainsExactSourceDiff",
+        "outcome": "Pass",
+        "runTimeMs": 167
+      },
+      {
+        "class": "OhmRemediationLifecycleTest",
+        "id": "07MEc00000hzYFRMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "coveredCleanAuditResolvesTaskAndKeepsAfterSource",
+        "outcome": "Pass",
+        "runTimeMs": 295
+      },
+      {
+        "class": "OhmRemediationLifecycleTest",
+        "id": "07MEc00000hzYFSMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "exactArtifactDiffSurvivesCleanAuditAndPublicationIds",
+        "outcome": "Pass",
+        "runTimeMs": 195
+      },
+      {
+        "class": "OhmRemediationLifecycleTest",
+        "id": "07MEc00000hzYFTMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "logicalProcessTrendsRetainPriorPublicationAndSeparateSimilarNames",
+        "outcome": "Pass",
+        "runTimeMs": 252
+      },
+      {
+        "class": "OhmRemediationLifecycleTest",
+        "id": "07MEc00000hzYFUMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "oversizedSourceIsNeverSavedAsACompleteTruncatedSnapshot",
+        "outcome": "Pass",
+        "runTimeMs": 39
+      },
+      {
+        "class": "OhmRemediationLifecycleTest",
+        "id": "07MEc00000hzYFVMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "reappearingIssueReopensSameTaskWithoutLosingAssignment",
+        "outcome": "Pass",
+        "runTimeMs": 372
+      },
+      {
+        "class": "OhmRemediationLifecycleTest",
+        "id": "07MEc00000hzYFWMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "republishedIssueRetainsTaskOwnerDateAndAcceptedState",
+        "outcome": "Pass",
+        "runTimeMs": 298
+      },
+      {
+        "class": "OhmRemediationLifecycleTest",
+        "id": "07MEc00000hzYFXMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "sameLabelsDifferentArtifactsRemainSeparateIssues",
+        "outcome": "Pass",
+        "runTimeMs": 91
+      },
+      {
+        "class": "OhmRemediationLifecycleTest",
+        "id": "07MEc00000hzYFYMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "snapshotRoundTripPreservesWhitespaceQuotesAndHash",
+        "outcome": "Pass",
+        "runTimeMs": 42
+      },
+      {
+        "class": "OhmRemediationLifecycleTest",
+        "id": "07MEc00000hzYFZMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "unknownCoverageDoesNotResolveExistingWork",
+        "outcome": "Pass",
+        "runTimeMs": 260
+      },
+      {
+        "class": "ActionChainingFlowTest",
+        "id": "07MEc00000hzZHuMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testAwardLoyaltyPoints",
+        "outcome": "Pass",
+        "runTimeMs": 312
+      },
+      {
+        "class": "ActionChainingFlowTest",
+        "id": "07MEc00000hzZHvMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testLogTransaction",
+        "outcome": "Pass",
+        "runTimeMs": 160
+      },
+      {
+        "class": "ActionChainingFlowTest",
+        "id": "07MEc00000hzZHwMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testProcessPaymentSuccess",
+        "outcome": "Pass",
+        "runTimeMs": 254
+      },
+      {
+        "class": "ActionChainingFlowTest",
+        "id": "07MEc00000hzZHxMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testSendReceipt",
+        "outcome": "Pass",
+        "runTimeMs": 152
+      },
+      {
+        "class": "OhmAuditorPermissionAcceptanceTest",
+        "id": "07MEc00000hzZMgMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "auditorCanReadButCannotOverwriteImportedSource",
+        "outcome": "Pass",
+        "runTimeMs": 678
+      },
+      {
+        "class": "OhmAuditorPermissionAcceptanceTest",
+        "id": "07MEc00000hzZMhMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "auditorPersistsAndReadsImpactAndImmutableSource",
+        "outcome": "Pass",
+        "runTimeMs": 838
+      },
+      {
+        "class": "WeatherServiceTest",
+        "id": "07MEc00000hzZRVMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "getResortWeather_returnsMockData",
+        "outcome": "Pass",
+        "runTimeMs": 10
+      },
+      {
+        "class": "ActionDefinitionsFlowTest",
+        "id": "07MEc00000hzZT7MAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testGetCurrentWeather",
+        "outcome": "Pass",
+        "runTimeMs": 253
+      },
+      {
+        "class": "ActionDefinitionsFlowTest",
+        "id": "07MEc00000hzZT8MAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testGetWeatherForecast",
+        "outcome": "Pass",
+        "runTimeMs": 106
+      },
+      {
+        "class": "PersonalizedGuestExperiencesTest",
+        "id": "07MEc00000hzZUkMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testPersonalizedGuestExperiencesSuccess",
+        "outcome": "Pass",
+        "runTimeMs": 74
+      },
+      {
+        "class": "CommunitiesLoginControllerTest",
+        "id": "07MEc00000hzZWLMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testCommunitiesLoginController",
+        "outcome": "Pass",
+        "runTimeMs": 29
+      },
+      {
+        "class": "CommunitiesSelfRegConfirmControllerTest",
+        "id": "07MEc00000hzZXxMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testCommunitiesSelfRegConfirmController",
+        "outcome": "Pass",
+        "runTimeMs": 8
+      },
+      {
+        "class": "CommunitiesSelfRegControllerTest",
+        "id": "07MEc00000hzZZZMA2",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testCommunitiesSelfRegController",
+        "outcome": "Pass",
+        "runTimeMs": 22
+      },
+      {
+        "class": "OhmSignalServiceTest",
+        "id": "07MEc00000hzZZaMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_analyze_empty_noException",
+        "outcome": "Pass",
+        "runTimeMs": 55
+      },
+      {
+        "class": "OhmSignalServiceTest",
+        "id": "07MEc00000hzZZbMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_analyze_fourSignalFixture_lowGrade",
+        "outcome": "Pass",
+        "runTimeMs": 17
+      },
+      {
+        "class": "OhmSignalServiceTest",
+        "id": "07MEc00000hzZZcMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_rate_cleanModel_gradeA",
+        "outcome": "Pass",
+        "runTimeMs": 9
+      },
+      {
+        "class": "OhmSignalServiceTest",
+        "id": "07MEc00000hzZZdMAM",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_rate_mixedFindings_formula",
+        "outcome": "Pass",
+        "runTimeMs": 8
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbBMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_a_bulk_noGovernor",
+        "outcome": "Pass",
+        "runTimeMs": 51
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbCMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_a_generatePromptResponse_fires",
+        "outcome": "Pass",
+        "runTimeMs": 5
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbDMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_a_informationDoesNotMatchFormat",
+        "outcome": "Pass",
+        "runTimeMs": 4
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbEMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_a_malformed_empty",
+        "outcome": "Pass",
+        "runTimeMs": 3
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbFMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_a_negative_apex",
+        "outcome": "Pass",
+        "runTimeMs": 4
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbGMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_a_negative_noLexicon",
+        "outcome": "Pass",
+        "runTimeMs": 4
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbHMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_a_positive_oneHit",
+        "outcome": "Pass",
+        "runTimeMs": 4
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbIMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_a_positive_twoHits_high",
+        "outcome": "Pass",
+        "runTimeMs": 4
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbJMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_a_wholeWordAndApiNameBoundaries",
+        "outcome": "Pass",
+        "runTimeMs": 4
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbKMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_b_boundary_overshootOne",
+        "outcome": "Pass",
+        "runTimeMs": 16
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbLMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_b_degrade_nullModel",
+        "outcome": "Pass",
+        "runTimeMs": 8
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbMMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_b_informationIsNotTrivialAndMiniIsNotOversized",
+        "outcome": "Pass",
+        "runTimeMs": 8
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbNMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_b_negative_rightSized",
+        "outcome": "Pass",
+        "runTimeMs": 9
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbOMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_b_neverCallout_bulk",
+        "outcome": "Pass",
+        "runTimeMs": 34
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbPMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_b_positive_largeOnTrivial",
+        "outcome": "Pass",
+        "runTimeMs": 8
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbQMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_b_unknownOrAssumedModelStaysInformational",
+        "outcome": "Pass",
+        "runTimeMs": 9
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbRMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_c_agentThreshold",
+        "outcome": "Pass",
+        "runTimeMs": 14
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbSMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_c_boundary_exactlySoft_noFire",
+        "outcome": "Pass",
+        "runTimeMs": 7
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbTMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_c_boundary_softPlusOne_fires",
+        "outcome": "Pass",
+        "runTimeMs": 8
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbUMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_c_bulk",
+        "outcome": "Pass",
+        "runTimeMs": 16
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbVMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_c_descriptionsAreNotInstructionSources",
+        "outcome": "Pass",
+        "runTimeMs": 9
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbWMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_c_negative_short",
+        "outcome": "Pass",
+        "runTimeMs": 8
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbXMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_c_positive_excessNotTotal",
+        "outcome": "Pass",
+        "runTimeMs": 7
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbYMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_c_sourceInstructionsOverrideScopeAndCarryModel",
+        "outcome": "Pass",
+        "runTimeMs": 8
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbZMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_d_degrade_malformed",
+        "outcome": "Pass",
+        "runTimeMs": 7
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbaMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_d_deterministicCycleDoesNotImplicateSeparatePrompt",
+        "outcome": "Pass",
+        "runTimeMs": 5
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbbMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_d_emptyGraph_noThrow",
+        "outcome": "Pass",
+        "runTimeMs": 4
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbcMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_d_negative_single",
+        "outcome": "Pass",
+        "runTimeMs": 5
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbdMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_d_positive_cycle",
+        "outcome": "Pass",
+        "runTimeMs": 5
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbeMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_d_positive_fixture",
+        "outcome": "Pass",
+        "runTimeMs": 5
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbfMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_d_promptCycleThroughDeterministicNodesIsReviewed",
+        "outcome": "Pass",
+        "runTimeMs": 4
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbgMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_d_sameTargetInSeparateTurnsIsNotRedundant",
+        "outcome": "Pass",
+        "runTimeMs": 5
+      },
+      {
+        "class": "OhmSignalDetectorTest",
+        "id": "07MEc00000hzZbhMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_d_unknownKeys_ignored",
+        "outcome": "Pass",
+        "runTimeMs": 5
+      },
+      {
+        "class": "OhmVolumeProviderTest",
+        "id": "07MEc00000hzZcnMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_defaultVolume_and_annualCalls",
+        "outcome": "Pass",
+        "runTimeMs": 26
+      },
+      {
+        "class": "OhmVolumeProviderTest",
+        "id": "07MEc00000hzZcoMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_scrubberLinearity",
+        "outcome": "Pass",
+        "runTimeMs": 7
+      },
+      {
+        "class": "OhmVolumeProviderTest",
+        "id": "07MEc00000hzZcpMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_withCallsPerTurn",
+        "outcome": "Pass",
+        "runTimeMs": 9
+      },
+      {
+        "class": "OhmActionsTest",
+        "id": "07MEc00000hzZePMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "createRemediationTaskBuildsTaskFromPersistedFinding",
+        "outcome": "Pass",
+        "runTimeMs": 288
+      },
+      {
+        "class": "OhmActionsTest",
+        "id": "07MEc00000hzZeQMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "createRemediationTaskReportsMissingFindingGracefully",
+        "outcome": "Pass",
+        "runTimeMs": 21
+      },
+      {
+        "class": "OhmActionsTest",
+        "id": "07MEc00000hzZeRMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "discoverAgenticWorkCreatesReportAndSavesGraph",
+        "outcome": "Pass",
+        "runTimeMs": 160
+      },
+      {
+        "class": "OhmActionsTest",
+        "id": "07MEc00000hzZeSMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "discoverAgenticWorkReusesExistingReport",
+        "outcome": "Pass",
+        "runTimeMs": 69
+      },
+      {
+        "class": "OhmActionsTest",
+        "id": "07MEc00000hzZeTMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "estimateFootprintReturnsOrderedBandsPerElement",
+        "outcome": "Pass",
+        "runTimeMs": 45
+      },
+      {
+        "class": "OhmActionsTest",
+        "id": "07MEc00000hzZeUMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "persistAuditReportWritesAgentNarratives",
+        "outcome": "Pass",
+        "runTimeMs": 103
+      },
+      {
+        "class": "OhmActionsTest",
+        "id": "07MEc00000hzZeVMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "recommendImprovementsAttachesDeterministicFixes",
+        "outcome": "Pass",
+        "runTimeMs": 57
+      },
+      {
+        "class": "OhmActionsTest",
+        "id": "07MEc00000hzZeWMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "runSignalsDetectsWasteFromGraphJson",
+        "outcome": "Pass",
+        "runTimeMs": 24
+      },
+      {
+        "class": "OhmActionsTest",
+        "id": "07MEc00000hzZeXMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "runSignalsReloadsGraphFromReportWhenJsonBlank",
+        "outcome": "Pass",
+        "runTimeMs": 41
+      },
+      {
+        "class": "OhmConstantsTest",
+        "id": "07MEc00000hzZg1MAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_bands",
+        "outcome": "Pass",
+        "runTimeMs": 45
+      },
+      {
+        "class": "OhmConstantsTest",
+        "id": "07MEc00000hzZg2MAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_defaultVolume",
+        "outcome": "Pass",
+        "runTimeMs": 15
+      },
+      {
+        "class": "OhmConstantsTest",
+        "id": "07MEc00000hzZg3MAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_happyOrFallback_values",
+        "outcome": "Pass",
+        "runTimeMs": 10
+      },
+      {
+        "class": "OhmConstantsTest",
+        "id": "07MEc00000hzZg4MAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_parseOrDefault_fallbacks",
+        "outcome": "Pass",
+        "runTimeMs": 6
+      },
+      {
+        "class": "OhmConstantsTest",
+        "id": "07MEc00000hzZg5MAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_partialJson_perKeyFallback",
+        "outcome": "Pass",
+        "runTimeMs": 6
+      },
+      {
+        "class": "OhmConstantsTest",
+        "id": "07MEc00000hzZg6MAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_signalWeightsAndGrades",
+        "outcome": "Pass",
+        "runTimeMs": 10
+      },
+      {
+        "class": "OhmConstantsTest",
+        "id": "07MEc00000hzZg7MAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_unknownModelBaseline",
+        "outcome": "Pass",
+        "runTimeMs": 10
+      },
+      {
+        "class": "OhmPublicWorkflowAcceptanceTest",
+        "id": "07MEc00000hzZhdMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "informationIsNotEvidenceOfFormattingWork",
+        "outcome": "Pass",
+        "runTimeMs": 107
+      },
+      {
+        "class": "OhmPublicWorkflowAcceptanceTest",
+        "id": "07MEc00000hzZheMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "paymentFlowChainIsNotRedundantLlmWork",
+        "outcome": "Pass",
+        "runTimeMs": 34
+      },
+      {
+        "class": "OhmPublicWorkflowAcceptanceTest",
+        "id": "07MEc00000hzZhfMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "promptInventoryRecognizesPublishedTargetType",
+        "outcome": "Pass",
+        "runTimeMs": 26
+      },
+      {
+        "class": "OhmPublicWorkflowAcceptanceTest",
+        "id": "07MEc00000hzZhgMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "publishedScheduleMiniModelIsSmall",
+        "outcome": "Pass",
+        "runTimeMs": 14
+      },
+      {
+        "class": "OhmPublicWorkflowAcceptanceTest",
+        "id": "07MEc00000hzZhhMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "weatherDiscoveryUsesRealRelationships",
+        "outcome": "Pass",
+        "runTimeMs": 32
+      },
+      {
+        "class": "OhmRecommendationServiceTest",
+        "id": "07MEc00000hzZjFMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_bulk",
+        "outcome": "Pass",
+        "runTimeMs": 53
+      },
+      {
+        "class": "OhmRecommendationServiceTest",
+        "id": "07MEc00000hzZjGMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_instructionBloat",
+        "outcome": "Pass",
+        "runTimeMs": 11
+      },
+      {
+        "class": "OhmRecommendationServiceTest",
+        "id": "07MEc00000hzZjHMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_llmWhereDeterministic",
+        "outcome": "Pass",
+        "runTimeMs": 11
+      },
+      {
+        "class": "OhmRecommendationServiceTest",
+        "id": "07MEc00000hzZjIMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_modelRightsizing",
+        "outcome": "Pass",
+        "runTimeMs": 11
+      },
+      {
+        "class": "OhmRecommendationServiceTest",
+        "id": "07MEc00000hzZjJMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_modelRightsizing_blankTarget_doesNotInventTarget",
+        "outcome": "Pass",
+        "runTimeMs": 11
+      },
+      {
+        "class": "OhmRecommendationServiceTest",
+        "id": "07MEc00000hzZjKMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_nullFinding_safe",
+        "outcome": "Pass",
+        "runTimeMs": 5
+      },
+      {
+        "class": "OhmRecommendationServiceTest",
+        "id": "07MEc00000hzZjLMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_redundantCalls",
+        "outcome": "Pass",
+        "runTimeMs": 10
+      },
+      {
+        "class": "OhmRecommendationServiceTest",
+        "id": "07MEc00000hzZjMMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_redundant_blankTarget_derivesDefault",
+        "outcome": "Pass",
+        "runTimeMs": 10
+      },
+      {
+        "class": "OhmRecommendationServiceTest",
+        "id": "07MEc00000hzZjNMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_unknownModelCannotBeDownsizedFromAMultiplier",
+        "outcome": "Pass",
+        "runTimeMs": 14
+      },
+      {
+        "class": "OhmDiscoveryServiceTest",
+        "id": "07MEc00000hzZkrMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_deriveDomainKeywordMap",
+        "outcome": "Pass",
+        "runTimeMs": 17
+      },
+      {
+        "class": "OhmDiscoveryServiceTest",
+        "id": "07MEc00000hzZksMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_discoverFindsLiveSpikeAgent",
+        "outcome": "Pass",
+        "runTimeMs": 103
+      },
+      {
+        "class": "OhmDiscoveryServiceTest",
+        "id": "07MEc00000hzZktMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_discoverNeverThrowsOnRealOrgData",
+        "outcome": "Pass",
+        "runTimeMs": 45
+      },
+      {
+        "class": "OhmDiscoveryServiceTest",
+        "id": "07MEc00000hzZkuMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_discoverProcessScopedToWasteDemoHasBloatedLeadTriage",
+        "outcome": "Pass",
+        "runTimeMs": 26
+      },
+      {
+        "class": "OhmDiscoveryServiceTest",
+        "id": "07MEc00000hzZkvMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_listFleetReturnsProcessesWithCountsAndDomainsNoGrade",
+        "outcome": "Pass",
+        "runTimeMs": 15
+      },
+      {
+        "class": "OhmDiscoveryServiceTest",
+        "id": "07MEc00000hzZkwMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_promptTemplateCountIsDistinctPromptTargets",
+        "outcome": "Pass",
+        "runTimeMs": 23
+      },
+      {
+        "class": "OhmDiscoveryServiceTest",
+        "id": "07MEc00000hzZkxMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "test_treeMapsAreConsistentWithFlatLists",
+        "outcome": "Pass",
+        "runTimeMs": 21
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmTMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testAskDraftReturnsRewriteWithDeltas",
+        "outcome": "Pass",
+        "runTimeMs": 560
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmUMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testAskReturnsGroundedAnswer",
+        "outcome": "Pass",
+        "runTimeMs": 206
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmVMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testBaselineCannotRenderAsSavingsFromModel",
+        "outcome": "Pass",
+        "runTimeMs": 12
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmWMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testBlankQuestionThrows",
+        "outcome": "Pass",
+        "runTimeMs": 4
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmXMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testBlankReplyThrowsInsteadOfEmptyDraft",
+        "outcome": "Pass",
+        "runTimeMs": 364
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmYMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testChangedOrMissingSourceHashStopsBeforeModel",
+        "outcome": "Pass",
+        "runTimeMs": 6
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmZMAU",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testDslDraftCannotPublishFlattenedOrChangedLogic",
+        "outcome": "Pass",
+        "runTimeMs": 7
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmaMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testDslGuardPreservesConditionsReferencesAndIndentation",
+        "outcome": "Pass",
+        "runTimeMs": 8
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmbMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testExactLimitPreservesTailAndUntrustedContent",
+        "outcome": "Pass",
+        "runTimeMs": 6
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmcMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testExactProseRemovalPreservesEveryOtherSourceByte",
+        "outcome": "Pass",
+        "runTimeMs": 5
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmdMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testExplicitArtifactControlsSourceAndFinding",
+        "outcome": "Pass",
+        "runTimeMs": 8
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmeMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testFullSourceLimitNeverTruncatesAndSkipsModel",
+        "outcome": "Pass",
+        "runTimeMs": 5
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmfMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testGetContextGroundsOnAudit",
+        "outcome": "Pass",
+        "runTimeMs": 201
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmgMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testGroundedContextCarriesAuditNumbers",
+        "outcome": "Pass",
+        "runTimeMs": 204
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmhMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testImportedScriptDuplicateDraftUsesNoModel",
+        "outcome": "Pass",
+        "runTimeMs": 7
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmiMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testIncompleteCoverageAndCalmPreferenceReachModel",
+        "outcome": "Pass",
+        "runTimeMs": 30
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmjMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testIntentMatrixClassifiesRealQuestions",
+        "outcome": "Pass",
+        "runTimeMs": 9
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmkMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testLegacyWrapperRequiresSelectionForRewrite",
+        "outcome": "Pass",
+        "runTimeMs": 9
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmlMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testNoSelectedTrimNeverSubstitutesBaseline",
+        "outcome": "Pass",
+        "runTimeMs": 10
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmmMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testNoSourceOrUnknownArtifactDoesNotDraft",
+        "outcome": "Pass",
+        "runTimeMs": 9
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmnMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testNullArgumentsThrow",
+        "outcome": "Pass",
+        "runTimeMs": 8
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmoMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testQualitativeExplanationSurvivesButSpelledMetricClaimsDoNot",
+        "outcome": "Pass",
+        "runTimeMs": 16
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmpMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testQuantitativeQuestionsUseServerMetricsWithoutModel",
+        "outcome": "Pass",
+        "runTimeMs": 10
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmqMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testSignalLabelMapsKnownValues",
+        "outcome": "Pass",
+        "runTimeMs": 8
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmrMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testSourceChangedSinceAuditRequiresReaudit",
+        "outcome": "Pass",
+        "runTimeMs": 9
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmsMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testUnoptimizedLabelDoesNotTriggerDraft",
+        "outcome": "Pass",
+        "runTimeMs": 269
+      },
+      {
+        "class": "OhmAssistantServiceTest",
+        "id": "07MEc00000hzZmtMAE",
+        "kind": "TestMethod",
+        "message": null,
+        "method": "testUnsupportedGradeAndCoverageClaimsNeverRender",
+        "outcome": "Pass",
+        "runTimeMs": 20
+      },
+      {
+        "class": "ExperienceControllerTest",
+        "id": "07MEc00000hzIgvMAE",
+        "kind": "TestSetup",
+        "message": null,
+        "method": "setupTestData",
+        "outcome": "Pass",
+        "runTimeMs": 185
+      },
+      {
+        "class": "PersonalizedGuestExperiencesTest",
+        "id": "07MEc00000hzZUjMAM",
+        "kind": "TestSetup",
+        "message": null,
+        "method": "setupTestData",
+        "outcome": "Pass",
+        "runTimeMs": 169
+      }
+    ]
+  },
+  "applicationDeployments": [
+    {
+      "completedDate": "2026-09-07T00:39:57.000Z",
+      "componentTypes": {
+        "ApexClass": 36,
+        "CustomField": 88,
+        "CustomObject": 5,
+        "LightningComponentBundle": 23,
+        "PermissionSet": 1
+      },
+      "exitStatus": 1,
+      "id": "0AfEc00000nXk1TKAS",
+      "includesServerOrConfigurationChanges": true,
+      "input": {
+        "file": "ohm-demo-deploy-1.json",
+        "modifiedAt": "2026-09-07T00:39:57.828825+00:00",
+        "sha256": "2976dd52370a9e2ba9472881c22e05ccf5e309e034d45d562c4609bed7b0546c",
+        "state": "present"
+      },
+      "numberComponentErrors": 17,
+      "numberComponentsDeployed": 153,
+      "numberComponentsTotal": 170,
+      "numberTestErrors": 0,
+      "status": "Failed",
+      "success": false
+    },
+    {
+      "completedDate": "2026-09-07T00:42:20.000Z",
+      "componentTypes": {
+        "ApexClass": 51,
+        "CustomField": 88,
+        "CustomObject": 5,
+        "LightningComponentBundle": 23,
+        "PermissionSet": 2
+      },
+      "exitStatus": 0,
+      "id": "0AfEc00000nY0lSKAS",
+      "includesServerOrConfigurationChanges": true,
+      "input": {
+        "file": "ohm-demo-deploy-2.json",
+        "modifiedAt": "2026-09-07T00:42:21.078431+00:00",
+        "sha256": "707d72809a0fc54d4f93f12d5391ab112a4373859601d71f5710672f62de6398",
+        "state": "present"
+      },
+      "numberComponentErrors": 0,
+      "numberComponentsDeployed": 169,
+      "numberComponentsTotal": 169,
+      "numberTestErrors": 0,
+      "status": "Succeeded",
+      "success": true
+    },
+    {
+      "completedDate": "2026-09-07T00:48:41.000Z",
+      "componentTypes": {
+        "ApexClass": 50,
+        "CustomField": 88,
+        "CustomObject": 5,
+        "PermissionSet": 2
+      },
+      "exitStatus": 1,
+      "id": "0AfEc00000nY1tVKAS",
+      "includesServerOrConfigurationChanges": true,
+      "input": {
+        "file": "ohm-demo-deploy-3.json",
+        "modifiedAt": "2026-09-07T00:48:41.580757+00:00",
+        "sha256": "128df4b56bf992dd7a40c4f2a4c3e44ef1b7569180373805bda27abceaa52678",
+        "state": "present"
+      },
+      "numberComponentErrors": 1,
+      "numberComponentsDeployed": 145,
+      "numberComponentsTotal": 146,
+      "numberTestErrors": 0,
+      "status": "Failed",
+      "success": false
+    },
+    {
+      "completedDate": "2026-09-07T00:50:40.000Z",
+      "componentTypes": {
+        "ApexClass": 51,
+        "CustomField": 88,
+        "CustomObject": 5,
+        "PermissionSet": 2
+      },
+      "exitStatus": 0,
+      "id": "0AfEc00000nXteGKAS",
+      "includesServerOrConfigurationChanges": true,
+      "input": {
+        "file": "ohm-demo-deploy-4.json",
+        "modifiedAt": "2026-09-07T00:50:41.276319+00:00",
+        "sha256": "dfc54f8c77b3bc463bcdb99b54dc949c3259e4d5e5209dca9acd16002ea522f0",
+        "state": "present"
+      },
+      "numberComponentErrors": 0,
+      "numberComponentsDeployed": 146,
+      "numberComponentsTotal": 146,
+      "numberTestErrors": 0,
+      "status": "Succeeded",
+      "success": true
+    },
+    {
+      "completedDate": "2026-09-07T00:56:05.000Z",
+      "componentTypes": {
+        "ApexClass": 51,
+        "CustomField": 89,
+        "CustomObject": 5,
+        "LightningComponentBundle": 23,
+        "PermissionSet": 2
+      },
+      "exitStatus": 0,
+      "id": "0AfEc00000nXpqkKAC",
+      "includesServerOrConfigurationChanges": true,
+      "input": {
+        "file": "ohm-demo-deploy-5.json",
+        "modifiedAt": "2026-09-07T00:56:05.640953+00:00",
+        "sha256": "8780162c95ac4f17b30024b202b03543b19a9bd9cdd2283fdca528192a83fd8b",
+        "state": "present"
+      },
+      "numberComponentErrors": 0,
+      "numberComponentsDeployed": 170,
+      "numberComponentsTotal": 170,
+      "numberTestErrors": 0,
+      "status": "Succeeded",
+      "success": true
+    },
+    {
+      "completedDate": "2026-09-07T01:03:44.000Z",
+      "componentTypes": {
+        "ApexClass": 51
+      },
+      "exitStatus": 0,
+      "id": "0AfEc00000nXyytKAC",
+      "includesServerOrConfigurationChanges": true,
+      "input": {
+        "file": "ohm-demo-deploy-6.json",
+        "modifiedAt": "2026-09-07T01:03:45.037930+00:00",
+        "sha256": "305d980f719718c0d12540e9f79eff64137a2227652c14670491cc80f383a0d2",
+        "state": "present"
+      },
+      "numberComponentErrors": 0,
+      "numberComponentsDeployed": 51,
+      "numberComponentsTotal": 51,
+      "numberTestErrors": 0,
+      "status": "Succeeded",
+      "success": true
+    },
+    {
+      "completedDate": "2026-09-07T01:06:13.000Z",
+      "componentTypes": {
+        "ApexClass": 1,
+        "LightningComponentBundle": 23
+      },
+      "exitStatus": 0,
+      "id": "0AfEc00000nXk1UKAS",
+      "includesServerOrConfigurationChanges": true,
+      "input": {
+        "file": "ohm-demo-deploy-7.json",
+        "modifiedAt": "2026-09-07T01:06:13.295894+00:00",
+        "sha256": "12d554276aef32fd3a591c9b18edeb38caa85b88a4f28179c28cadda6b3cf874",
+        "state": "present"
+      },
+      "numberComponentErrors": 0,
+      "numberComponentsDeployed": 24,
+      "numberComponentsTotal": 24,
+      "numberTestErrors": 0,
+      "status": "Succeeded",
+      "success": true
+    },
+    {
+      "completedDate": "2026-09-07T01:09:24.000Z",
+      "componentTypes": {
+        "ApexClass": 2
+      },
+      "exitStatus": 0,
+      "id": "0AfEc00000nXyE7KAK",
+      "includesServerOrConfigurationChanges": true,
+      "input": {
+        "file": "ohm-demo-deploy-8.json",
+        "modifiedAt": "2026-09-07T01:09:25.038478+00:00",
+        "sha256": "bfa4368d8647fc42745ac385eb5493dc3411bc362c8383a397c6be382903b8bd",
+        "state": "present"
+      },
+      "numberComponentErrors": 0,
+      "numberComponentsDeployed": 2,
+      "numberComponentsTotal": 2,
+      "numberTestErrors": 0,
+      "status": "Succeeded",
+      "success": true
+    },
+    {
+      "completedDate": "2026-09-07T01:10:10.000Z",
+      "componentTypes": {
+        "ApexClass": 52
+      },
+      "exitStatus": 0,
+      "id": "0AfEc00000nY35hKAC",
+      "includesServerOrConfigurationChanges": true,
+      "input": {
+        "file": "ohm-demo-deploy-9.json",
+        "modifiedAt": "2026-09-07T01:10:10.554497+00:00",
+        "sha256": "bf7be3fc6aee2bbcd1db526529a3de84c0bcf064d33bfc0e178ea8fe96733cdd",
+        "state": "present"
+      },
+      "numberComponentErrors": 0,
+      "numberComponentsDeployed": 52,
+      "numberComponentsTotal": 52,
+      "numberTestErrors": 0,
+      "status": "Succeeded",
+      "success": true
+    },
+    {
+      "completedDate": "2026-09-07T01:15:22.000Z",
+      "componentTypes": {},
+      "exitStatus": 1,
+      "id": "0AfEc00000nXxJeKAK",
+      "includesServerOrConfigurationChanges": false,
+      "input": {
+        "file": "ohm-demo-deploy-10.json",
+        "modifiedAt": "2026-09-07T01:15:22.730689+00:00",
+        "sha256": "e3edbbf17bbbe39b87b15499196f1721a4ae10dc193403840495d2afd2c3e4b8",
+        "state": "present"
+      },
+      "numberComponentErrors": 2,
+      "numberComponentsDeployed": 0,
+      "numberComponentsTotal": 2,
+      "numberTestErrors": 0,
+      "status": "Failed",
+      "success": false
+    },
+    {
+      "completedDate": "2026-09-07T01:16:40.000Z",
+      "componentTypes": {
+        "ApexClass": 55,
+        "LightningComponentBundle": 23,
+        "PermissionSet": 3
+      },
+      "exitStatus": 0,
+      "id": "0AfEc00000nY3gnKAC",
+      "includesServerOrConfigurationChanges": true,
+      "input": {
+        "file": "ohm-demo-deploy-11.json",
+        "modifiedAt": "2026-09-07T01:16:41.277998+00:00",
+        "sha256": "4b4b0749a0dc367e39148571a97f1c15128b304f963bae93df752b2faab34f71",
+        "state": "present"
+      },
+      "numberComponentErrors": 0,
+      "numberComponentsDeployed": 81,
+      "numberComponentsTotal": 81,
+      "numberTestErrors": 0,
+      "status": "Succeeded",
+      "success": true
+    },
+    {
+      "completedDate": "2026-09-07T01:17:55.000Z",
+      "componentTypes": {
+        "ApexClass": 2,
+        "LightningComponentBundle": 23
+      },
+      "exitStatus": 0,
+      "id": "0AfEc00000nXwAhKAK",
+      "includesServerOrConfigurationChanges": true,
+      "input": {
+        "file": "ohm-demo-deploy-12.json",
+        "modifiedAt": "2026-09-07T01:17:55.396530+00:00",
+        "sha256": "fa7ee388e0f7f97d080997ce409d602de20df1a4d9c23ef2c889fdc70dca29d3",
+        "state": "present"
+      },
+      "numberComponentErrors": 0,
+      "numberComponentsDeployed": 25,
+      "numberComponentsTotal": 25,
+      "numberTestErrors": 0,
+      "status": "Succeeded",
+      "success": true
+    },
+    {
+      "completedDate": "2026-09-07T01:27:19.000Z",
+      "componentTypes": {
+        "LightningComponentBundle": 1
+      },
+      "exitStatus": 0,
+      "id": "0AfEc00000nY4jJKAS",
+      "includesServerOrConfigurationChanges": false,
+      "input": {
+        "file": "ohm-demo-deploy-13.json",
+        "modifiedAt": "2026-09-07T01:27:20.245882+00:00",
+        "sha256": "cde7cbbcbc303a01db969e98da8d040c03a7fb33e8ed5bf70fb1f53d9b812cb0",
+        "state": "present"
+      },
+      "numberComponentErrors": 0,
+      "numberComponentsDeployed": 1,
+      "numberComponentsTotal": 1,
+      "numberTestErrors": 0,
+      "status": "Succeeded",
+      "success": true
+    }
+  ],
+  "applicationSource": {
+    "applicationFileCount": 334,
+    "applicationSourceSha256": "d6730678e87bb28338030611c9784e956bd78ad7971728e56b789706abe364e6",
+    "gitBranch": "codex/demo-audit-repairs",
+    "gitCommit": "038b5a09e14afaf064faafcabfc87b78bd3fb76b",
+    "workingTreeDirty": true
+  },
+  "collectedAt": "2026-09-07T01:35:10.454601+00:00",
+  "collectionComplete": true,
+  "controlledDemo": {
+    "complete": true,
+    "findings": [
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lpuukIAA",
+        "Annual_Energy_Savings_Wh_High__c": 34295.4,
+        "Annual_Energy_Savings_Wh_Low__c": 27436.32,
+        "Annual_Energy_Savings_Wh__c": 30865.86,
+        "Artifact_Api_Name__c": "weather_lookup_16jEc000000PAPB",
+        "Artifact_Key__c": "d616403f25e9c35a5bb626ac0351a12f3bd6108508bdcb96966317f6038f4dd2",
+        "Artifact_Label__c": "Weather Lookup",
+        "Artifact_Tooling_Id__c": "179Ec000006G6nZIAS",
+        "Artifact_Type__c": "Topic",
+        "Confidence__c": "High",
+        "CreatedDate": "2026-09-07T00:51:58.000+0000",
+        "Finding_Status__c": "Accepted",
+        "Fix_Type__c": "Trim_Instructions",
+        "Id": "a01Ec00002XJzaRIAT",
+        "Issue_Key__c": "3322fa2a33528855d35d5e66cfd4dc2a4a6124e08b93dea8aac0fdfb02a89ae4",
+        "Metric_Unit__c": "tokens",
+        "Metric_Value__c": 522,
+        "Process_Key__c": "ohm_weather_demo",
+        "Rec_Status__c": "Accepted",
+        "Recommended_Target__c": "500 tokens",
+        "Remediation_Task_Id__c": "00TEc00000a9bLNMAY",
+        "Severity__c": "High",
+        "Signal_Type__c": "INSTRUCTION_BLOAT"
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lq00rIAA",
+        "Annual_Energy_Savings_Wh_High__c": 34295.4,
+        "Annual_Energy_Savings_Wh_Low__c": 27436.32,
+        "Annual_Energy_Savings_Wh__c": 30865.86,
+        "Artifact_Api_Name__c": "weather_lookup_16jEc000000PAU1",
+        "Artifact_Key__c": "d616403f25e9c35a5bb626ac0351a12f3bd6108508bdcb96966317f6038f4dd2",
+        "Artifact_Label__c": "Weather Lookup",
+        "Artifact_Tooling_Id__c": "179Ec000006G6sPIAS",
+        "Artifact_Type__c": "Topic",
+        "Confidence__c": "High",
+        "CreatedDate": "2026-09-07T01:29:14.000+0000",
+        "Finding_Status__c": "Applied",
+        "Fix_Type__c": "Trim_Instructions",
+        "Id": "a01Ec00002XLfkLIAT",
+        "Issue_Key__c": "3322fa2a33528855d35d5e66cfd4dc2a4a6124e08b93dea8aac0fdfb02a89ae4",
+        "Metric_Unit__c": "tokens",
+        "Metric_Value__c": 522,
+        "Process_Key__c": "ohm_weather_demo",
+        "Rec_Status__c": "Applied",
+        "Recommended_Target__c": "500 tokens",
+        "Remediation_Task_Id__c": "00TEc00000a9bLNMAY",
+        "Severity__c": "High",
+        "Signal_Type__c": "INSTRUCTION_BLOAT"
+      }
+    ],
+    "issuesWithMultipleTaskIds": [],
+    "logicalProcess": "ohm_weather_demo",
+    "orgAlias": "ohm-audit-lab",
+    "reports": [
+      {
+        "Actions_Discovered__c": 3,
+        "Agents_Discovered__c": 1,
+        "Coverage_Status__c": "Incomplete",
+        "CreatedDate": "2026-09-07T00:51:58.000+0000",
+        "Efficiency_Grade__c": "IN",
+        "Efficiency_Score__c": null,
+        "Findings_Count__c": 1,
+        "Id": "a00Ec00000lpuukIAA",
+        "Methodology_Version__c": "1.0",
+        "Modeled_Energy_Wh_High__c": 70824.6,
+        "Modeled_Energy_Wh_Low__c": 56659.68,
+        "Modeled_Energy_Wh__c": 63742.14,
+        "Modeled_Savings_Wh_High__c": 34295.4,
+        "Modeled_Savings_Wh_Low__c": 27436.32,
+        "Modeled_Savings_Wh__c": 30865.86,
+        "Name": "AUDIT-00004",
+        "Prompt_Templates_Discovered__c": 0,
+        "Run_Status__c": "Complete",
+        "Run_Timestamp__c": "2026-09-07T00:51:58.000+0000",
+        "Target_Planner_Api_Name__c": "Ohm_Weather_Demo_v1",
+        "Target_Planner_Id__c": "16jEc000000PAPBIA4",
+        "Topics_Discovered__c": 2,
+        "modeledScenario": {
+          "artifactCount": 3,
+          "assumptionSummary": "109500 modeled calls/year per source block; source characters / 4 approximate tokens. Conditional branches and dynamic outputs are not executed. Unknown models use standard multiplier 1.0; reference cost is 0.27 Wh per 500 tokens. Low confidence. Excludes output tokens, tool compute and actual runtime frequency. Potential savings cover instruction trimming only.",
+          "comparisonKey": "d271754d07a1a12be755cda32d588ea3a31ed41cc078c458fcebf6461201f61f",
+          "scope": "Modeled instruction-source scenario"
+        }
+      },
+      {
+        "Actions_Discovered__c": 3,
+        "Agents_Discovered__c": 1,
+        "Coverage_Status__c": "Incomplete",
+        "CreatedDate": "2026-09-07T01:22:31.000+0000",
+        "Efficiency_Grade__c": "IN",
+        "Efficiency_Score__c": null,
+        "Findings_Count__c": 0,
+        "Id": "a00Ec00000lpeoWIAQ",
+        "Methodology_Version__c": "1.0",
+        "Modeled_Energy_Wh_High__c": 16425,
+        "Modeled_Energy_Wh_Low__c": 13140,
+        "Modeled_Energy_Wh__c": 14782.5,
+        "Modeled_Savings_Wh_High__c": 0,
+        "Modeled_Savings_Wh_Low__c": 0,
+        "Modeled_Savings_Wh__c": 0,
+        "Name": "AUDIT-00008",
+        "Prompt_Templates_Discovered__c": 0,
+        "Run_Status__c": "Complete",
+        "Run_Timestamp__c": "2026-09-07T01:22:31.000+0000",
+        "Target_Planner_Api_Name__c": "Ohm_Weather_Demo_v2",
+        "Target_Planner_Id__c": "16jEc000000PASPIA4",
+        "Topics_Discovered__c": 2,
+        "modeledScenario": {
+          "artifactCount": 3,
+          "assumptionSummary": "109500 modeled calls/year per source block; source characters / 4 approximate tokens. Conditional branches and dynamic outputs are not executed. Unknown models use standard multiplier 1.0; reference cost is 0.27 Wh per 500 tokens. Low confidence. Excludes output tokens, tool compute and actual runtime frequency. Potential savings cover instruction trimming only.",
+          "comparisonKey": "d271754d07a1a12be755cda32d588ea3a31ed41cc078c458fcebf6461201f61f",
+          "scope": "Modeled instruction-source scenario"
+        }
+      },
+      {
+        "Actions_Discovered__c": 3,
+        "Agents_Discovered__c": 1,
+        "Coverage_Status__c": "Incomplete",
+        "CreatedDate": "2026-09-07T01:29:14.000+0000",
+        "Efficiency_Grade__c": "IN",
+        "Efficiency_Score__c": null,
+        "Findings_Count__c": 1,
+        "Id": "a00Ec00000lq00rIAA",
+        "Methodology_Version__c": "1.0",
+        "Modeled_Energy_Wh_High__c": 70824.6,
+        "Modeled_Energy_Wh_Low__c": 56659.68,
+        "Modeled_Energy_Wh__c": 63742.14,
+        "Modeled_Savings_Wh_High__c": 34295.4,
+        "Modeled_Savings_Wh_Low__c": 27436.32,
+        "Modeled_Savings_Wh__c": 30865.86,
+        "Name": "AUDIT-00009",
+        "Prompt_Templates_Discovered__c": 0,
+        "Run_Status__c": "Complete",
+        "Run_Timestamp__c": "2026-09-07T01:29:13.000+0000",
+        "Target_Planner_Api_Name__c": "Ohm_Weather_Demo_v3",
+        "Target_Planner_Id__c": "16jEc000000PAU1IAO",
+        "Topics_Discovered__c": 2,
+        "modeledScenario": {
+          "artifactCount": 3,
+          "assumptionSummary": "109500 modeled calls/year per source block; source characters / 4 approximate tokens. Conditional branches and dynamic outputs are not executed. Unknown models use standard multiplier 1.0; reference cost is 0.27 Wh per 500 tokens. Low confidence. Excludes output tokens, tool compute and actual runtime frequency. Potential savings cover instruction trimming only.",
+          "comparisonKey": "d271754d07a1a12be755cda32d588ea3a31ed41cc078c458fcebf6461201f61f",
+          "scope": "Modeled instruction-source scenario"
+        }
+      },
+      {
+        "Actions_Discovered__c": 3,
+        "Agents_Discovered__c": 1,
+        "Coverage_Status__c": "Incomplete",
+        "CreatedDate": "2026-09-07T01:35:02.000+0000",
+        "Efficiency_Grade__c": "IN",
+        "Efficiency_Score__c": null,
+        "Findings_Count__c": 0,
+        "Id": "a00Ec00000lpk2aIAA",
+        "Methodology_Version__c": "1.0",
+        "Modeled_Energy_Wh_High__c": 16425,
+        "Modeled_Energy_Wh_Low__c": 13140,
+        "Modeled_Energy_Wh__c": 14782.5,
+        "Modeled_Savings_Wh_High__c": 0,
+        "Modeled_Savings_Wh_Low__c": 0,
+        "Modeled_Savings_Wh__c": 0,
+        "Name": "AUDIT-00010",
+        "Prompt_Templates_Discovered__c": 0,
+        "Run_Status__c": "Complete",
+        "Run_Timestamp__c": "2026-09-07T01:35:02.000+0000",
+        "Target_Planner_Api_Name__c": "Ohm_Weather_Demo_v4",
+        "Target_Planner_Id__c": "16jEc000000PBBZIA4",
+        "Topics_Discovered__c": 2,
+        "modeledScenario": {
+          "artifactCount": 3,
+          "assumptionSummary": "109500 modeled calls/year per source block; source characters / 4 approximate tokens. Conditional branches and dynamic outputs are not executed. Unknown models use standard multiplier 1.0; reference cost is 0.27 Wh per 500 tokens. Low confidence. Excludes output tokens, tool compute and actual runtime frequency. Potential savings cover instruction trimming only.",
+          "comparisonKey": "d271754d07a1a12be755cda32d588ea3a31ed41cc078c458fcebf6461201f61f",
+          "scope": "Modeled instruction-source scenario"
+        }
+      }
+    ],
+    "snapshots": [
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lpuukIAA",
+        "Artifact_Api_Name__c": "Ohm_Weather_Demo_v1",
+        "Artifact_Key__c": "aa7cbc5f0b70178084c836bb8ea46a7acf2460325918af4411e65c356c0f7fb9",
+        "Artifact_Label__c": "Controlled Weather Demo",
+        "Artifact_Type__c": "Agent",
+        "Character_Count__c": 103,
+        "Coverage_Status__c": "Complete",
+        "CreatedDate": "2026-09-07T00:51:58.000+0000",
+        "Id": "a06Ec00000cpstLIAQ",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": "8f8dfca7d77a006c38bdb822a4be821c45da7f810114b8c18554a190861de2c3",
+        "Source_Kind__c": "ImportedAgentScript",
+        "Source_Path__c": "/Users/dom/Documents/ohm-a4g/test-fixtures/controlled-weather/before/force-app/main/default/aiAuthoringBundles/Ohm_Weather_Demo/Ohm_Weather_Demo.agent#system",
+        "Source_Version__c": "controlled-weather-before:6946581b3aef7b33c52b21ef90c9f080ad1de8705a94a42d87d2fcbb29a4dbc0"
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lpuukIAA",
+        "Artifact_Api_Name__c": "weather_lookup_16jEc000000PAPB",
+        "Artifact_Key__c": "d616403f25e9c35a5bb626ac0351a12f3bd6108508bdcb96966317f6038f4dd2",
+        "Artifact_Label__c": "Weather Lookup",
+        "Artifact_Type__c": "Topic",
+        "Character_Count__c": 4085,
+        "Coverage_Status__c": "Complete",
+        "CreatedDate": "2026-09-07T00:51:58.000+0000",
+        "Id": "a06Ec00000cpstMIAQ",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": "cf1d706095580fc6506fdb98c03a16a46d0ffdb6455a148e278e66a4ba085f10",
+        "Source_Kind__c": "ImportedAgentScript",
+        "Source_Path__c": "/Users/dom/Documents/ohm-a4g/test-fixtures/controlled-weather/before/force-app/main/default/aiAuthoringBundles/Ohm_Weather_Demo/Ohm_Weather_Demo.agent#weather_lookup",
+        "Source_Version__c": "controlled-weather-before:6946581b3aef7b33c52b21ef90c9f080ad1de8705a94a42d87d2fcbb29a4dbc0"
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lpuukIAA",
+        "Artifact_Api_Name__c": "agent_router_16jEc000000PAPB",
+        "Artifact_Key__c": "bdf0110b3b26e58905951c2e73bc0b1e6ab9112b40e49736c1c92e5f4358c8bb",
+        "Artifact_Label__c": "Agent Router",
+        "Artifact_Type__c": "Topic",
+        "Character_Count__c": 117,
+        "Coverage_Status__c": "Complete",
+        "CreatedDate": "2026-09-07T00:51:58.000+0000",
+        "Id": "a06Ec00000cpstNIAQ",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": "0204cc6cc8a8ed21695dd1d3fa64ccab53e0f0b66445612da8b90b0f3e72cec5",
+        "Source_Kind__c": "ImportedAgentScript",
+        "Source_Path__c": "/Users/dom/Documents/ohm-a4g/test-fixtures/controlled-weather/before/force-app/main/default/aiAuthoringBundles/Ohm_Weather_Demo/Ohm_Weather_Demo.agent#agent_router",
+        "Source_Version__c": "controlled-weather-before:6946581b3aef7b33c52b21ef90c9f080ad1de8705a94a42d87d2fcbb29a4dbc0"
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lpuukIAA",
+        "Artifact_Api_Name__c": "get_current_weather_179Ec000006G6nZ",
+        "Artifact_Key__c": "b09dd800d4d61e7f0cd33788af11113dabb6aa87433c768fa309f9203f78b615",
+        "Artifact_Label__c": "Get Current Weather",
+        "Artifact_Type__c": "Action",
+        "Character_Count__c": null,
+        "Coverage_Status__c": "Unavailable",
+        "CreatedDate": "2026-09-07T00:51:58.000+0000",
+        "Id": "a06Ec00000cpstOIAQ",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": null,
+        "Source_Kind__c": null,
+        "Source_Path__c": null,
+        "Source_Version__c": null
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lpuukIAA",
+        "Artifact_Api_Name__c": "get_forecast_179Ec000006G6nZ",
+        "Artifact_Key__c": "f2bbd116ae5218796a6adec0897ffee72d5fe990a0467ea314cb7a13e4a07b35",
+        "Artifact_Label__c": "Get Forecast",
+        "Artifact_Type__c": "Action",
+        "Character_Count__c": null,
+        "Coverage_Status__c": "Unavailable",
+        "CreatedDate": "2026-09-07T00:51:58.000+0000",
+        "Id": "a06Ec00000cpstPIAQ",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": null,
+        "Source_Kind__c": null,
+        "Source_Path__c": null,
+        "Source_Version__c": null
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lpuukIAA",
+        "Artifact_Api_Name__c": "send_weather_alert_179Ec000006G6nZ",
+        "Artifact_Key__c": "31e9a1f329eb51e239d60ea604c3c1ffc6dead4be38a5a456f62d7810d779310",
+        "Artifact_Label__c": "Send Weather Alert",
+        "Artifact_Type__c": "Action",
+        "Character_Count__c": null,
+        "Coverage_Status__c": "Unavailable",
+        "CreatedDate": "2026-09-07T00:51:58.000+0000",
+        "Id": "a06Ec00000cpstQIAQ",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": null,
+        "Source_Kind__c": null,
+        "Source_Path__c": null,
+        "Source_Version__c": null
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lpeoWIAQ",
+        "Artifact_Api_Name__c": "Ohm_Weather_Demo_v2",
+        "Artifact_Key__c": "aa7cbc5f0b70178084c836bb8ea46a7acf2460325918af4411e65c356c0f7fb9",
+        "Artifact_Label__c": "Controlled Weather Demo",
+        "Artifact_Type__c": "Agent",
+        "Character_Count__c": 103,
+        "Coverage_Status__c": "Complete",
+        "CreatedDate": "2026-09-07T01:22:31.000+0000",
+        "Id": "a06Ec00000cpmpWIAQ",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": "8f8dfca7d77a006c38bdb822a4be821c45da7f810114b8c18554a190861de2c3",
+        "Source_Kind__c": "ImportedAgentScript",
+        "Source_Path__c": "/Users/dom/Documents/ohm-a4g/test-fixtures/controlled-weather/after/force-app/main/default/aiAuthoringBundles/Ohm_Weather_Demo/Ohm_Weather_Demo.agent#system",
+        "Source_Version__c": "controlled-weather-after:5f054b92b76b8ec97f04bf19570633cda61d5bbdb76e59b2f9cc11e8cc0482b6"
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lpeoWIAQ",
+        "Artifact_Api_Name__c": "agent_router_16jEc000000PASP",
+        "Artifact_Key__c": "bdf0110b3b26e58905951c2e73bc0b1e6ab9112b40e49736c1c92e5f4358c8bb",
+        "Artifact_Label__c": "Agent Router",
+        "Artifact_Type__c": "Topic",
+        "Character_Count__c": 117,
+        "Coverage_Status__c": "Complete",
+        "CreatedDate": "2026-09-07T01:22:31.000+0000",
+        "Id": "a06Ec00000cpmpXIAQ",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": "0204cc6cc8a8ed21695dd1d3fa64ccab53e0f0b66445612da8b90b0f3e72cec5",
+        "Source_Kind__c": "ImportedAgentScript",
+        "Source_Path__c": "/Users/dom/Documents/ohm-a4g/test-fixtures/controlled-weather/after/force-app/main/default/aiAuthoringBundles/Ohm_Weather_Demo/Ohm_Weather_Demo.agent#agent_router",
+        "Source_Version__c": "controlled-weather-after:5f054b92b76b8ec97f04bf19570633cda61d5bbdb76e59b2f9cc11e8cc0482b6"
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lpeoWIAQ",
+        "Artifact_Api_Name__c": "weather_lookup_16jEc000000PASP",
+        "Artifact_Key__c": "d616403f25e9c35a5bb626ac0351a12f3bd6108508bdcb96966317f6038f4dd2",
+        "Artifact_Label__c": "Weather Lookup",
+        "Artifact_Type__c": "Topic",
+        "Character_Count__c": 773,
+        "Coverage_Status__c": "Complete",
+        "CreatedDate": "2026-09-07T01:22:31.000+0000",
+        "Id": "a06Ec00000cpmpYIAQ",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": "8128ac0e1af2b1cda6aa7100fe60f3f1da96c1ae234d6740c5eb5f192cdae226",
+        "Source_Kind__c": "ImportedAgentScript",
+        "Source_Path__c": "/Users/dom/Documents/ohm-a4g/test-fixtures/controlled-weather/after/force-app/main/default/aiAuthoringBundles/Ohm_Weather_Demo/Ohm_Weather_Demo.agent#weather_lookup",
+        "Source_Version__c": "controlled-weather-after:5f054b92b76b8ec97f04bf19570633cda61d5bbdb76e59b2f9cc11e8cc0482b6"
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lpeoWIAQ",
+        "Artifact_Api_Name__c": "send_weather_alert_179Ec000006G6qo",
+        "Artifact_Key__c": "7a8459a03c99e25d9df7c408601caf2f9876d6e8f72d7a8de9008ad155d0c72d",
+        "Artifact_Label__c": "Send Weather Alert",
+        "Artifact_Type__c": "Action",
+        "Character_Count__c": null,
+        "Coverage_Status__c": "Unavailable",
+        "CreatedDate": "2026-09-07T01:22:31.000+0000",
+        "Id": "a06Ec00000cpmpZIAQ",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": null,
+        "Source_Kind__c": null,
+        "Source_Path__c": null,
+        "Source_Version__c": null
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lpeoWIAQ",
+        "Artifact_Api_Name__c": "get_current_weather_179Ec000006G6qo",
+        "Artifact_Key__c": "be78f738ca4fa93a8d35da5c5c47e271aa72831389efb398dc2d073e6b649cd4",
+        "Artifact_Label__c": "Get Current Weather",
+        "Artifact_Type__c": "Action",
+        "Character_Count__c": null,
+        "Coverage_Status__c": "Unavailable",
+        "CreatedDate": "2026-09-07T01:22:31.000+0000",
+        "Id": "a06Ec00000cpmpaIAA",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": null,
+        "Source_Kind__c": null,
+        "Source_Path__c": null,
+        "Source_Version__c": null
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lpeoWIAQ",
+        "Artifact_Api_Name__c": "get_forecast_179Ec000006G6qo",
+        "Artifact_Key__c": "09192046ddbc9f3ca048e0ce12a95b90757dbac7901fda0c73c51b66755cbe0b",
+        "Artifact_Label__c": "Get Forecast",
+        "Artifact_Type__c": "Action",
+        "Character_Count__c": null,
+        "Coverage_Status__c": "Unavailable",
+        "CreatedDate": "2026-09-07T01:22:31.000+0000",
+        "Id": "a06Ec00000cpmpbIAA",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": null,
+        "Source_Kind__c": null,
+        "Source_Path__c": null,
+        "Source_Version__c": null
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lq00rIAA",
+        "Artifact_Api_Name__c": "Ohm_Weather_Demo_v3",
+        "Artifact_Key__c": "aa7cbc5f0b70178084c836bb8ea46a7acf2460325918af4411e65c356c0f7fb9",
+        "Artifact_Label__c": "Controlled Weather Demo",
+        "Artifact_Type__c": "Agent",
+        "Character_Count__c": 103,
+        "Coverage_Status__c": "Complete",
+        "CreatedDate": "2026-09-07T01:29:14.000+0000",
+        "Id": "a06Ec00000cq3qLIAQ",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": "8f8dfca7d77a006c38bdb822a4be821c45da7f810114b8c18554a190861de2c3",
+        "Source_Kind__c": "ImportedAgentScript",
+        "Source_Path__c": "/Users/dom/Documents/ohm-a4g/test-fixtures/controlled-weather/before/force-app/main/default/aiAuthoringBundles/Ohm_Weather_Demo/Ohm_Weather_Demo.agent#system",
+        "Source_Version__c": "controlled-weather-before-repeat:6946581b3aef7b33c52b21ef90c9f080ad1de8705a94a42d87d2fcbb29a4dbc0"
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lq00rIAA",
+        "Artifact_Api_Name__c": "weather_lookup_16jEc000000PAU1",
+        "Artifact_Key__c": "d616403f25e9c35a5bb626ac0351a12f3bd6108508bdcb96966317f6038f4dd2",
+        "Artifact_Label__c": "Weather Lookup",
+        "Artifact_Type__c": "Topic",
+        "Character_Count__c": 4085,
+        "Coverage_Status__c": "Complete",
+        "CreatedDate": "2026-09-07T01:29:14.000+0000",
+        "Id": "a06Ec00000cq3qMIAQ",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": "cf1d706095580fc6506fdb98c03a16a46d0ffdb6455a148e278e66a4ba085f10",
+        "Source_Kind__c": "ImportedAgentScript",
+        "Source_Path__c": "/Users/dom/Documents/ohm-a4g/test-fixtures/controlled-weather/before/force-app/main/default/aiAuthoringBundles/Ohm_Weather_Demo/Ohm_Weather_Demo.agent#weather_lookup",
+        "Source_Version__c": "controlled-weather-before-repeat:6946581b3aef7b33c52b21ef90c9f080ad1de8705a94a42d87d2fcbb29a4dbc0"
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lq00rIAA",
+        "Artifact_Api_Name__c": "agent_router_16jEc000000PAU1",
+        "Artifact_Key__c": "bdf0110b3b26e58905951c2e73bc0b1e6ab9112b40e49736c1c92e5f4358c8bb",
+        "Artifact_Label__c": "Agent Router",
+        "Artifact_Type__c": "Topic",
+        "Character_Count__c": 117,
+        "Coverage_Status__c": "Complete",
+        "CreatedDate": "2026-09-07T01:29:14.000+0000",
+        "Id": "a06Ec00000cq3qNIAQ",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": "0204cc6cc8a8ed21695dd1d3fa64ccab53e0f0b66445612da8b90b0f3e72cec5",
+        "Source_Kind__c": "ImportedAgentScript",
+        "Source_Path__c": "/Users/dom/Documents/ohm-a4g/test-fixtures/controlled-weather/before/force-app/main/default/aiAuthoringBundles/Ohm_Weather_Demo/Ohm_Weather_Demo.agent#agent_router",
+        "Source_Version__c": "controlled-weather-before-repeat:6946581b3aef7b33c52b21ef90c9f080ad1de8705a94a42d87d2fcbb29a4dbc0"
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lq00rIAA",
+        "Artifact_Api_Name__c": "get_current_weather_179Ec000006G6sP",
+        "Artifact_Key__c": "71ef866f2f9bd1dc2344cc2a349979efd58a71e8699460d7c09797fe5728d37d",
+        "Artifact_Label__c": "Get Current Weather",
+        "Artifact_Type__c": "Action",
+        "Character_Count__c": null,
+        "Coverage_Status__c": "Unavailable",
+        "CreatedDate": "2026-09-07T01:29:14.000+0000",
+        "Id": "a06Ec00000cq3qOIAQ",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": null,
+        "Source_Kind__c": null,
+        "Source_Path__c": null,
+        "Source_Version__c": null
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lq00rIAA",
+        "Artifact_Api_Name__c": "send_weather_alert_179Ec000006G6sP",
+        "Artifact_Key__c": "0bc616628cd2bbaea66bfb9bfcb2892e8938c56dd3137b3a259a11a920f9149b",
+        "Artifact_Label__c": "Send Weather Alert",
+        "Artifact_Type__c": "Action",
+        "Character_Count__c": null,
+        "Coverage_Status__c": "Unavailable",
+        "CreatedDate": "2026-09-07T01:29:14.000+0000",
+        "Id": "a06Ec00000cq3qPIAQ",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": null,
+        "Source_Kind__c": null,
+        "Source_Path__c": null,
+        "Source_Version__c": null
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lq00rIAA",
+        "Artifact_Api_Name__c": "get_forecast_179Ec000006G6sP",
+        "Artifact_Key__c": "d96d6274d1c4e6d817ad83ded3829f53d5f17d2723c8f5810790e5c8d0ac7cb3",
+        "Artifact_Label__c": "Get Forecast",
+        "Artifact_Type__c": "Action",
+        "Character_Count__c": null,
+        "Coverage_Status__c": "Unavailable",
+        "CreatedDate": "2026-09-07T01:29:14.000+0000",
+        "Id": "a06Ec00000cq3qQIAQ",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": null,
+        "Source_Kind__c": null,
+        "Source_Path__c": null,
+        "Source_Version__c": null
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lpk2aIAA",
+        "Artifact_Api_Name__c": "Ohm_Weather_Demo_v4",
+        "Artifact_Key__c": "aa7cbc5f0b70178084c836bb8ea46a7acf2460325918af4411e65c356c0f7fb9",
+        "Artifact_Label__c": "Controlled Weather Demo",
+        "Artifact_Type__c": "Agent",
+        "Character_Count__c": 103,
+        "Coverage_Status__c": "Complete",
+        "CreatedDate": "2026-09-07T01:35:02.000+0000",
+        "Id": "a06Ec00000cprMAIAY",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": "8f8dfca7d77a006c38bdb822a4be821c45da7f810114b8c18554a190861de2c3",
+        "Source_Kind__c": "ImportedAgentScript",
+        "Source_Path__c": "/Users/dom/Documents/ohm-a4g/test-fixtures/controlled-weather/after/force-app/main/default/aiAuthoringBundles/Ohm_Weather_Demo/Ohm_Weather_Demo.agent#system",
+        "Source_Version__c": "controlled-weather-after-repeat:5f054b92b76b8ec97f04bf19570633cda61d5bbdb76e59b2f9cc11e8cc0482b6"
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lpk2aIAA",
+        "Artifact_Api_Name__c": "agent_router_16jEc000000PBBZ",
+        "Artifact_Key__c": "bdf0110b3b26e58905951c2e73bc0b1e6ab9112b40e49736c1c92e5f4358c8bb",
+        "Artifact_Label__c": "Agent Router",
+        "Artifact_Type__c": "Topic",
+        "Character_Count__c": 117,
+        "Coverage_Status__c": "Complete",
+        "CreatedDate": "2026-09-07T01:35:02.000+0000",
+        "Id": "a06Ec00000cprMBIAY",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": "0204cc6cc8a8ed21695dd1d3fa64ccab53e0f0b66445612da8b90b0f3e72cec5",
+        "Source_Kind__c": "ImportedAgentScript",
+        "Source_Path__c": "/Users/dom/Documents/ohm-a4g/test-fixtures/controlled-weather/after/force-app/main/default/aiAuthoringBundles/Ohm_Weather_Demo/Ohm_Weather_Demo.agent#agent_router",
+        "Source_Version__c": "controlled-weather-after-repeat:5f054b92b76b8ec97f04bf19570633cda61d5bbdb76e59b2f9cc11e8cc0482b6"
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lpk2aIAA",
+        "Artifact_Api_Name__c": "weather_lookup_16jEc000000PBBZ",
+        "Artifact_Key__c": "d616403f25e9c35a5bb626ac0351a12f3bd6108508bdcb96966317f6038f4dd2",
+        "Artifact_Label__c": "Weather Lookup",
+        "Artifact_Type__c": "Topic",
+        "Character_Count__c": 773,
+        "Coverage_Status__c": "Complete",
+        "CreatedDate": "2026-09-07T01:35:02.000+0000",
+        "Id": "a06Ec00000cprMCIAY",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": "8128ac0e1af2b1cda6aa7100fe60f3f1da96c1ae234d6740c5eb5f192cdae226",
+        "Source_Kind__c": "ImportedAgentScript",
+        "Source_Path__c": "/Users/dom/Documents/ohm-a4g/test-fixtures/controlled-weather/after/force-app/main/default/aiAuthoringBundles/Ohm_Weather_Demo/Ohm_Weather_Demo.agent#weather_lookup",
+        "Source_Version__c": "controlled-weather-after-repeat:5f054b92b76b8ec97f04bf19570633cda61d5bbdb76e59b2f9cc11e8cc0482b6"
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lpk2aIAA",
+        "Artifact_Api_Name__c": "send_weather_alert_179Ec000006G6u2",
+        "Artifact_Key__c": "9aee34fd9cebba87bbced0fc99a4467713fefc79b940efcd36cb3f233638ce82",
+        "Artifact_Label__c": "Send Weather Alert",
+        "Artifact_Type__c": "Action",
+        "Character_Count__c": null,
+        "Coverage_Status__c": "Unavailable",
+        "CreatedDate": "2026-09-07T01:35:02.000+0000",
+        "Id": "a06Ec00000cprMDIAY",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": null,
+        "Source_Kind__c": null,
+        "Source_Path__c": null,
+        "Source_Version__c": null
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lpk2aIAA",
+        "Artifact_Api_Name__c": "get_forecast_179Ec000006G6u2",
+        "Artifact_Key__c": "76cec66dcdc79242ebd68083b641d1af7b5c34ef994ee5cb9d10673e6c740b57",
+        "Artifact_Label__c": "Get Forecast",
+        "Artifact_Type__c": "Action",
+        "Character_Count__c": null,
+        "Coverage_Status__c": "Unavailable",
+        "CreatedDate": "2026-09-07T01:35:02.000+0000",
+        "Id": "a06Ec00000cprMEIAY",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": null,
+        "Source_Kind__c": null,
+        "Source_Path__c": null,
+        "Source_Version__c": null
+      },
+      {
+        "Agent_Audit_Report__c": "a00Ec00000lpk2aIAA",
+        "Artifact_Api_Name__c": "get_current_weather_179Ec000006G6u2",
+        "Artifact_Key__c": "f550ebd81ce963080a2ccb62f82cffcfea9b245f13712814b3bdfac7394964dd",
+        "Artifact_Label__c": "Get Current Weather",
+        "Artifact_Type__c": "Action",
+        "Character_Count__c": null,
+        "Coverage_Status__c": "Unavailable",
+        "CreatedDate": "2026-09-07T01:35:02.000+0000",
+        "Id": "a06Ec00000cprMFIAY",
+        "Process_Key__c": "ohm_weather_demo",
+        "Source_Hash__c": null,
+        "Source_Kind__c": null,
+        "Source_Path__c": null,
+        "Source_Version__c": null
+      }
+    ],
+    "taskIdsByStableIssue": {
+      "3322fa2a33528855d35d5e66cfd4dc2a4a6124e08b93dea8aac0fdfb02a89ae4": [
+        "00TEc00000a9bLNMAY"
+      ]
+    },
+    "taskIdsWithoutFindingLinks": [],
+    "tasks": [
+      {
+        "ActivityDate": "2026-09-08",
+        "CreatedDate": "2026-09-07T01:09:03.000+0000",
+        "Id": "00TEc00000a9bLNMAY",
+        "IsClosed": true,
+        "LastModifiedDate": "2026-09-07T01:35:02.000+0000",
+        "OwnerId": "005Ec00000deLvLIAU",
+        "Status": "Completed",
+        "Subject": "Ohm: Trim Instructions \u2192 500 tokens",
+        "WhatId": "a00Ec00000lpuukIAA",
+        "ownerName": "User User"
+      }
+    ]
+  },
+  "jest": {
+    "complete": true,
+    "input": {
+      "file": "ohm-demo-jest-final-3.txt",
+      "modifiedAt": "2026-09-07T01:27:22.969131+00:00",
+      "sha256": "7fb3bb938f9bf5ae04e221dec088561b78f9bbf3b9ac0a2015b93b9bcd82c821",
+      "state": "present"
+    },
+    "outcome": "Passed",
+    "suites": {
+      "passed": 23,
+      "total": 23
+    },
+    "tests": {
+      "passed": 165,
+      "total": 165
+    }
+  },
+  "privacy": "Explicit field allowlists. No credentials, auth output, raw source, source JSON, graph JSON, Task descriptions or raw debug logs are retained.",
+  "publicAudits": {
+    "audits": [
+      {
+        "actionTypes": {
+          "flow": 4
+        },
+        "agentGraphPresent": false,
+        "coverageStatus": "Incomplete",
+        "detectorCoverage": {
+          "INSTRUCTION_BLOAT": "Covered",
+          "LLM_WHERE_DETERMINISTIC": "Covered",
+          "MODEL_RIGHTSIZING": "Covered",
+          "REDUNDANT_CALLS": "Unknown"
+        },
+        "discoveryErrors": null,
+        "energyWh": 11116.44,
+        "findings": 0,
+        "grade": "IN",
+        "ohmActions": 4,
+        "ohmTopics": 2,
+        "persistedScopeChars": 0,
+        "planner": "ActionChaining_v1",
+        "plannerId": "16jEc000000PAIjIAO",
+        "reportId": "a00Ec00000lplhoIAA",
+        "score": null,
+        "structuralActions": 4,
+        "structuralTopics": 2
+      },
+      {
+        "actionTypes": {
+          "apex": 1,
+          "flow": 2
+        },
+        "agentGraphPresent": false,
+        "coverageStatus": "Incomplete",
+        "detectorCoverage": {
+          "INSTRUCTION_BLOAT": "Covered",
+          "LLM_WHERE_DETERMINISTIC": "Covered",
+          "MODEL_RIGHTSIZING": "Covered",
+          "REDUNDANT_CALLS": "Unknown"
+        },
+        "discoveryErrors": null,
+        "energyWh": 14782.5,
+        "findings": 0,
+        "grade": "IN",
+        "ohmActions": 3,
+        "ohmTopics": 2,
+        "persistedScopeChars": 0,
+        "planner": "ActionDefinitions_v1",
+        "plannerId": "16jEc000000PAH7IAO",
+        "reportId": "a00Ec00000lplhpIAA",
+        "score": null,
+        "structuralActions": 3,
+        "structuralTopics": 2
+      },
+      {
+        "actionTypes": {
+          "generatePromptResponse": 1
+        },
+        "agentGraphPresent": false,
+        "coverageStatus": "Incomplete",
+        "detectorCoverage": {
+          "INSTRUCTION_BLOAT": "Covered",
+          "LLM_WHERE_DETERMINISTIC": "Covered",
+          "MODEL_RIGHTSIZING": "Unknown",
+          "REDUNDANT_CALLS": "Unknown"
+        },
+        "discoveryErrors": null,
+        "energyWh": 14723.37,
+        "findings": 2,
+        "grade": "IN",
+        "ohmActions": 1,
+        "ohmTopics": 2,
+        "persistedScopeChars": 0,
+        "planner": "PromptTemplateActions_v1",
+        "plannerId": "16jEc000000PAKLIA4",
+        "reportId": "a00Ec00000lplhqIAA",
+        "score": null,
+        "structuralActions": 1,
+        "structuralTopics": 2
+      }
+    ],
+    "execution": {
+      "compiled": true,
+      "success": true
+    },
+    "fullInventory": {
+      "actions": 15,
+      "agents": 8,
+      "findings": [
+        {
+          "artifactApiName": "generate_personalized_schedule_179Ec000006G6ik",
+          "artifactToolingId": "172Ec00000VL5ndIAD",
+          "artifactType": "Action",
+          "boundModel": "sfdc_ai__DefaultOpenAIGPT4OmniMini",
+          "confidence": "Low",
+          "fixType": null,
+          "metricUnit": "model-multiplier",
+          "metricValue": null,
+          "recommendedTarget": null,
+          "reviewRequired": true,
+          "severity": "Low",
+          "signalType": "MODEL_RIGHTSIZING"
+        },
+        {
+          "artifactApiName": "Ohm_Sample_OrderHelp",
+          "artifactToolingId": "179Ec000006G6kLIAS",
+          "artifactType": "Topic",
+          "boundModel": null,
+          "confidence": "High",
+          "fixType": null,
+          "metricUnit": "tokens",
+          "metricValue": 237,
+          "recommendedTarget": null,
+          "reviewRequired": null,
+          "severity": "Medium",
+          "signalType": "INSTRUCTION_BLOAT"
+        },
+        {
+          "artifactApiName": "Ohm_Waste_LeadTriage",
+          "artifactToolingId": "179Ec000006G6kOIAS",
+          "artifactType": "Topic",
+          "boundModel": null,
+          "confidence": "High",
+          "fixType": null,
+          "metricUnit": "tokens",
+          "metricValue": 850,
+          "recommendedTarget": null,
+          "reviewRequired": null,
+          "severity": "High",
+          "signalType": "INSTRUCTION_BLOAT"
+        },
+        {
+          "artifactApiName": "weather_lookup_16jEc000000PAPB",
+          "artifactToolingId": "179Ec000006G6nZIAS",
+          "artifactType": "Topic",
+          "boundModel": null,
+          "confidence": "High",
+          "fixType": null,
+          "metricUnit": "tokens",
+          "metricValue": 522,
+          "recommendedTarget": null,
+          "reviewRequired": null,
+          "severity": "High",
+          "signalType": "INSTRUCTION_BLOAT"
+        },
+        {
+          "artifactApiName": "generate_personalized_schedule_179Ec000006G6ik",
+          "artifactToolingId": "172Ec00000VL5ndIAD",
+          "artifactType": "Action",
+          "boundModel": "sfdc_ai__DefaultOpenAIGPT4OmniMini",
+          "confidence": "High",
+          "fixType": null,
+          "metricUnit": "tokens",
+          "metricValue": 58,
+          "recommendedTarget": null,
+          "reviewRequired": null,
+          "severity": "Medium",
+          "signalType": "INSTRUCTION_BLOAT"
+        }
+      ],
+      "promptTemplates": 1,
+      "topics": 12
+    },
+    "input": {
+      "file": "ohm-demo-public-audits.json",
+      "modifiedAt": "2026-09-07T01:07:16.445252+00:00",
+      "sha256": "4f7528bd433d5689832c0835ba103aa05dfd4c808565dfc8c6c109c0cbfb3273",
+      "state": "present"
+    }
+  },
+  "schemaVersion": 1,
+  "scope": "Tests, application deployment metadata, public audit measurements, and controlled weather remediation metadata. Modeled energy is not runtime telemetry.",
+  "sourceParser": {
+    "complete": true,
+    "durationSeconds": 0.004,
+    "input": {
+      "file": "ohm-demo-parser-final.txt",
+      "modifiedAt": "2026-09-07T01:10:22.465056+00:00",
+      "sha256": "780f9e5309df7d95fd2c98b8162de16cc74523aeb82642ee3609c69a587843e9",
+      "state": "present"
+    },
+    "outcome": "Passed",
+    "tests": [
+      {
+        "name": "test_active_prompt_version_and_model",
+        "outcome": "ok"
+      },
+      {
+        "name": "test_dynamic_weather_preserves_branches_and_action_references",
+        "outcome": "ok"
+      },
+      {
+        "name": "test_legacy_nested_instructions_are_distinct_from_scope",
+        "outcome": "ok"
+      },
+      {
+        "name": "test_missing_active_version_is_rejected",
+        "outcome": "ok"
+      },
+      {
+        "name": "test_payment_reasoning_keeps_sequence",
+        "outcome": "ok"
+      },
+      {
+        "name": "test_unknown_expression_is_rejected",
+        "outcome": "ok"
+      }
+    ],
+    "testsRan": 6
+  },
+  "validationFreshness": {
+    "apexRunStartedAfterLatestServerDeployment": true,
+    "jestResultWrittenAfterLatestUiDeployment": true,
+    "latestApplicationDeploymentId": "0AfEc00000nY4jJKAS",
+    "latestApplicationDeploymentSucceeded": true,
+    "latestServerDeploymentId": "0AfEc00000nXwAhKAK",
+    "latestUiDeploymentId": "0AfEc00000nY4jJKAS",
+    "note": "Numbered application deployments are classified by component types. LWC-only changes do not invalidate the Apex gate. Controlled agent publication is separate behavior evidence. Jest file time records result completion, not test start."
+  }
+}

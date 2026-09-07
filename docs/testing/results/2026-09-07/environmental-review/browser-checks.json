@@ -1,0 +1,20 @@
+{
+  "url": "https://innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/n/Ohm_Audit?c__scope=agentScript&c__review=v1",
+  "checks": {
+    "fleetFourReviewed": true,
+    "fleetOneOpportunityAfterCorrection": true,
+    "fourIndependentCategoryCards": true,
+    "modelUnratedWithoutQualityEvaluation": true,
+    "legacySupportingEvidenceCollapsed": true,
+    "bundleStructureNotExecutionGraphLabel": true,
+    "linkedPromptExpanded": true,
+    "exact832CharactersAndApprox208SourceTokensVisible": true,
+    "overlapGapAndOrderingQuotesVisible": true,
+    "changePreserveValidateVisible": true,
+    "configuredGpt55ReviewerVisible": true,
+    "finalDeclaredTemplateVersionVisible": true,
+    "sourceHashesAndPathsWrapInNarrowPanel": true,
+    "askOhmExplainsSavedReview": true
+  },
+  "note": "Observed through the authenticated application browser. Ask OHM saved-review behavior was exercised on the first GPT-5.5 completed report; final schema is unchanged. Final page is open on the refreshed schedule-prompt review."
+}

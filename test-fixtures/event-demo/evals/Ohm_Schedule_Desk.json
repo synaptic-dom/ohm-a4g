@@ -1,0 +1,62 @@
+{
+  "tests": [
+    {
+      "id": "control-day",
+      "steps": [
+        {
+          "type": "agent.create_session",
+          "id": "cs",
+          "use_agent_api": true
+        },
+        {
+          "type": "agent.send_message",
+          "id": "sm",
+          "session_id": "{cs.session_id}",
+          "utterance": "Create a guest day plan from these activity rows:\n13:00|60|Forest walk|Trailhead\n09:00|45|Kayaking|Boathouse\n10:30|30|Clay studio|Art room\n10:45|45|Garden tour|Garden"
+        },
+        {
+          "type": "agent.get_state",
+          "id": "state",
+          "session_id": "{cs.session_id}"
+        },
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "utterance": "Create a guest day plan from these activity rows:\n13:00|60|Forest walk|Trailhead\n09:00|45|Kayaking|Boathouse\n10:30|30|Clay studio|Art room\n10:45|45|Garden tour|Garden",
+          "expected": "Include Kayaking at 09:00–09:45, Garden tour at 10:45–11:30, and Forest walk at 13:00–14:00, in that order. Omit Clay studio because of insufficient free time. Preserve the Apex-prepared plan and do not claim a booking exists.",
+          "actual": "{sm.response}",
+          "threshold": 3.0
+        }
+      ]
+    },
+    {
+      "id": "control-invalid",
+      "steps": [
+        {
+          "type": "agent.create_session",
+          "id": "cs",
+          "use_agent_api": true
+        },
+        {
+          "type": "agent.send_message",
+          "id": "sm",
+          "session_id": "{cs.session_id}",
+          "utterance": "Plan this activity: 25:00|30|Evening yoga|Studio"
+        },
+        {
+          "type": "agent.get_state",
+          "id": "state",
+          "session_id": "{cs.session_id}"
+        },
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "utterance": "Plan this activity: 25:00|30|Evening yoga|Studio",
+          "expected": "Relay the preparation action validation problem and ask for corrected rows. Do not invent a new time or schedule.",
+          "actual": "{sm.response}",
+          "threshold": 3.0
+        }
+      ]
+    }
+  ]
+}

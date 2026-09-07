@@ -1,274 +1,34 @@
-/* ============================================================================
-   OHM v2 — "INSTRUMENT" workbench SHELL.
-   Tokens are declared once on :host so they inherit through the composed shadow
-   tree into every child (ohmFleetTable, ohmCalmModeToggle). Calm Mode flips the
-   whole console to a light, colour-independent console via the --calm modifier.
-   ========================================================================== */
 :host {
-    /* palette --------------------------------------------------------------- */
-    --ohm-panel: #0e1518; /* instrument face (dark petrol) */
-    --ohm-panel-2: #16232a; /* raised card */
-    --ohm-panel-3: #1d2f37; /* hover / elevated */
-    --ohm-ink: #eaf2f0; /* primary text on panel */
-    --ohm-muted: #7e9aa0; /* labels / secondary */
-    --ohm-filament: #ffb24c; /* energy / waste signal (warm amber) */
-    --ohm-filament-hot: #ff6b4a; /* high severity */
-    --ohm-cool: #4fd1c5; /* efficiency / good / cooled state */
-    --ohm-hairline: #2a3b42; /* dividers */
-
-    --ohm-device-accent: linear-gradient(
-        90deg,
-        var(--ohm-filament-hot),
-        var(--ohm-filament) 45%,
-        var(--ohm-cool)
-    );
-
-    /* scale ----------------------------------------------------------------- */
-    --ohm-radius: 10px;
-    --ohm-s1: 8px;
-    --ohm-s2: 12px;
-    --ohm-s3: 20px;
-    --ohm-s4: 32px;
-    --ohm-line: 1.55;
-
-    /* type stacks ----------------------------------------------------------- */
-    --ohm-font-data: ui-monospace, "SF Mono", "Cascadia Mono", "Cascadia Code",
-        Consolas, "Liberation Mono", monospace;
-    --ohm-font-head: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-
-    display: block;
+    --ohm-panel: #0b1010; --ohm-panel-2: #121b1b; --ohm-panel-3: #1c2827;
+    --ohm-ink: #f4f1e8; --ohm-muted: #a4b4ab; --ohm-filament: #efb86a;
+    --ohm-filament-hot: #ff9179; --ohm-cool: #b8f36b; --ohm-hairline: #2c3833;
+    --ohm-radius: 14px; --ohm-s1: 8px; --ohm-s2: 12px; --ohm-s3: 20px; --ohm-s4: 32px;
+    --ohm-font-head: "Avenir Next", "Segoe UI", system-ui, sans-serif;
+    --ohm-font-data: "SF Mono", Consolas, monospace;
+    --slds-c-button-brand-color-background: #b8f36b; --slds-c-button-brand-color-background-hover: #cef99c;
+    --slds-c-button-brand-color-border: #b8f36b; --slds-c-button-brand-text-color: #0b1010;
+    --slds-c-button-brand-text-color-hover: #0b1010; --slds-c-button-neutral-color-background: #121b1b;
+    --slds-c-button-neutral-color-background-hover: #1c2827; --slds-c-button-neutral-color-border: #2c3833;
+    --slds-c-button-text-color: #f4f1e8; --slds-c-button-text-color-hover: #f4f1e8;
+    --slds-c-button-radius-border: 8px; display: block; color-scheme: dark;
 }
-
-/* Base component -> lightning-button skinning (inherits across shadow tree). */
-:host {
-    --slds-c-button-brand-color-background: var(--ohm-filament);
-    --slds-c-button-brand-color-background-hover: var(--ohm-filament-hot);
-    --slds-c-button-brand-color-background-active: var(--ohm-filament-hot);
-    --slds-c-button-brand-color-border: var(--ohm-filament);
-    --slds-c-button-brand-color-border-hover: var(--ohm-filament-hot);
-    --slds-c-button-brand-text-color: #0e1518;
-    --slds-c-button-brand-text-color-hover: #0e1518;
-    --slds-c-button-brand-text-color-active: #0e1518;
-    --slds-c-button-neutral-color-background: var(--ohm-panel-2);
-    --slds-c-button-neutral-color-background-hover: var(--ohm-panel-3);
-    --slds-c-button-neutral-color-border: var(--ohm-hairline);
-    --slds-c-button-text-color: var(--ohm-ink);
-    --slds-c-button-text-color-hover: var(--ohm-ink);
-    --slds-c-button-color-border: var(--ohm-hairline);
-    --slds-c-button-radius-border: 8px;
-}
-
-.ohm-app {
-    box-sizing: border-box;
-    max-width: 1160px;
-    margin: 20px auto;
-    padding: 0;
-    position: relative;
-    background: var(--ohm-panel);
-    color: var(--ohm-ink);
-    border: 1px solid var(--ohm-hairline);
-    border-radius: 16px;
-    box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.7),
-        inset 0 1px 0 rgba(255, 255, 255, 0.03);
-    font-family: var(--ohm-font-head);
-    line-height: var(--ohm-line);
-    overflow: hidden;
-}
-.ohm-app * {
-    box-sizing: border-box;
-}
-
-/* Signature: a thin "current path" accent along the top edge. */
-.ohm-app::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--ohm-device-accent);
-    opacity: 0.9;
-    z-index: 2;
-}
-
-/* ---- top bar -------------------------------------------------------------- */
-.ohm-app__topbar {
-    display: flex;
-    align-items: center;
-    gap: var(--ohm-s3);
-    flex-wrap: wrap;
-    padding: var(--ohm-s3) var(--ohm-s4);
-    border-bottom: 1px solid var(--ohm-hairline);
-}
-
-.ohm-app__brand {
-    display: flex;
-    align-items: baseline;
-    gap: var(--ohm-s2);
-    flex: none;
-}
-.ohm-app__wordmark {
-    font-family: var(--ohm-font-head);
-    font-weight: 800;
-    font-size: 22px;
-    letter-spacing: 0.02em;
-    color: var(--ohm-ink);
-}
-.ohm-app__tagline {
-    font-family: var(--ohm-font-data);
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ohm-muted);
-}
-
-/* ---- tab strip ------------------------------------------------------------ */
-.ohm-app__tabs {
-    display: flex;
-    align-items: stretch;
-    gap: 2px;
-    flex: 1 1 auto;
-    min-width: 0;
-    overflow-x: auto;
-}
-.ohm-app__tab {
-    appearance: none;
-    background: transparent;
-    border: 0;
-    border-bottom: 2px solid transparent;
-    color: var(--ohm-muted);
-    font-family: var(--ohm-font-head);
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 10px 16px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: color 120ms ease, border-color 120ms ease;
-}
-.ohm-app__tab:hover {
-    color: var(--ohm-ink);
-}
-.ohm-app__tab--active {
-    color: var(--ohm-ink);
-    border-bottom-color: var(--ohm-filament);
-}
-.ohm-app__tab:focus-visible {
-    outline: 2px solid var(--ohm-cool);
-    outline-offset: -2px;
-    border-radius: 4px;
-}
-
-.ohm-app__calm {
-    flex: none;
-    margin-left: auto;
-}
-
-/* ---- breadcrumb ----------------------------------------------------------- */
-.ohm-app__breadcrumb {
-    padding: var(--ohm-s2) var(--ohm-s4);
-    font-family: var(--ohm-font-data);
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    color: var(--ohm-muted);
-    border-bottom: 1px solid var(--ohm-hairline);
-    background: rgba(0, 0, 0, 0.14);
-}
-
-/* ---- body ----------------------------------------------------------------- */
-.ohm-app__body {
-    padding: var(--ohm-s4);
-}
-
-/* ---- placeholder panel ---------------------------------------------------- */
-.ohm-app__placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--ohm-s2);
-    padding: var(--ohm-s4);
-    border: 1px dashed var(--ohm-hairline);
-    border-radius: var(--ohm-radius);
-    background: var(--ohm-panel-2);
-    min-height: 220px;
-    justify-content: center;
-}
-.ohm-app__placeholder-badge {
-    font-family: var(--ohm-font-data);
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ohm-filament);
-    border: 1px solid var(--ohm-hairline);
-    border-radius: 999px;
-    padding: 4px 12px;
-}
-.ohm-app__placeholder-title {
-    margin: 0;
-    font-family: var(--ohm-font-head);
-    font-weight: 800;
-    font-size: 24px;
-    color: var(--ohm-ink);
-}
-.ohm-app__placeholder-body {
-    margin: 0;
-    max-width: 52ch;
-    color: var(--ohm-muted);
-    font-size: 14px;
-    line-height: 1.6;
-}
-
-/* ============================================================================
-   CALM MODE — light, quiet, colour-independent console. Meaning-bearing colours
-   collapse to ink so no meaning rides on colour alone. Tokens flip here and
-   inherit into every child through the composed tree.
-   ========================================================================== */
-.ohm-app--calm {
-    --ohm-panel: #f7f9f9;
-    --ohm-panel-2: #ffffff;
-    --ohm-panel-3: #eef3f3;
-    --ohm-ink: #14242a;
-    --ohm-muted: #4c5f65;
-    --ohm-filament: #14242a; /* meaning stripped -> ink */
-    --ohm-filament-hot: #14242a;
-    --ohm-cool: #14242a;
-    --ohm-hairline: #d3dede;
-    --ohm-device-accent: var(--ohm-hairline);
-
-    background: var(--ohm-panel);
-    color: var(--ohm-ink);
-    border-color: var(--ohm-hairline);
-    box-shadow: 0 1px 3px rgba(20, 36, 42, 0.12);
-
-    --slds-c-button-brand-color-background: #14242a;
-    --slds-c-button-brand-color-background-hover: #29414a;
-    --slds-c-button-brand-color-border: #14242a;
-    --slds-c-button-brand-text-color: #ffffff;
-    --slds-c-button-brand-text-color-hover: #ffffff;
-    --slds-c-button-neutral-color-background: #ffffff;
-    --slds-c-button-neutral-color-border: #b7c6c6;
-    --slds-c-button-text-color: #14242a;
-}
-.ohm-app--calm::before {
-    opacity: 0.35;
-}
-.ohm-app--calm .ohm-app__breadcrumb {
-    background: rgba(20, 36, 42, 0.04);
-}
-
-/* ---- responsive ----------------------------------------------------------- */
-@media (max-width: 640px) {
-    .ohm-app__topbar {
-        padding: var(--ohm-s3);
-    }
-    .ohm-app__body {
-        padding: var(--ohm-s3);
-    }
-    .ohm-app__breadcrumb {
-        padding: var(--ohm-s2) var(--ohm-s3);
-    }
-    .ohm-app__calm {
-        margin-left: 0;
-    }
-}
+.ohm-app { scroll-margin-top: 200px; max-width: 1440px; margin: 12px auto; background: var(--ohm-panel); color: var(--ohm-ink); border: 1px solid var(--ohm-hairline); border-radius: 18px; overflow: hidden; font-family: var(--ohm-font-head); line-height: 1.5; box-shadow: 0 20px 60px #07100c26; }
+* { box-sizing: border-box; }
+.ohm-app__topbar { display: flex; align-items: center; gap: 40px; min-height: 84px; padding: 0 40px; border-bottom: 1px solid var(--ohm-hairline); }
+.ohm-app__brand { display: flex; align-items: center; gap: 10px; background: none; border: 0; padding: 0; color: var(--ohm-ink); cursor: pointer; }
+.ohm-app__symbol { width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid var(--ohm-cool); border-radius: 50%; color: var(--ohm-cool); font: 500 23px Georgia, serif; }
+.ohm-app__wordmark { font-size: 32px; font-weight: 700; letter-spacing: -2px; }
+.ohm-app__period { color: var(--ohm-cool); }
+.ohm-app__tabs { display: flex; gap: 4px; }
+.ohm-app__tab { background: none; border: 1px solid transparent; border-radius: 8px; color: var(--ohm-muted); padding: 9px 16px; font: 600 13px var(--ohm-font-head); cursor: pointer; }
+.ohm-app__tab:hover { color: var(--ohm-ink); background: #17211c; }
+.ohm-app__tab--active { background: #1c2920; color: var(--ohm-cool); border-color: #354530; }
+.ohm-app__signature { margin-left: auto; display: flex; align-items: center; gap: 8px; color: var(--ohm-muted); font-size: 11px; white-space: nowrap; }
+.ohm-app__signature span { width: 6px; height: 6px; border-radius: 50%; background: var(--ohm-cool); }
+.ohm-app__body { padding: 38px 40px 48px; min-height: 580px; }
+.ohm-app__body:focus-visible { outline: 1px solid var(--ohm-cool); outline-offset: -5px; }
+.ohm-app__footer { padding: 16px 40px; border-top: 1px solid var(--ohm-hairline); display: flex; justify-content: space-between; gap: 16px; color: var(--ohm-muted); font-size: 11px; }
+button:focus-visible { outline: 2px solid var(--ohm-cool); outline-offset: 4px; }
+@media (max-width: 900px) { .ohm-app__signature { display: none; } .ohm-app__topbar { gap: 24px; } }
+@media (max-width: 600px) { .ohm-app { margin: 0; border-radius: 10px; } .ohm-app__topbar { padding: 16px 20px; flex-wrap: wrap; gap: 16px; } .ohm-app__tabs { width: 100%; } .ohm-app__tab { padding: 9px 10px; } .ohm-app__body { padding: 28px 20px; } .ohm-app__footer { padding: 16px 20px; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }

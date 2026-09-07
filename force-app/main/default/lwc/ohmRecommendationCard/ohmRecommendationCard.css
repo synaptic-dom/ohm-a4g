@@ -1,96 +1,29 @@
-.ohm-rec-card {
-    display: block;
-    padding: var(--ohm-s3);
-    border: 1px solid var(--ohm-hairline);
-    border-left: 3px solid var(--ohm-filament);
-    border-radius: var(--ohm-radius);
-    background: var(--ohm-card-bg);
-}
-
-.ohm-rec-card__signal {
-    margin: 0 0 var(--ohm-s2);
-    font-family: var(--ohm-font-head);
-    font-weight: 700;
-    font-size: clamp(16px, 2.2vw, 19px);
-    line-height: 1.25;
-    color: var(--ohm-ink);
-}
-
-/* Severity + effort read as compact meta chips. */
-.ohm-rec-card__severity,
-.ohm-rec-card__effort {
-    display: inline-block;
-    margin: 0 var(--ohm-s1) var(--ohm-s2) 0;
-    padding: 2px 8px;
-    border: 1px solid var(--ohm-hairline);
-    border-radius: 999px;
-    font-family: var(--ohm-font-data);
-    font-size: 11px;
-    letter-spacing: 0.02em;
-    color: var(--ohm-muted);
-}
-.ohm-rec-card__severity {
-    color: var(--ohm-filament);
-    border-color: var(--ohm-filament);
-}
-
-/* Calm mode: raise the Effort chip to the same ink the sibling chips (severity /
-   generated-by) resolve to in Calm, so it is not a lower-contrast light gray. */
-.ohm-rec-card--calm .ohm-rec-card__effort {
-    color: var(--ohm-ink);
-}
-
-.ohm-rec-card__generated-by {
-    display: inline-block;
-    margin: 0 0 var(--ohm-s2);
-    padding: 2px 8px;
-    border: 1px solid var(--ohm-cool);
-    border-radius: 999px;
-    font-family: var(--ohm-font-data);
-    font-size: 11px;
-    letter-spacing: 0.02em;
-    color: var(--ohm-cool);
-}
-
-.ohm-rec-card__recommendation {
-    margin: var(--ohm-s1) 0 var(--ohm-s3);
-    font-size: 15px;
-    line-height: var(--ohm-line);
-    color: var(--ohm-ink);
-}
-
-.ohm-rec-card__savings {
-    margin: 0 0 4px;
-    font-family: var(--ohm-font-data);
-    font-variant-numeric: tabular-nums;
-    font-size: 14px;
-    color: var(--ohm-cool);
-    font-weight: 600;
-}
-
-.ohm-rec-card__provenance {
-    margin: 0 0 var(--ohm-s3);
-    font-size: 11px;
-    line-height: 1.4;
-    color: var(--ohm-muted);
-}
-
-.ohm-rec-card__done {
-    margin: var(--ohm-s1) 0 0;
-    display: inline-block;
-    padding: 6px 12px;
-    border-radius: 8px;
-    background: rgba(79, 209, 197, 0.12);
-    border: 1px solid var(--ohm-cool);
-    color: var(--ohm-cool);
-    font-family: var(--ohm-font-data);
-    font-size: 13px;
-    font-weight: 600;
-}
-
-.ohm-rec-card__error {
-    margin: var(--ohm-s2) 0 0;
-    color: var(--ohm-filament-hot);
-    font-family: var(--ohm-font-data);
-    font-size: 13px;
-}
+:host { display: block; color: #f4f1e8; }
+.ohm-rec-card { padding: 26px 28px; background: #121b1b; border: 1px solid #2c3936; border-radius: 16px; }
+.ohm-rec-card__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; color: #b3c0b8; font-size: 12px; line-height: 1.5; }
+.ohm-rec-card__category, .ohm-rec-card__eyebrow { color: #b8f36b; font-weight: 650; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+.ohm-rec-card__rating { padding: 3px 9px; color: #efb86a; border: 1px solid #5a4930; border-radius: 100px; font-size: 11px; }
+.ohm-rec-card__source { margin: 20px 0 8px; color: #b3c0b8; font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
+.ohm-rec-card__source span { padding: 0 7px; color: #687d73; }
+.ohm-rec-card__change { margin: 0; color: #f4f1e8; font-size: clamp(19px, 2vw, 24px); line-height: 1.4; font-weight: 500; letter-spacing: -.02em; overflow-wrap: anywhere; }
+.ohm-rec-card__signal { margin: 8px 0 12px; font-size: 21px; font-weight: 500; }
+.ohm-rec-card__legacy-change { margin: 18px 0; line-height: 1.65; }
+.ohm-rec-card__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin: 24px 0 0; }
+.ohm-rec-card__button { display: inline-flex; align-items: center; gap: 20px; border: 1px solid #52634e; background: transparent; color: #f4f1e8; border-radius: 8px; padding: 11px 15px; min-height: 42px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.ohm-rec-card__button--primary { background: #b8f36b; border-color: #b8f36b; color: #172014; }
+.ohm-rec-card__button:hover { border-color: #b8f36b; }
+.ohm-rec-card__link { display: inline-flex; align-items: center; gap: 9px; border: 0; background: transparent; color: #c6d2c9; font: inherit; font-size: 13px; padding: 8px 0; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.ohm-rec-card__link:hover { color: #b8f36b; }
+button:focus-visible, a:focus-visible { outline: 2px solid #b8f36b; outline-offset: 4px; }
+button:disabled { opacity: .55; cursor: wait; }
+.ohm-rec-card__details { display: grid; gap: 22px; border-top: 1px solid #2c3936; margin-top: 24px; padding-top: 24px; }
+.ohm-rec-card__detail h4 { color: #b3c0b8; font-size: 12px; letter-spacing: .04em; margin: 0 0 8px; font-weight: 600; }
+.ohm-rec-card__detail p { margin: 0; font-size: 14px; line-height: 1.7; color: #e0e5dd; overflow-wrap: anywhere; }
+.ohm-rec-card__evidence { margin: 12px 0 0; padding: 16px 18px; background: #0b1010; border-left: 2px solid #6f8a50; border-radius: 0 6px 6px 0; }
+.ohm-rec-card__evidence figcaption { color: #b3c0b8; font-size: 12px; margin-bottom: 10px; overflow-wrap: anywhere; }
+.ohm-rec-card__evidence blockquote { margin: 0; color: #e0e5dd; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
+.ohm-rec-card__task { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 20px; margin-top: 23px; padding-top: 15px; border-top: 1px solid #2c3936; }
+.ohm-rec-card__task-note { color: #9eaea4; font-size: 12px; }
+.ohm-rec-card__done { color: #b8f36b; font-size: 13px; }
+.ohm-rec-card__error { margin: 16px 0 0; color: #f4b59d; font-size: 13px; line-height: 1.5; }
+@media (max-width: 600px) { .ohm-rec-card { padding: 21px 20px; } .ohm-rec-card__actions { align-items: flex-start; flex-direction: column; gap: 8px; } }

@@ -1,0 +1,44 @@
+{
+  "browserObservation": {
+    "controlledWeatherWorklistRowAbsent": true,
+    "newLabelVisible": "Model sizing review",
+    "source": "root agent live browser verification"
+  },
+  "disableDeployment": {
+    "completedDate": "2026-09-07T01:35:47.000Z",
+    "id": "0AfEc00000nY3P4KAK",
+    "numberComponentErrors": 0,
+    "numberComponentsDeployed": 1,
+    "startDate": "2026-09-07T01:35:46.000Z",
+    "status": "Succeeded",
+    "success": true
+  },
+  "environment": "ohm-audit-lab scratch org",
+  "metadataHashes": {
+    "originalSha256": "3f211cb07e9a6461b8578b886b886010ab7534d2da3ddac7c93c9062f07c012f",
+    "restoredSha256": "3f211cb07e9a6461b8578b886b886010ab7534d2da3ddac7c93c9062f07c012f"
+  },
+  "originalValue": true,
+  "restoreDeployment": {
+    "completedDate": "2026-09-07T01:38:57.000Z",
+    "id": "0AfEc00000nY5ibKAC",
+    "numberComponentErrors": 0,
+    "numberComponentsDeployed": 1,
+    "startDate": "2026-09-07T01:38:56.000Z",
+    "status": "Succeeded",
+    "success": true
+  },
+  "restoredValue": true,
+  "schemaVersion": 1,
+  "setting": "MobileSettings.enableS1EncryptedStoragePref2",
+  "temporaryValue": false,
+  "verification": {
+    "allOtherMobileSettingsUnchanged": true,
+    "applicationCodeChanged": false,
+    "authenticationSettingsIncluded": false,
+    "disabledValueRetrieved": true,
+    "restoredMobileSettingsMatchOriginal": true,
+    "restoredValueRetrieved": true
+  },
+  "verifiedAt": "2026-09-07T01:39:42.121758+00:00"
+}

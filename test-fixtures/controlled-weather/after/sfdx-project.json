@@ -1,0 +1,12 @@
+{
+  "packageDirectories": [
+    {
+      "path": "force-app",
+      "default": true
+    }
+  ],
+  "name": "ohm-controlled-weather",
+  "namespace": "",
+  "sourceApiVersion": "67.0",
+  "sfdcLoginUrl": "https://login.salesforce.com"
+}

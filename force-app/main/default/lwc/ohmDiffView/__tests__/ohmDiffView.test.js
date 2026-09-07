@@ -1,14 +1,15 @@
 import { createElement } from 'lwc';
 import OhmDiffView from 'c/ohmDiffView';
-import getDiff from '@salesforce/apex/OhmAuditController.getDiff';
+import getDiff from '@salesforce/apex/OhmAuditController.getArtifactDiff';
 
 jest.mock(
-    '@salesforce/apex/OhmAuditController.getDiff',
+    '@salesforce/apex/OhmAuditController.getArtifactDiff',
     () => ({ default: jest.fn() }),
     { virtual: true }
 );
 
 const IMPROVED = {
+    comparable: true,
     plannerId: 'P1',
     label: 'Lead Triage',
     beforeReportId: 'R1',
@@ -73,7 +74,7 @@ describe('c-ohm-diff-view', () => {
         const el = create('P1');
         await flush();
 
-        expect(getDiff).toHaveBeenCalledWith({ plannerId: 'P1' });
+        expect(getDiff).toHaveBeenCalledWith({ plannerId: 'P1', artifactKey: null });
         expect(
             el.shadowRoot.querySelector('[data-id="before-grade"]').textContent
         ).toContain('F');
@@ -105,6 +106,17 @@ describe('c-ohm-diff-view', () => {
         expect(
             el.shadowRoot.querySelector('[data-id="delta-findings"]').textContent
         ).toContain('1 → 0 findings');
+    });
+
+    it('withholds improvement claims when the reports are not comparable', async () => {
+        getDiff.mockResolvedValue({ ...IMPROVED, comparable: false, energyDeltaWh: null });
+        const el = create('P1');
+        await flush();
+        const delta = el.shadowRoot.querySelector('[data-id="delta"]');
+        expect(delta.textContent).toContain('Comparison unavailable');
+        expect(delta.textContent).not.toContain('No improvement');
+        expect(delta.className).not.toContain('--improved');
+        expect(delta.className).not.toContain('--worse');
     });
 
     it('renders the instructions comparison with char counts', async () => {

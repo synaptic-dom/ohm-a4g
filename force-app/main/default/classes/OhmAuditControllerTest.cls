@@ -1,8 +1,5 @@
-/**
- * OhmAuditControllerTest — SPEC §S.10 gate.
- * startAudit runs the full sync pipeline against the LIVE org agent surface
- * (GenAi*Definition rows, e.g. the deployed Ohm_Spike_Agent) — no mocks: discovery
- * is inline Apex SOQL (canon C13), so the pipeline is testable end-to-end.
+/** Readout/Task/controller regressions use completed report fixtures from the shared engine.
+ * The asynchronous acquisition/queued endpoint contract is verified by OhmAuditCoordinatorTest.
  */
 @IsTest
 private class OhmAuditControllerTest {
@@ -12,7 +9,7 @@ private class OhmAuditControllerTest {
     @IsTest(SeeAllData=true) // GenAiPlannerDefinition/GenAiPluginDefinition/GenAiFunctionDefinition are org metadata rows
     static void testStartAuditReturnsCompleteReportWithReadout() {
         Test.startTest();
-        Id reportId = OhmAuditController.startAudit();
+        Id reportId = OhmAuditTestSupport.startAudit();
         Test.stopTest();
 
         System.assertNotEquals(null, reportId, 'startAudit must return the reportId (== runId)');
@@ -20,14 +17,14 @@ private class OhmAuditControllerTest {
         OhmDTO.AuditReadoutDTO dto = OhmAuditController.getAuditStatus(reportId);
         System.assertNotEquals(null, dto, 'readout must load');
         System.assertEquals(reportId, dto.reportId);
-        System.assertEquals('Complete', dto.runStatus, 'sync pipeline must finish Complete');
+        System.assertEquals('Complete', dto.runStatus, 'shared deterministic pipeline must finish Complete');
         System.assertEquals(100, dto.percentComplete);
         System.assert(dto.agentsDiscovered >= 1,
             'live spike agent (Ohm_Spike_Agent) must be discovered; got ' + dto.agentsDiscovered);
         System.assert(dto.actionsDiscovered >= 1,
             'live spike apex action must be discovered; got ' + dto.actionsDiscovered);
-        System.assertNotEquals(null, dto.efficiencyGrade, 'grade stamped');
-        System.assertNotEquals(null, dto.efficiencyScore, 'score stamped');
+        System.assertEquals('IN', dto.efficiencyGrade, 'Unknown runtime/model coverage is explicitly incomplete.');
+        System.assertEquals(null, dto.efficiencyScore, 'Incomplete coverage withholds the numeric score.');
         System.assertEquals(false, dto.telemetryBacked, 'modeled figures are disclosed as non-telemetry');
         System.assertNotEquals(null, dto.findings, 'findings list always present (possibly empty)');
         System.assertNotEquals(null, dto.assumptions, 'assumptions disclosed (F10)');
@@ -130,6 +127,31 @@ private class OhmAuditControllerTest {
             [SELECT Remediation_Task_Id__c FROM Finding__c WHERE Id = :row.Id].Remediation_Task_Id__c);
     }
 
+    @IsTest
+    static void testPrimitiveTaskDoorUsesSavedEvidenceAndPreservesAssignment() {
+        Id reportId = new OhmPersistenceService().createReport();
+        Finding__c finding = new Finding__c(
+            Agent_Audit_Report__c = reportId, Signal_Type__c = 'INSTRUCTION_BLOAT',
+            Fix_Type__c = 'Trim_Instructions', Recommended_Target__c = '500 tokens',
+            Recommendation_Text__c = 'Keep the weather conditions and remove repeated prose.',
+            Annual_Energy_Savings_Wh__c = 321, Generated_By__c = 'Deterministic'
+        );
+        insert finding;
+        Id taskId = OhmAuditController.createFindingRemediationTask(finding.Id, 'Review against the published source.');
+        Task task = [SELECT WhatId, Description, OwnerId FROM Task WHERE Id = :taskId];
+        System.assertEquals(reportId, task.WhatId);
+        System.assert(task.Description.contains(finding.Recommendation_Text__c));
+        System.assert(task.Description.contains('Estimated annual energy savings (central): 321'));
+        System.assert(task.Description.contains('Review against the published source.'));
+        Date due = Date.today().addDays(10);
+        update new Task(Id = taskId, ActivityDate = due, Status = 'In Progress');
+        System.assertEquals(taskId, OhmAuditController.createFindingRemediationTask(finding.Id, null));
+        task = [SELECT OwnerId, ActivityDate, Status FROM Task WHERE Id = :taskId];
+        System.assertEquals(UserInfo.getUserId(), task.OwnerId);
+        System.assertEquals(due, task.ActivityDate);
+        System.assertEquals('In Progress', task.Status);
+    }
+
     // ---------- estimateFootprint aura twin (C5: per-element singular engine) ----------
 
     @IsTest
@@ -159,12 +181,30 @@ private class OhmAuditControllerTest {
 
     // ========================= v2 Fleet Workbench (SPEC-ohm-v2 §4) =========================
 
-    /** The Ohm_Waste_Demo planner (the bloated Lead Triage fixture) — resolved from live metadata. */
+    /** Current Agent Script publication; completed-report helper supplies synthetic bloat. */
     private static Id wastePlannerId() {
-        List<GenAiPlannerDefinition> ps = [
-            SELECT Id FROM GenAiPlannerDefinition WHERE DeveloperName = 'Ohm_Waste_Demo' LIMIT 1
-        ];
-        return ps.isEmpty() ? null : ps[0].Id;
+        return OhmAuditTestSupport.scriptPlannerId();
+    }
+
+    @IsTest(SeeAllData=true)
+    static void testLegacyPlannerCannotQueueAnAuditOrAppearInAcquisition() {
+        GenAiPlannerDefinition legacy = [SELECT Id FROM GenAiPlannerDefinition
+            WHERE DeveloperName = 'Ohm_Waste_Demo' LIMIT 1];
+        Integer reportCount = [SELECT COUNT() FROM Agent_Audit_Report__c];
+        Boolean rejected = false;
+        try {
+            OhmAuditController.auditProcess(legacy.Id);
+        } catch (AuraHandledException ex) {
+            rejected = true;
+        }
+        System.assert(rejected, 'Direct entry must reject legacy planners before enqueueing work.');
+        System.assertEquals(reportCount, [SELECT COUNT() FROM Agent_Audit_Report__c], 'Rejected targets create no report.');
+        OhmDTO.AgentModel scoped = new OhmDiscoveryService().discoverForRetrieval(legacy.Id);
+        System.assertEquals(0, scoped.agentsById.size());
+        System.assert(scoped.discoveryErrors[0].contains('Agent Script bundles only'));
+        OhmDTO.AgentModel orgWide = new OhmDiscoveryService().discoverForRetrieval(null);
+        System.assert(!orgWide.agentsById.containsKey(String.valueOf(legacy.Id)));
+        System.assertEquals(null, rowFor(OhmAuditController.getFleet(), legacy.Id));
     }
 
     private static OhmDTO.ProcessSummaryDTO rowFor(List<OhmDTO.ProcessSummaryDTO> fleet, Id plannerId) {
@@ -189,14 +229,14 @@ private class OhmAuditControllerTest {
         System.assert(!fleet.isEmpty(), 'live org has agents; fleet must be non-empty');
 
         Id wasteId = wastePlannerId();
-        System.assertNotEquals(null, wasteId, 'Ohm_Waste_Demo planner must exist in the org');
+        System.assertNotEquals(null, wasteId, 'Published Weather Agent Script fixture must exist in the org');
         OhmDTO.ProcessSummaryDTO waste = rowFor(fleet, wasteId);
-        System.assertNotEquals(null, waste, 'the Waste Demo process must appear in the fleet');
+        System.assertNotEquals(null, waste, 'the Weather fixture process must appear in the fleet');
         System.assertNotEquals(null, waste.plannerApiName, 'apiName populated by listFleet');
         System.assertNotEquals(null, waste.label, 'label populated by listFleet');
         System.assertNotEquals(null, waste.domain, 'domain derived by listFleet');
         System.assert(waste.topicCount != null && waste.topicCount >= 1,
-            'Waste Demo has at least its Lead Triage topic; got ' + waste.topicCount);
+            'Weather fixture has at least one topic; got ' + waste.topicCount);
 
         // audited=false when no PROCESS-scoped report has been committed for this planner
         Integer committed = [
@@ -215,34 +255,49 @@ private class OhmAuditControllerTest {
     @IsTest(SeeAllData=true)
     static void testAuditProcessPersistsScopedReportAndFleetReflectsGrade() {
         Id wasteId = wastePlannerId();
-        System.assertNotEquals(null, wasteId, 'Ohm_Waste_Demo planner must exist in the org');
+        System.assertNotEquals(null, wasteId, 'Published Weather Agent Script fixture must exist in the org');
 
         Test.startTest();
-        Id reportId = OhmAuditController.auditProcess(wasteId);
+        Id reportId = OhmAuditTestSupport.auditProcess(wasteId);
         Test.stopTest();
 
         System.assertNotEquals(null, reportId, 'auditProcess returns the report Id (== runId)');
 
         Agent_Audit_Report__c rep = [
             SELECT Id, Target_Type__c, Target_Planner_Id__c, Target_Planner_Api_Name__c,
-                   Run_Status__c, Efficiency_Grade__c
+                   Run_Status__c, Efficiency_Grade__c, Coverage_Status__c, Efficiency_Score__c
             FROM Agent_Audit_Report__c WHERE Id = :reportId
         ];
         System.assertEquals('Process', rep.Target_Type__c, 'report is process-scoped');
         System.assertEquals(String.valueOf(wasteId), rep.Target_Planner_Id__c, 'report tagged with planner id');
         System.assertNotEquals(null, rep.Target_Planner_Api_Name__c, 'report tagged with planner api name');
-        System.assertEquals('Complete', rep.Run_Status__c, 'sync process audit finishes Complete');
-        System.assertEquals('F', rep.Efficiency_Grade__c,
-            'the 5400-char bloated Lead Triage scope drives the process to grade F; got ' + rep.Efficiency_Grade__c);
+        System.assertEquals('Complete', rep.Run_Status__c, 'completed report fixture finishes Complete');
+        System.assertEquals('IN', rep.Efficiency_Grade__c, 'Known bloat does not fill missing runtime/model coverage.');
+        System.assertEquals('Incomplete', rep.Coverage_Status__c);
+        System.assertEquals(null, rep.Efficiency_Score__c);
 
         // re-called getFleet joins the latest process report → audited, grade F
         List<OhmDTO.ProcessSummaryDTO> fleet = OhmAuditController.getFleet();
         OhmDTO.ProcessSummaryDTO waste = rowFor(fleet, wasteId);
         System.assertNotEquals(null, waste, 'waste process still in fleet');
         System.assertEquals(true, waste.audited, 'process now shows audited');
-        System.assertEquals('F', waste.grade, 'fleet row reflects the process grade F');
+        System.assertEquals('IN', waste.grade, 'fleet row reflects incomplete coverage.');
         System.assertEquals(reportId, waste.latestReportId, 'fleet row points at the latest report');
         System.assertNotEquals(null, waste.lastAudited, 'lastAudited stamped');
+        // The footprint strip needs the requests/year behind the modeled figures, never a bare number.
+        System.assertNotEquals(null, waste.impactFactors, 'fleet rows disclose the modeling constants');
+        if (waste.energyWhCentral != null) {
+            System.assert(waste.annualCalls > 0, 'a modeled footprint carries the requests/year it assumed');
+            System.assertNotEquals(null, waste.co2eGCentral, 'CO2e travels with energy');
+            System.assertNotEquals(null, waste.waterMlCentral, 'water travels with energy');
+            System.assertNotEquals(null, waste.energyWhHigh, 'the band travels with the central figure');
+        }
+        OhmDTO.ProcessDetailDTO detail = OhmAuditController.getProcessDetail(wasteId);
+        System.assertNotEquals(null, detail.impactFactors, 'detail discloses the modeling constants');
+        if (detail.energyWhCentral != null) {
+            System.assert(detail.annualCalls > 0, 'detail carries the requests/year it assumed');
+            System.assertNotEquals(null, detail.co2eGCentral);
+        }
     }
 
     // ---------- getProcessDetail: nodes with the bloated topic marked wasteful ----------
@@ -250,10 +305,10 @@ private class OhmAuditControllerTest {
     @IsTest(SeeAllData=true)
     static void testGetProcessDetailMarksBloatedTopicWasteful() {
         Id wasteId = wastePlannerId();
-        System.assertNotEquals(null, wasteId, 'Ohm_Waste_Demo planner must exist in the org');
+        System.assertNotEquals(null, wasteId, 'Published Weather Agent Script fixture must exist in the org');
 
         Test.startTest();
-        OhmAuditController.auditProcess(wasteId);           // findings must exist to mark nodes
+        OhmAuditTestSupport.auditProcess(wasteId);           // findings must exist to mark nodes
         OhmDTO.ProcessDetailDTO detail = OhmAuditController.getProcessDetail(wasteId);
         Test.stopTest();
 
@@ -261,10 +316,12 @@ private class OhmAuditControllerTest {
         System.assertEquals(String.valueOf(wasteId), String.valueOf(detail.plannerId));
         System.assertNotEquals(null, detail.domain, 'domain populated');
         System.assertNotEquals(null, detail.reportId, 'latest process report joined in');
-        System.assertEquals('F', detail.grade, 'process detail carries the grade');
+        System.assertEquals('IN', detail.grade, 'process detail carries incomplete coverage.');
+        System.assertEquals('Incomplete', detail.coverageStatus);
+        System.assert(!detail.coverageWarnings.isEmpty(), 'The missing evidence is disclosed.');
         System.assert(detail.nodes != null && !detail.nodes.isEmpty(), 'node list built from discoverProcess');
 
-        // find the bloated Lead Triage topic node (by name, else the first wasteful topic)
+        // find the synthetic bloat topic node (by name, else the first wasteful topic)
         OhmDTO.NodeDTO triage;
         for (OhmDTO.NodeDTO n : detail.nodes) {
             if (n == null || n.nodeType != 'Topic') { continue; }
@@ -276,7 +333,7 @@ private class OhmAuditControllerTest {
                 if (n != null && n.nodeType == 'Topic' && n.wasteful == true) { triage = n; break; }
             }
         }
-        System.assertNotEquals(null, triage, 'the bloated Lead Triage topic node must be present');
+        System.assertNotEquals(null, triage, 'the synthetic bloat topic node must be present');
         System.assertEquals(true, triage.wasteful, 'the bloated topic node is marked wasteful');
         System.assert(String.isNotBlank(triage.instructions), 'topic instructions (Scope) populated');
         System.assertEquals(InstructionBloatDetector.SIGNAL, triage.signalType,
@@ -298,16 +355,16 @@ private class OhmAuditControllerTest {
     @IsTest(SeeAllData=true)
     static void testGetFindingsDedupsAcrossReAudits() {
         Id wasteId = wastePlannerId();
-        System.assertNotEquals(null, wasteId, 'Ohm_Waste_Demo planner must exist in the org');
+        System.assertNotEquals(null, wasteId, 'Published Weather Agent Script fixture must exist in the org');
 
         Test.startTest();
-        OhmAuditController.auditProcess(wasteId);   // first audit
-        OhmAuditController.auditProcess(wasteId);   // re-audit the SAME process
+        OhmAuditTestSupport.auditProcess(wasteId);   // first audit
+        OhmAuditTestSupport.auditProcess(wasteId);   // re-audit the SAME process
         List<OhmDTO.WorklistItemDTO> items = OhmAuditController.getFindings(null, null);
         Test.stopTest();
 
         System.assertNotEquals(null, items, 'getFindings must never return null');
-        System.assert(!items.isEmpty(), 'at least one waste finding after auditing the Waste Demo process');
+        System.assert(!items.isEmpty(), 'at least one waste finding after auditing the Weather fixture process');
 
         // dedup: no two items share (plannerApiName|artifactLabel|signal)
         Set<String> keys = new Set<String>();
@@ -345,6 +402,7 @@ private class OhmAuditControllerTest {
     static void testGetFindingsAppliesStatusAndSeverityFilters() {
         OhmPersistenceService svc = new OhmPersistenceService();
         Id reportId = svc.createReport();
+        svc.updateProgress(reportId, 'Complete', 'Audit complete', 100);
         insert new List<Finding__c>{
             new Finding__c(Agent_Audit_Report__c = reportId, Signal_Type__c = 'INSTRUCTION_BLOAT',
                 Severity__c = 'High', Artifact_Label__c = 'Alpha', Annual_Energy_Savings_Wh__c = 5000,
@@ -446,6 +504,7 @@ private class OhmAuditControllerTest {
     static void testGetRecommendationsRanksQuickWinsBySavingsPerEffort() {
         OhmPersistenceService svc = new OhmPersistenceService();
         Id reportId = svc.createReport();
+        svc.updateProgress(reportId, 'Complete', 'Audit complete', 100);
         // A: 6000 Wh / High(3) = 2000 ; B: 5000 Wh / Low(1) = 5000 ; C: 9000 Wh Dismissed (excluded)
         insert new List<Finding__c>{
             new Finding__c(Agent_Audit_Report__c = reportId, Signal_Type__c = 'INSTRUCTION_BLOAT',
@@ -495,11 +554,11 @@ private class OhmAuditControllerTest {
     @IsTest(SeeAllData=true)
     static void testGetTrendsPerProcessReturnsChronologicalPoints() {
         Id wasteId = wastePlannerId();
-        System.assertNotEquals(null, wasteId, 'Ohm_Waste_Demo planner must exist in the org');
+        System.assertNotEquals(null, wasteId, 'Published Weather Agent Script fixture must exist in the org');
 
         Test.startTest();
-        OhmAuditController.auditProcess(wasteId);   // point 1
-        OhmAuditController.auditProcess(wasteId);   // point 2 (re-audit accumulates a trend point)
+        Id firstReport = OhmAuditTestSupport.auditProcess(wasteId);
+        Id secondReport = OhmAuditTestSupport.auditProcess(wasteId);
         OhmDTO.TrendDTO trend = OhmAuditController.getTrends(wasteId);
         Test.stopTest();
 
@@ -511,9 +570,12 @@ private class OhmAuditControllerTest {
         for (OhmDTO.TrendPointDTO p : trend.points) {
             System.assertNotEquals(null, p.reportId, 'each point carries its report id');
             System.assertNotEquals(null, p.auditedAt, 'each point carries a timestamp');
-            System.assertEquals('F', p.grade, 'the bloated Lead Triage process grades F each run');
+            if (p.reportId == firstReport || p.reportId == secondReport) {
+                System.assertEquals('IN', p.grade, 'Incomplete coverage is retained in history.');
+                System.assertEquals(null, p.score);
+                System.assert(p.energyWhCentral > 0, 'Known instruction scope still has modeled cost.');
+            }
         }
-        System.assertNotEquals(null, trend.firstEnergyWhCentral, 'first energy stamped');
         System.assertNotEquals(null, trend.lastEnergyWhCentral, 'last energy stamped');
         System.assertNotEquals(null, trend.realizedSavingsWh, 'realizedSavings stamped');
         System.assert(trend.realizedSavingsWh >= 0, 'realizedSavings is clamped at 0');
@@ -524,10 +586,11 @@ private class OhmAuditControllerTest {
     @IsTest(SeeAllData=true)
     static void testGetTrendsOrgReturnsPointsAndPerAgentHistory() {
         Id wasteId = wastePlannerId();
-        System.assertNotEquals(null, wasteId, 'Ohm_Waste_Demo planner must exist in the org');
+        System.assertNotEquals(null, wasteId, 'Published Weather Agent Script fixture must exist in the org');
 
+        Integer fleetPointsBefore = OhmAuditController.getTrends(null).points.size();
         Test.startTest();
-        OhmAuditController.auditProcess(wasteId);
+        OhmAuditTestSupport.auditProcess(wasteId);
         OhmDTO.TrendDTO trend = OhmAuditController.getTrends(null);
         Test.stopTest();
 
@@ -535,7 +598,7 @@ private class OhmAuditControllerTest {
         System.assertEquals('Org', trend.scope, 'null planner → org scope');
         System.assertEquals(null, trend.plannerId, 'org scope has no plannerId');
         System.assertNotEquals(null, trend.points, 'org points list present');
-        System.assert(!trend.points.isEmpty(), 'org points populated after at least one audit');
+        System.assertEquals(fleetPointsBefore, trend.points.size(), 'A process audit must not create a fleet trend point.');
 
         System.assertNotEquals(null, trend.perAgent, 'perAgent history present for org scope');
         OhmDTO.AgentGradeHistoryDTO waste = perAgentFor(trend.perAgent, wasteId);
@@ -543,7 +606,7 @@ private class OhmAuditControllerTest {
         System.assertNotEquals(null, waste.label, 'perAgent label derived');
         System.assert(waste.gradeHistory != null && !waste.gradeHistory.isEmpty(),
             'grade history populated for the audited planner');
-        System.assertEquals('F', waste.currentGrade, 'current grade is the newest process grade (F)');
+        System.assertEquals('IN', waste.currentGrade, 'Latest process history retains incomplete coverage.');
     }
 
     // ---------- getDiff: two process audits → before/after with deltas + improved flag ----------
@@ -551,12 +614,17 @@ private class OhmAuditControllerTest {
     @IsTest(SeeAllData=true)
     static void testGetDiffAfterTwoAuditsReturnsBeforeAfterWithDeltas() {
         Id wasteId = wastePlannerId();
-        System.assertNotEquals(null, wasteId, 'Ohm_Waste_Demo planner must exist in the org');
+        System.assertNotEquals(null, wasteId, 'Published Weather Agent Script fixture must exist in the org');
 
         Test.startTest();
-        OhmAuditController.auditProcess(wasteId);   // before
-        OhmAuditController.auditProcess(wasteId);   // after
-        OhmDTO.DiffDTO diff = OhmAuditController.getDiff(wasteId);
+        OhmAuditTestSupport.auditProcess(wasteId);   // before
+        Id afterReport = OhmAuditTestSupport.auditProcess(wasteId);
+        Audit_Artifact_Snapshot__c source = [
+            SELECT Artifact_Key__c FROM Audit_Artifact_Snapshot__c
+            WHERE Agent_Audit_Report__c = :afterReport AND Artifact_Type__c = 'Topic' AND Coverage_Status__c = 'Complete'
+            ORDER BY Character_Count__c DESC LIMIT 1
+        ];
+        OhmDTO.DiffDTO diff = OhmAuditController.getArtifactDiff(wasteId, source.Artifact_Key__c);
         Test.stopTest();
 
         System.assertNotEquals(null, diff, 'getDiff must never return null');
@@ -564,18 +632,18 @@ private class OhmAuditControllerTest {
         System.assertNotEquals(null, diff.beforeReportId, 'before report set (2nd-newest)');
         System.assertNotEquals(null, diff.afterReportId, 'after report set (newest)');
         System.assertNotEquals(diff.beforeReportId, diff.afterReportId, 'before and after are distinct reports');
-        System.assertEquals('F', diff.afterGrade, 'after grade F');
-        System.assertEquals('F', diff.beforeGrade, 'before grade F');
+        System.assertEquals('IN', diff.afterGrade);
+        System.assertEquals('IN', diff.beforeGrade);
+        System.assertEquals(true, diff.comparable, 'The selected known instruction scope has unchanged modeled assumptions.');
 
         // deltas present; two identical audits of an unchanged process → zero deltas, not improved
-        System.assertNotEquals(null, diff.scoreDelta, 'scoreDelta computed when both scores present');
-        System.assertEquals(0, diff.scoreDelta, 'no change → scoreDelta 0');
+        System.assertEquals(null, diff.scoreDelta, 'Incomplete coverage does not create a numeric grade improvement.');
         System.assertEquals(false, diff.improved, 'unchanged process is not "improved"');
         System.assertNotEquals(null, diff.energyDeltaWh, 'energyDelta computed');
         System.assertEquals(0, diff.energyDeltaWh, 'unchanged process → zero energy delta');
         System.assertNotEquals(null, diff.findingsDelta, 'findingsDelta computed');
 
-        // instructions snapshot captured on the bloat finding of each report → diff shows before/after text
+        // Exact same artifact snapshots survive independently of findings.
         System.assert(String.isNotBlank(diff.afterInstructions),
             'after instructions snapshot present (bloat finding scope)');
         System.assert(String.isNotBlank(diff.beforeInstructions),
@@ -587,7 +655,7 @@ private class OhmAuditControllerTest {
     @IsTest(SeeAllData=true)
     static void testGetDiffSingleAuditReturnsAfterOnly() {
         Id wasteId = wastePlannerId();
-        System.assertNotEquals(null, wasteId, 'Ohm_Waste_Demo planner must exist in the org');
+        System.assertNotEquals(null, wasteId, 'Published Weather Agent Script fixture must exist in the org');
 
         // guard: this test relies on exactly one report existing; skip if prior process reports linger
         Integer existing = [
@@ -596,7 +664,7 @@ private class OhmAuditControllerTest {
         ];
 
         Test.startTest();
-        Id reportId = OhmAuditController.auditProcess(wasteId);
+        Id reportId = OhmAuditTestSupport.auditProcess(wasteId);
         OhmDTO.DiffDTO diff = OhmAuditController.getDiff(wasteId);
         Test.stopTest();
 
@@ -614,28 +682,30 @@ private class OhmAuditControllerTest {
     @IsTest(SeeAllData=true)
     static void testAuditProcessCapturesInstructionSnapshotForBloatFinding() {
         Id wasteId = wastePlannerId();
-        System.assertNotEquals(null, wasteId, 'Ohm_Waste_Demo planner must exist in the org');
+        System.assertNotEquals(null, wasteId, 'Published Weather Agent Script fixture must exist in the org');
 
         Test.startTest();
-        Id reportId = OhmAuditController.auditProcess(wasteId);
+        Id reportId = OhmAuditTestSupport.auditProcess(wasteId);
         Test.stopTest();
 
-        List<Finding__c> bloat = [
-            SELECT Id, Instructions_Snapshot__c, Artifact_Type__c
-            FROM Finding__c
-            WHERE Agent_Audit_Report__c = :reportId
-              AND Signal_Type__c = :InstructionBloatDetector.SIGNAL
-        ];
-        System.assert(!bloat.isEmpty(), 'the bloated Lead Triage scope produces an INSTRUCTION_BLOAT finding');
+        // Read through the source-evidence service: Source_Json__c preserves the exact source
+        // whitespace that Salesforce can trim from the convenience long-text field.
+        List<Audit_Artifact_Snapshot__c> sources = new List<Audit_Artifact_Snapshot__c>();
+        for (Audit_Artifact_Snapshot__c source : OhmArtifactSnapshotService.load(new Set<Id>{reportId}).get(reportId).values()) {
+            if (source.Artifact_Type__c == 'Topic') sources.add(source);
+        }
+        System.assert(!sources.isEmpty(), 'Every discovered topic has independent source evidence.');
         Boolean sawSnapshot = false;
-        for (Finding__c f : bloat) {
-            if (String.isNotBlank(f.Instructions_Snapshot__c)) {
+        for (Audit_Artifact_Snapshot__c source : sources) {
+            if (String.isNotBlank(source.Instructions__c) && source.Instructions__c.length() > 100) {
                 sawSnapshot = true;
-                System.assert(f.Instructions_Snapshot__c.length() > 100,
-                    'the captured raw instructions are substantial (the 5400-char bloated scope)');
-                break;
+                System.assertEquals('Complete', source.Coverage_Status__c);
+                System.assertEquals(OhmPersistenceService.sha256(source.Instructions__c), source.Source_Hash__c);
+                System.assertEquals(source.Character_Count__c, source.Instructions__c.length(),
+                    'The exact audited source, including its trailing whitespace, survives the snapshot.');
+                System.assertNotEquals(null, source.Artifact_Key__c);
             }
         }
-        System.assert(sawSnapshot, 'at least one bloat finding captured its raw instructions snapshot');
+        System.assert(sawSnapshot, 'The audited raw topic instructions survive independently of findings.');
     }
 }

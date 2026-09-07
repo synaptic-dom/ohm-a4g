@@ -1,167 +1,124 @@
 import { createElement } from 'lwc';
 import OhmRecommendations from 'c/ohmRecommendations';
-import getRecommendations from '@salesforce/apex/OhmAuditController.getRecommendations';
-import assignFinding from '@salesforce/apex/OhmAuditController.assignFinding';
+import getFleet from '@salesforce/apex/OhmAuditController.getFleet';
+import getReviewRecommendations from '@salesforce/apex/OhmReviewRecommendationService.getReviewRecommendations';
+import createReviewTask from '@salesforce/apex/OhmReviewRecommendationService.createReviewTask';
+import getFindings from '@salesforce/apex/OhmAuditController.getFindings';
 
-// createRemediationTask is imported by the (untouched) v1 path; stub it so the
-// module resolves even though these standalone tests never exercise it.
-jest.mock(
-    '@salesforce/apex/OhmAuditController.createRemediationTask',
-    () => ({ default: jest.fn() }),
-    { virtual: true }
-);
-jest.mock(
-    '@salesforce/apex/OhmAuditController.getRecommendations',
-    () => ({ default: jest.fn() }),
-    { virtual: true }
-);
-jest.mock(
-    '@salesforce/apex/OhmAuditController.assignFinding',
-    () => ({ default: jest.fn() }),
-    { virtual: true }
-);
-jest.mock('@salesforce/user/Id', () => ({ default: '005000000000USER' }), {
-    virtual: true
-});
+jest.mock('@salesforce/apex/OhmAuditController.getFleet', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock('@salesforce/apex/OhmReviewRecommendationService.getReviewRecommendations', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock('@salesforce/apex/OhmReviewRecommendationService.createReviewTask', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock('@salesforce/apex/OhmAuditController.getFindings', () => ({ default: jest.fn() }), { virtual: true });
 
-function mockRecs() {
-    return [
-        {
-            findingId: 'FIND-1',
-            signal: 'INSTRUCTION_BLOAT',
-            severity: 'High',
-            processLabel: 'Lead Concierge',
-            plannerApiName: 'Lead_Concierge',
-            savingsCentralWh: 52921,
-            savingsLowWh: 47041,
-            savingsHighWh: 58802,
-            fixType: 'Trim_Instructions',
-            recommendedTarget: 'Trim the scope',
-            recommendationText: 'Cut 800 excess tokens from the topic scope.',
-            findingStatus: 'Open',
-            taskId: null,
-            effort: 'Low'
-        },
-        {
-            findingId: 'FIND-2',
-            signal: 'MODEL_RIGHTSIZING',
-            severity: 'Medium',
-            processLabel: 'Order Support',
-            plannerApiName: 'Order_Support',
-            savingsCentralWh: 16083,
-            savingsLowWh: 14000,
-            savingsHighWh: 18000,
-            fixType: 'Downsize_Model',
-            recommendedTarget: 'Use a smaller model',
-            recommendationText: 'Bind the cheaper model to this action.',
-            findingStatus: 'Open',
-            taskId: null,
-            effort: 'Medium'
-        }
-    ];
-}
+const ITEM = {
+    key: 'review-key', reportId: 'R1', plannerId: 'P1', bundleLabel: 'Schedule Assistant',
+    artifactId: 'N1', nodeId: 'N1', artifactKey: 'Action:Schedule', artifactLabel: 'Generate Schedule',
+    categoryId: 'CALLS', categoryLabel: 'Call efficiency', rating: 'B',
+    recommendation: 'Evaluate moving overlap checks into validated code.',
+    explanation: 'The instruction assigns a bounded calculation to the model.',
+    preserve: 'Keep the schedule and all required checks.',
+    validation: 'Compare boundary cases and the final output.',
+    evidence: [{ artifactId: 'N1', nodeId: 'N1', artifactKey: 'Action:Schedule', artifactLabel: 'Generate Schedule', quote: 'Calculate all overlaps.' }]
+};
+function page(overrides = {}) { return { plannerId: 'P1', bundleLabel: 'Schedule Assistant', sourceCurrent: true, reviewAvailable: true, items: [{ ...ITEM }], ...overrides }; }
+async function flush(times = 12) { for (let i = 0; i < times; i += 1) { await Promise.resolve(); } }
+function create() { const element = createElement('c-ohm-recommendations', { is: OhmRecommendations }); element.standalone = true; document.body.appendChild(element); return element; }
+function card(element) { return element.shadowRoot.querySelector('c-ohm-recommendation-card'); }
 
-async function flush(times = 6) {
-    for (let i = 0; i < times; i += 1) {
-        // eslint-disable-next-line no-await-in-loop
-        await Promise.resolve();
-    }
-}
-
-function create(props = {}) {
-    const el = createElement('c-ohm-recommendations', {
-        is: OhmRecommendations
-    });
-    el.standalone = true;
-    Object.assign(el, props);
-    document.body.appendChild(el);
-    return el;
-}
-
-function cards(el) {
-    return Array.from(el.shadowRoot.querySelectorAll('[data-id="card"]'));
-}
-
-describe('c-ohm-recommendations (standalone quick-wins tab)', () => {
+describe('saved review recommendations', () => {
     beforeEach(() => {
-        getRecommendations.mockReset();
-        assignFinding.mockReset();
-        getRecommendations.mockResolvedValue(mockRecs());
-        assignFinding.mockResolvedValue('00T000000000009');
+        jest.clearAllMocks();
+        getFleet.mockResolvedValue([{ plannerId: 'P1', label: 'Schedule Assistant' }]);
+        getReviewRecommendations.mockResolvedValue(page());
+        createReviewTask.mockResolvedValue('00T000000000009');
+        getFindings.mockResolvedValue([]);
     });
-    afterEach(() => {
-        while (document.body.firstChild) {
-            document.body.removeChild(document.body.firstChild);
-        }
+    afterEach(() => { while (document.body.firstChild) document.body.removeChild(document.body.firstChild); });
+
+    it('loads recommendations from each bundle’s current saved review without modeled savings', async () => {
+        const element = create(); await flush();
+        expect(getFleet).toHaveBeenCalledTimes(1);
+        expect(getReviewRecommendations).toHaveBeenCalledWith({ plannerId: 'P1' });
+        expect(card(element).recommendation).toMatchObject(ITEM);
+        expect(element.shadowRoot.querySelector('[data-id="coverage"]').textContent).toContain('1 recommendation · 1 of 1');
+        expect(element.shadowRoot.textContent).not.toMatch(/\bWh\b/);
+        expect(getFindings).not.toHaveBeenCalled();
     });
-
-    it('self-fetches and renders ranked quick-win cards', async () => {
-        const el = create();
+    it('creates a task using only saved server identities and shows its returned link', async () => {
+        const element = create(); await flush();
+        card(element).dispatchEvent(new CustomEvent('createtask', { detail: { plannerId: 'P1', reportId: 'R1', key: 'review-key' } }));
         await flush();
-
-        expect(getRecommendations).toHaveBeenCalledTimes(1);
-        const c = cards(el);
-        expect(c).toHaveLength(2);
-
-        const ranks = Array.from(
-            el.shadowRoot.querySelectorAll('[data-id="rank"]')
-        ).map((n) => n.textContent.trim());
-        expect(ranks).toEqual(['#1', '#2']);
-
-        // savings band + effort chip render
-        expect(el.shadowRoot.textContent).toContain('52,921');
-        expect(el.shadowRoot.textContent).toContain('Effort: Low');
-        expect(el.shadowRoot.textContent).toContain('Cut 800 excess tokens');
+        expect(createReviewTask).toHaveBeenCalledWith({ plannerId: 'P1', reportId: 'R1', key: 'review-key' });
+        expect(card(element).recommendation.taskId).toBe('00T000000000009');
+        expect(card(element).recommendation.taskStatus).toBeUndefined();
+        expect(card(element).shadowRoot.querySelector('[data-id="rec-task-link"]').getAttribute('href')).toBe('/lightning/r/Task/00T000000000009/view');
+        expect(card(element).shadowRoot.textContent).not.toContain('Applied');
+        card(element).dispatchEvent(new CustomEvent('createtask', { detail: { plannerId: 'P1', reportId: 'R1', key: 'review-key' } }));
+        await flush(); expect(createReviewTask).toHaveBeenCalledTimes(1);
     });
-
-    it('create-task calls assignFinding to the current user and flips the card', async () => {
-        const el = create();
+    it('ignores unknown recommendation identities and displays server rejection on the correct card', async () => {
+        createReviewTask.mockRejectedValue({ body: { message: 'Source changed. Run a new audit.' } });
+        const element = create(); await flush();
+        card(element).dispatchEvent(new CustomEvent('createtask', { detail: { plannerId: 'P1', reportId: 'R1', key: 'unknown' } }));
+        expect(createReviewTask).not.toHaveBeenCalled();
+        card(element).dispatchEvent(new CustomEvent('createtask', { detail: { plannerId: 'P1', reportId: 'R1', key: 'review-key' } }));
         await flush();
-
-        el.shadowRoot.querySelector('[data-id="create-task"]').click();
-        await flush();
-
-        expect(assignFinding).toHaveBeenCalledTimes(1);
-        expect(assignFinding.mock.calls[0][0]).toEqual({
-            findingId: 'FIND-1',
-            userId: '005000000000USER',
-            dueDate: null
-        });
-        expect(
-            el.shadowRoot.querySelector('[data-id="created"]')
-        ).not.toBeNull();
+        expect(card(element).errorMessage).toContain('Source changed');
+        expect(card(element).recommendation.taskId).toBeUndefined();
     });
-
-    it('surfaces an error on the failing card when assignFinding rejects', async () => {
-        assignFinding.mockRejectedValue({ body: { message: 'DML failed' } });
-        const el = create();
-        await flush();
-
-        el.shadowRoot.querySelector('[data-id="create-task"]').click();
-        await flush();
-
-        const err = el.shadowRoot.querySelector('[data-id="card-error"]');
-        expect(err).not.toBeNull();
-        expect(err.textContent).toContain('DML failed');
+    it('keeps available bundle recommendations when another source check fails', async () => {
+        getFleet.mockResolvedValue([{ plannerId: 'P1', label: 'Schedule Assistant' }, { plannerId: 'P2', label: 'Weather Assistant' }]);
+        getReviewRecommendations.mockImplementation(({ plannerId }) => plannerId === 'P1' ? Promise.resolve(page()) : Promise.reject(new Error('Metadata unavailable')));
+        const element = create(); await flush();
+        expect(card(element)).not.toBeNull();
+        const unavailable = element.shadowRoot.querySelector('[data-id="unavailable-bundle"]');
+        expect(unavailable.textContent).toContain('Weather Assistant');
+        expect(unavailable.textContent).toContain('Metadata unavailable');
+        const open = jest.fn(); element.addEventListener('openprocess', open);
+        unavailable.querySelector('button').click();
+        expect(open.mock.calls[0][0].detail).toMatchObject({ plannerId: 'P2', label: 'Weather Assistant' });
     });
-
-    it('shows an on-brand empty state when there are no quick wins', async () => {
-        getRecommendations.mockResolvedValue([]);
-        const el = create();
-        await flush();
-
-        const empty = el.shadowRoot.querySelector('[data-id="empty"]');
-        expect(empty).not.toBeNull();
-        expect(empty.textContent).toContain('audit a process from the Fleet tab');
+    it('hides stale recommendations even if an unavailable response includes items', async () => {
+        getReviewRecommendations.mockResolvedValue(page({ sourceCurrent: false, reason: 'Source changed.' }));
+        const element = create(); await flush();
+        expect(card(element)).toBeNull();
+        expect(element.shadowRoot.textContent).toContain('Source changed.');
+        expect(element.shadowRoot.textContent).toContain('Your next step is a fresh review');
     });
-
-    it('is accessible in both Calm variants', async () => {
-        const dark = create();
-        await flush();
-        await expect(dark).toBeAccessible();
-
-        const calm = create({ calmMode: true });
-        await flush();
-        await expect(calm).toBeAccessible();
+    it('keeps a no-recommendation review distinct from a clean pass', async () => {
+        getReviewRecommendations.mockResolvedValue(page({ items: [] }));
+        const element = create(); await flush();
+        expect(element.shadowRoot.querySelector('[data-id="empty"]').textContent).toContain('insufficient evidence');
+        expect(element.shadowRoot.textContent).not.toContain('already running lean');
+    });
+    it('filters categories and omits Model Fit from the interface', async () => {
+        getReviewRecommendations.mockResolvedValue(page({ items: [ITEM, { ...ITEM, key: 'model', categoryId: 'MODEL', categoryLabel: 'Model fit' }] }));
+        const element = create(); await flush();
+        expect(element.shadowRoot.querySelectorAll('[data-id="card"]')).toHaveLength(1);
+        expect(element.shadowRoot.textContent).not.toContain('Model fit');
+        const filter = element.shadowRoot.querySelector('[data-id="filter-category"]');
+        filter.value = 'INPUT'; filter.dispatchEvent(new CustomEvent('change')); await flush();
+        expect(card(element)).toBeNull();
+        expect(element.shadowRoot.querySelector('[data-id="empty"]').textContent).toContain('match these filters');
+    });
+    it('loads existing detector work only when its disclosure is opened', async () => {
+        const element = create(); await flush();
+        expect(getFindings).not.toHaveBeenCalled();
+        element.shadowRoot.querySelector('[data-id="tracked-toggle"]').click(); await flush();
+        expect(getFindings).toHaveBeenCalledWith({ statusFilter: 'All', severityFilter: 'All' });
+        expect(element.shadowRoot.querySelector('c-ohm-findings-worklist')).not.toBeNull();
+    });
+    it('can retry a fleet failure without inventing recommendation coverage', async () => {
+        getFleet.mockRejectedValueOnce(new Error('Fleet unavailable'));
+        const element = create(); await flush();
+        expect(element.shadowRoot.querySelector('[data-id="load-error"]').textContent).toContain('Fleet unavailable');
+        expect(element.shadowRoot.querySelector('[data-id="coverage"]')).toBeNull();
+        element.shadowRoot.querySelector('[data-id="refresh"]').click(); await flush();
+        expect(card(element)).not.toBeNull();
+    });
+    it('is accessible with review cards and missing source coverage', async () => {
+        const element = create(); await flush(); await expect(element).toBeAccessible();
+        getReviewRecommendations.mockResolvedValue(page({ sourceCurrent: false }));
+        await element.refresh(); await flush(); await expect(element).toBeAccessible();
     });
 });

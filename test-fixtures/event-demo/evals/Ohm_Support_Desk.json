@@ -1,0 +1,62 @@
+{
+  "tests": [
+    {
+      "id": "support-damaged-lantern",
+      "steps": [
+        {
+          "type": "agent.create_session",
+          "id": "cs",
+          "use_agent_api": true
+        },
+        {
+          "type": "agent.send_message",
+          "id": "sm",
+          "session_id": "{cs.session_id}",
+          "utterance": "Draft a reply to this customer message: My TrekLite lantern arrived with a cracked lens. I bought it last Tuesday and my order reference is JUN-4201. I can send a photo. What should I do next?"
+        },
+        {
+          "type": "agent.get_state",
+          "id": "state",
+          "session_id": "{cs.session_id}"
+        },
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "utterance": "Draft a reply to this customer message: My TrekLite lantern arrived with a cracked lens. I bought it last Tuesday and my order reference is JUN-4201. I can send a photo. What should I do next?",
+          "expected": "Acknowledge the damage, ask the customer to provide a photo, and explain specialist replacement review without promising approval or requesting card information. Do not claim that an email was sent.",
+          "actual": "{sm.response}",
+          "threshold": 3.0
+        }
+      ]
+    },
+    {
+      "id": "support-missing-message",
+      "steps": [
+        {
+          "type": "agent.create_session",
+          "id": "cs",
+          "use_agent_api": true
+        },
+        {
+          "type": "agent.send_message",
+          "id": "sm",
+          "session_id": "{cs.session_id}",
+          "utterance": "Help me reply to a customer."
+        },
+        {
+          "type": "agent.get_state",
+          "id": "state",
+          "session_id": "{cs.session_id}"
+        },
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "utterance": "Help me reply to a customer.",
+          "expected": "Ask for the customer message or details of the issue rather than inventing a customer or order.",
+          "actual": "{sm.response}",
+          "threshold": 3.0
+        }
+      ]
+    }
+  ]
+}

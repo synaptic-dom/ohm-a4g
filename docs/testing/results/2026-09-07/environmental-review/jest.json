@@ -1,0 +1,30 @@
+{
+  "command": "npm run test:unit -- -- --runInBand",
+  "workingDirectory": "/Users/dom/Documents/ohm-a4g",
+  "date": "2026-09-07",
+  "recordedAtUtc": "2026-09-07T18:43:40Z",
+  "evidence": "Observed completed tool session 19652; no rerun",
+  "suites": {
+    "passed": 25,
+    "total": 25
+  },
+  "tests": {
+    "passed": 197,
+    "total": 197
+  },
+  "snapshots": 0,
+  "durationSeconds": 4.226,
+  "exitCode": 0,
+  "diffCheck": {
+    "command": "git diff --check -- force-app/main/default/lwc test-fixtures/review",
+    "exitCode": 0
+  },
+  "followUp": {
+    "reason": "Clarify source-token estimate wording after narrow citation wrap fix",
+    "command": "npm run test:unit -- -- --runInBand --runTestsByPath force-app/main/default/lwc/ohmReviewPanel/__tests__/ohmReviewPanel.test.js",
+    "suitesPassed": 1,
+    "testsPassed": 8,
+    "exitCode": 0,
+    "durationSeconds": 1.43
+  }
+}

@@ -20,6 +20,7 @@ private class OhmSignalServiceTest {
     @IsTest
     static void test_rate_cleanModel_gradeA() {
         OhmDTO.AgentModel g = new OhmDTO.AgentModel();
+        g.coverageComplete = true; // these fixtures explicitly supply the detector contract
         g.actions = new List<OhmDTO.ActionNode>{
             action('LookupCredit', 'Lookup credit via Apex', 'apex', null),
             action('CreateCase', 'Create case', 'flow', null)
@@ -42,7 +43,8 @@ private class OhmSignalServiceTest {
             finding('LLM_WHERE_DETERMINISTIC', 0.55),
             finding('INSTRUCTION_BLOAT', 1.0)
         };
-        OhmDTO.EfficiencyResult r = new OhmSignalService().rate(new OhmDTO.AgentModel(), findings);
+        OhmDTO.AgentModel complete = new OhmDTO.AgentModel(); complete.coverageComplete = true;
+        OhmDTO.EfficiencyResult r = new OhmSignalService().rate(complete, findings);
         System.assertEquals(1.05, r.weightedSeveritySum, 'weighted sum');
         System.assertEquals(1.5, r.maxPossible, 'max possible');
         System.assertEquals(30, r.score, 'grade math');
@@ -52,6 +54,7 @@ private class OhmSignalServiceTest {
     @IsTest
     static void test_analyze_fourSignalFixture_lowGrade() {
         OhmDTO.AgentModel g = new OhmDTO.AgentModel();
+        g.coverageComplete = true; // these fixtures explicitly supply the detector contract
         // (a)+(b): prompt action, deterministic label, oversized model
         g.actions = new List<OhmDTO.ActionNode>{
             action('ClassifyPriority', 'Classify and route priority into High/Medium/Low', 'prompt', 'LARGE')
@@ -88,6 +91,10 @@ private class OhmSignalServiceTest {
 
     @IsTest
     static void test_analyze_empty_noException() {
+        OhmDTO.EfficiencyResult unknown = new OhmSignalService().rate(new OhmDTO.AgentModel(), new List<OhmDTO.Finding>());
+        System.assertEquals('IN', unknown.grade);
+        System.assertEquals(null, unknown.score);
+        System.assertEquals('Incomplete', unknown.coverageStatus);
         OhmSignalService svc = new OhmSignalService();
         System.assertEquals(0, svc.analyze(null).size(), 'null -> empty');
         System.assertEquals(0, svc.analyze(new OhmDTO.AgentModel()).size(), 'empty graph -> empty');

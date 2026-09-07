@@ -1,6 +1,6 @@
 import { LightningElement, api, track } from 'lwc';
-import getAssistantContext from '@salesforce/apex/OhmAuditController.getAssistantContext';
-import askAssistant from '@salesforce/apex/OhmAuditController.askAssistant';
+import getAssistantContext from '@salesforce/apex/OhmAuditController.getArtifactAssistantContext';
+import askAssistant from '@salesforce/apex/OhmAuditController.askArtifactAssistant';
 import { formatNumber } from 'c/ohmConstants';
 
 /**
@@ -15,6 +15,17 @@ import { formatNumber } from 'c/ohmConstants';
 export default class OhmAskAssistant extends LightningElement {
     @api calmMode = false;
     @api processLabel;
+    @api expectedSourceHash;
+    _artifactKey;
+
+    @api
+    get artifactKey() { return this._artifactKey; }
+    set artifactKey(value) {
+        if (value !== this._artifactKey) {
+            this._artifactKey = value;
+            if (this._plannerId) this.refresh();
+        }
+    }
 
     @track context;
     @track turns = [];
@@ -27,6 +38,17 @@ export default class OhmAskAssistant extends LightningElement {
     _plannerId;
     _loadedFor;
     _seq = 0;
+    _focusRequested = false;
+    renderedCallback() {
+        const input = this.template.querySelector('[data-id="input"]');
+        if (input && input.value !== this.draftInput) input.value = this.draftInput;
+    }
+    @api
+    prepareQuestion(question, focusComposer = true) {
+        this.draftInput = typeof question === 'string' ? question : '';
+        this._focusRequested = focusComposer === true;
+        if (this.available && this._focusRequested) { this._focusRequested = false; this._refocusComposer(); }
+    }
 
     @api
     get plannerId() {
@@ -47,6 +69,7 @@ export default class OhmAskAssistant extends LightningElement {
 
     async loadContext() {
         const planner = this._plannerId;
+        const artifact = this._artifactKey;
         if (!planner) {
             return;
         }
@@ -57,21 +80,22 @@ export default class OhmAskAssistant extends LightningElement {
         this.turns = [];
         this.sendError = undefined;
         try {
-            const ctx = await getAssistantContext({ plannerId: planner });
+            const ctx = await getAssistantContext({ plannerId: planner, artifactKey: artifact || null });
             // G10: the process may have changed while we awaited — drop this stale context.
-            if (this._plannerId !== planner) {
+            if (this._plannerId !== planner || this._artifactKey !== artifact) {
                 return;
             }
             this.context = ctx;
         } catch (e) {
-            if (this._plannerId !== planner) {
+            if (this._plannerId !== planner || this._artifactKey !== artifact) {
                 return;
             }
             this.contextError = this._msg(e) || 'Ask Ohm is unavailable right now.';
             this.context = undefined;
         } finally {
-            if (this._plannerId === planner) {
+            if (this._plannerId === planner && this._artifactKey === artifact) {
                 this.isLoadingContext = false;
+                if (this._focusRequested) { this._focusRequested = false; this._refocusComposer(); }
             }
         }
     }
@@ -86,10 +110,11 @@ export default class OhmAskAssistant extends LightningElement {
         this._loadedFor = undefined;
         this.loadContext();
     }
+    handleContextRetry() { this.refresh(); }
 
     // ---- host / presentation ------------------------------------------------
     get hostClass() {
-        return this.calmMode ? 'ohm-ask ohm-ask--calm' : 'ohm-ask';
+        return 'ohm-ask';
     }
     get available() {
         return !!(this.context && this.context.available);
@@ -110,10 +135,15 @@ export default class OhmAskAssistant extends LightningElement {
         return this.context ? this.context.greeting : '';
     }
     get groundedChips() {
-        return (this.context && this.context.groundedOn) || [];
+        return ((this.context && this.context.groundedOn) || []).filter((chip) => !/model|sizing|downsize/i.test(chip));
     }
     get quickPrompts() {
-        return (this.context && this.context.quickPrompts) || [];
+        return this.visiblePrompts((this.context && this.context.quickPrompts) || []);
+    }
+    visiblePrompts(prompts) {
+        const priority = { draft: 0, validate: 0, why: 1 };
+        return prompts.filter((prompt) => !/model|sizing|downsize/i.test(`${prompt.label} ${prompt.prompt}`))
+            .sort((a, b) => (priority[a.id] ?? 2) - (priority[b.id] ?? 2)).slice(0, 2);
     }
     get hasTurns() {
         return this.turns.length > 0;
@@ -191,16 +221,19 @@ export default class OhmAskAssistant extends LightningElement {
         this.sendError = undefined;
         this.draftInput = '';
         const askedFor = this._plannerId; // G10: bind the reply to the process it was asked for
+        const artifact = this._artifactKey;
+        const sourceHash = this.expectedSourceHash;
         this._pushTurn({ role: 'user', text: q });
         this.isThinking = true;
         try {
-            const reply = await askAssistant({ plannerId: askedFor, question: q });
-            if (this._plannerId !== askedFor) {
+            const reply = await askAssistant({ plannerId: askedFor, artifactKey: artifact || null,
+                expectedSourceHash: sourceHash || null, question: q, calmMode: false });
+            if (this._plannerId !== askedFor || this._artifactKey !== artifact || this.expectedSourceHash !== sourceHash) {
                 return; // process changed mid-flight — this answer belongs to a page that's gone
             }
             this._pushTurn(this._toOhmTurn(reply));
         } catch (e) {
-            if (this._plannerId !== askedFor) {
+            if (this._plannerId !== askedFor || this._artifactKey !== artifact) {
                 return;
             }
             this.sendError = this._msg(e) || 'Ohm could not answer just now.';
@@ -210,7 +243,7 @@ export default class OhmAskAssistant extends LightningElement {
                 isError: true
             });
         } finally {
-            if (this._plannerId === askedFor) {
+            if (this._plannerId === askedFor && this._artifactKey === artifact) {
                 this.isThinking = false;
                 this._scrollToEnd();
                 this._refocusComposer(); // G11: don't strand keyboard focus after each turn
@@ -240,7 +273,8 @@ export default class OhmAskAssistant extends LightningElement {
     }
 
     _toOhmTurn(reply) {
-        const t = { role: 'ohm', text: reply.answer, modelLabel: reply.modelLabel };
+        const t = { role: 'ohm', text: reply.answer, modelLabel: reply.modelLabel,
+            sourcePath: reply.sourcePath, sourceHash: reply.sourceHash };
         if (reply.isDraft && reply.draftText) {
             t.isDraft = true;
             t.draftText = reply.draftText;
@@ -266,7 +300,7 @@ export default class OhmAskAssistant extends LightningElement {
                 : 'ohm-ask__delta-pct';
         }
         if (reply.followUps && reply.followUps.length) {
-            t.followUps = reply.followUps;
+            t.followUps = this.visiblePrompts(reply.followUps);
         }
         return t;
     }

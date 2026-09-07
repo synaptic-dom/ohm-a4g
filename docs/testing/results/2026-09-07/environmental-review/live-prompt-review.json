@@ -1,0 +1,147 @@
+{
+  "collectedAt": "2026-09-07T18:54:59.119349+00:00",
+  "targetOrg": "ohm-audit-lab",
+  "requestedReportCount": 1,
+  "returnedReportCount": 1,
+  "reports": [
+    {
+      "reportId": "a00Ec00000lt7U1IAI",
+      "planner": "PromptTemplateActions_v1",
+      "status": "Complete",
+      "stageMessage": "Salesforce review complete; category ratings ready",
+      "reviewerModel": "sfdc_ai__DefaultGPT55",
+      "reviewerTemplate": "Ohm_Bundle_Environmental_Review",
+      "declaredReviewerVersion": "DcudyluTADAc6DkoMsOzz6QsH3Esqr8lZMl42AkSKZo=_1",
+      "reviewedAt": "2026-09-07T18:54:23.802Z",
+      "coverage": {
+        "assessedArtifactCount": 4,
+        "artifactCount": 4
+      },
+      "categories": [
+        {
+          "totalArtifactCount": 4,
+          "status": "reviewed",
+          "rating": "A",
+          "label": "Input efficiency",
+          "issues": [],
+          "id": "INPUT",
+          "environmentalMechanism": "Removing unnecessary instruction input may reduce inference work when that source is included in a request.",
+          "coverageStatus": "Complete",
+          "coverageNote": "The supplied source was assessed under the review rubric.",
+          "assessment": "The bundle sources align around routing, collecting an email address, retrieving interests, and generating a schedule. No bundle input issue is evident.",
+          "assessedArtifactCount": 4
+        },
+        {
+          "totalArtifactCount": 4,
+          "status": "reviewed",
+          "rating": "A",
+          "label": "Output efficiency",
+          "issues": [],
+          "id": "OUTPUT",
+          "environmentalMechanism": "Avoiding unnecessary generated output may reduce inference work while preserving the required response.",
+          "coverageStatus": "Complete",
+          "coverageNote": "The supplied source was assessed under the review rubric.",
+          "assessment": "The bundle output requirements support a clear schedule response and do not evidence avoidable verbosity or format conflict.",
+          "assessedArtifactCount": 4
+        },
+        {
+          "totalArtifactCount": 4,
+          "status": "unknown",
+          "rating": "UNRATED",
+          "label": "Model fit",
+          "issues": [],
+          "id": "MODEL",
+          "environmentalMechanism": "A suitable smaller model may use less compute; model quality and environmental effects require separate validation.",
+          "coverageStatus": "Unknown",
+          "coverageNote": "No model quality evaluation is available. A verified binding permits candidates only; fit is unproven.",
+          "assessment": "Not every reviewed artifact has a known binding, and model fit has not been established by evaluation.",
+          "assessedArtifactCount": 0
+        },
+        {
+          "totalArtifactCount": 4,
+          "status": "reviewed",
+          "rating": "A",
+          "label": "Call efficiency",
+          "issues": [],
+          "id": "CALLS",
+          "environmentalMechanism": "Avoiding unnecessary model invocations may reduce inference work; static source does not establish runtime call frequency.",
+          "coverageStatus": "Complete",
+          "coverageNote": "Static source suitability only. Runtime frequency, repeated execution and complete path coverage are unverified.",
+          "assessment": "The configured source shows a single schedule action behind an email requirement, with no evidenced duplicate model work or unbounded model retry.",
+          "assessedArtifactCount": 4
+        }
+      ],
+      "artifacts": [
+        {
+          "artifactId": "16jEc000000PAKLIA4",
+          "label": "Prompt Template Actions",
+          "characterCount": 83,
+          "sourceHash": "c0893cac65687cb4411f4fa52fb88b6e0cfac9894b61da7b3360c1bcb3c1df3e",
+          "sourceVersion": "MetadataApi:67.0:PromptTemplateActions.v1:ac4da8df29a7fabaf01c7e96d45257bf0e0833e1616f224d2c47fbc6ee4c87bb",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        },
+        {
+          "artifactId": "179Ec000006G6ijIAC",
+          "label": "Agent Router",
+          "characterCount": 117,
+          "sourceHash": "0204cc6cc8a8ed21695dd1d3fa64ccab53e0f0b66445612da8b90b0f3e72cec5",
+          "sourceVersion": "MetadataApi:67.0:PromptTemplateActions.v1:ac4da8df29a7fabaf01c7e96d45257bf0e0833e1616f224d2c47fbc6ee4c87bb",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        },
+        {
+          "artifactId": "179Ec000006G6ikIAC",
+          "label": "Schedule Generation",
+          "characterCount": 376,
+          "sourceHash": "4437e33d6c78ceaf1652163cc698ef3d05d7d5580443486ae89252d1daa53434",
+          "sourceVersion": "MetadataApi:67.0:PromptTemplateActions.v1:ac4da8df29a7fabaf01c7e96d45257bf0e0833e1616f224d2c47fbc6ee4c87bb",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        },
+        {
+          "artifactId": "172Ec00000VL5ndIAD",
+          "label": "Generate Personalized Schedule",
+          "characterCount": 832,
+          "sourceHash": "dce551c323ad092321d0f2389dc1247dbaeecf140cf968ff071354827bb47628",
+          "sourceVersion": "MetadataApi:67.0:ul8eo8Wmi00b0AAaWZ5z5Q0cwb3Wq2HdIrEhx41Dtl4=_1:d82c67f681f03070d2033dd8dd2534464296bdd7d7333600f9b8f40ff3e4b86f",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        }
+      ],
+      "configurationSources": [
+        {
+          "artifactId": "configuration:16jEc000000PAKLIA4",
+          "verified": true
+        }
+      ],
+      "quotedEvidenceCount": 0,
+      "allQuotesMatchStoredSources": true,
+      "fleetSummaryMatchesDetail": true,
+      "verified": true
+    }
+  ],
+  "allVerified": true,
+  "superseded": true,
+  "supersededBy": "live-reviews.json"
+}

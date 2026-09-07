@@ -1,0 +1,15 @@
+{
+  "kind": "controlled demo variant, not an upstream defect",
+  "upstreamRepository": "https://github.com/trailheadapps/agent-script-recipes",
+  "upstreamCommit": "ac5ccac8f675153035370abbdce174e2b769c89c",
+  "upstreamPath": "test-fixtures/public-agents/agent-script-recipes/force-app/main/02_actionConfiguration/actionDefinitions/aiAuthoringBundles/actionDefinitions/ActionDefinitions.agent",
+  "upstreamSha256": "b67a3c7f22160058c0ad448fd61994d6824e9e04985dc417c8a401c7cbdcf555",
+  "logicalAgentApiName": "Ohm_Weather_Demo",
+  "changes": [
+    "Rename agent identity and add controlled-demo description/comment",
+    "Before only: repeat an existing weather instruction 36 times",
+    "After: remove only the intentional duplicate instruction lines; all upstream actions and branches unchanged"
+  ],
+  "beforeSha256": "6946581b3aef7b33c52b21ef90c9f080ad1de8705a94a42d87d2fcbb29a4dbc0",
+  "afterSha256": "5f054b92b76b8ec97f04bf19570633cda61d5bbdb76e59b2f9cc11e8cc0482b6"
+}

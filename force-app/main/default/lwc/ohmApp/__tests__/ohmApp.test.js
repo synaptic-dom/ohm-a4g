@@ -1,273 +1,54 @@
 import { createElement } from 'lwc';
 import OhmApp from 'c/ohmApp';
 import getCalmModePreference from '@salesforce/apex/OhmAuditController.getCalmModePreference';
-import setCalmModePreference from '@salesforce/apex/OhmAuditController.setCalmModePreference';
-
-jest.mock(
-    '@salesforce/apex/OhmAuditController.getCalmModePreference',
-    () => ({ default: jest.fn() }),
-    { virtual: true }
-);
-jest.mock(
-    '@salesforce/apex/OhmAuditController.setCalmModePreference',
-    () => ({ default: jest.fn() }),
-    { virtual: true }
-);
-
-// ohmFleetTable pulls in its own Apex; stub those imports so the child mounts.
-jest.mock(
-    '@salesforce/apex/OhmAuditController.getFleet',
-    () => ({ default: jest.fn(() => Promise.resolve([])) }),
-    { virtual: true }
-);
-jest.mock(
-    '@salesforce/apex/OhmAuditController.auditProcess',
-    () => ({ default: jest.fn() }),
-    { virtual: true }
-);
-
-// ohmProcessPage (mounted when a row is opened) pulls in its own Apex too.
-jest.mock(
-    '@salesforce/apex/OhmAuditController.getProcessDetail',
-    () =>
-        ({
-            default: jest.fn(() =>
-                Promise.resolve({
-                    plannerId: '0Ai000000000001',
-                    label: 'Lead Concierge',
-                    domain: 'Sales',
-                    grade: 'F',
-                    reportId: 'R1',
-                    findings: [],
-                    nodes: []
-                })
-            )
-        }),
-    { virtual: true }
-);
-jest.mock(
-    '@salesforce/apex/OhmAuditController.createRemediationTask',
-    () => ({ default: jest.fn() }),
-    { virtual: true }
-);
-
-// ohmFindingsWorklist (FINDINGS tab) + ohmRecommendations standalone (RECOMMENDATIONS
-// tab) pull in their own Apex; stub those so the tabs mount cleanly.
-jest.mock(
-    '@salesforce/apex/OhmAuditController.getFindings',
-    () => ({ default: jest.fn(() => Promise.resolve([])) }),
-    { virtual: true }
-);
-jest.mock(
-    '@salesforce/apex/OhmAuditController.updateFindingStatus',
-    () => ({ default: jest.fn() }),
-    { virtual: true }
-);
-jest.mock(
-    '@salesforce/apex/OhmAuditController.assignFinding',
-    () => ({ default: jest.fn() }),
-    { virtual: true }
-);
-jest.mock(
-    '@salesforce/apex/OhmAuditController.getRecommendations',
-    () => ({ default: jest.fn(() => Promise.resolve([])) }),
-    { virtual: true }
-);
-
-// ohmTrends (TRENDS tab) pulls in getTrends; stub it so the tab mounts cleanly.
-jest.mock(
-    '@salesforce/apex/OhmAuditController.getTrends',
-    () =>
-        ({
-            default: jest.fn(() =>
-                Promise.resolve({
-                    scope: 'Org',
-                    plannerId: null,
-                    points: [],
-                    realizedSavingsWh: 0,
-                    perAgent: []
-                })
-            )
-        }),
-    { virtual: true }
-);
-
-async function flush(times = 6) {
-    for (let i = 0; i < times; i += 1) {
-        // eslint-disable-next-line no-await-in-loop
-        await Promise.resolve();
-    }
-}
-
-function create() {
-    const el = createElement('c-ohm-app', { is: OhmApp });
-    document.body.appendChild(el);
-    return el;
-}
-
-function tabs(el) {
-    return Array.from(el.shadowRoot.querySelectorAll('[data-id="tab"]'));
-}
-
-describe('c-ohm-app', () => {
-    beforeEach(() => {
-        getCalmModePreference.mockReset();
-        setCalmModePreference.mockReset();
-        getCalmModePreference.mockResolvedValue(false);
-        setCalmModePreference.mockResolvedValue(undefined);
-    });
-    afterEach(() => {
-        while (document.body.firstChild) {
-            document.body.removeChild(document.body.firstChild);
-        }
-    });
-
-    it('renders the shell with four tabs and Fleet active by default', async () => {
-        const el = create();
-        await flush();
-
-        const strip = tabs(el);
-        expect(strip).toHaveLength(4);
-        expect(strip.map((t) => t.textContent.trim())).toEqual([
-            'Fleet',
-            'Findings',
-            'Recommendations',
-            'Trends'
-        ]);
-        // Fleet is active + fleet table is mounted
-        expect(strip[0].getAttribute('aria-selected')).toBe('true');
-        expect(el.shadowRoot.querySelector('[data-id="fleet"]')).not.toBeNull();
-        expect(
-            el.shadowRoot.querySelector('[data-id="placeholder"]')
-        ).toBeNull();
-    });
-
-    it('switches to Trends on click and mounts the live Trends tab', async () => {
-        const el = create();
-        await flush();
-
-        const trendsTab = tabs(el)[3];
-        trendsTab.click();
-        await flush();
-
-        expect(trendsTab.getAttribute('aria-selected')).toBe('true');
-        const trends = el.shadowRoot.querySelector('[data-id="trends"]');
-        expect(trends).not.toBeNull();
-        expect(trends.calmMode).toBe(false);
-        // no placeholder any more; fleet table unmounted while on another tab
-        expect(
-            el.shadowRoot.querySelector('[data-id="placeholder"]')
-        ).toBeNull();
-        expect(el.shadowRoot.querySelector('[data-id="fleet"]')).toBeNull();
-    });
-
-    it('mounts the live Findings worklist on the Findings tab', async () => {
-        const el = create();
-        await flush();
-
-        tabs(el)[1].click();
-        await flush();
-
-        expect(
-            el.shadowRoot.querySelector('[data-id="findings"]')
-        ).not.toBeNull();
-        expect(
-            el.shadowRoot.querySelector('[data-id="placeholder"]')
-        ).toBeNull();
-        expect(el.shadowRoot.querySelector('[data-id="fleet"]')).toBeNull();
-    });
-
-    it('mounts the standalone Recommendations tab', async () => {
-        const el = create();
-        await flush();
-
-        tabs(el)[2].click();
-        await flush();
-
-        const recs = el.shadowRoot.querySelector('[data-id="recommendations"]');
-        expect(recs).not.toBeNull();
-        expect(recs.standalone).toBe(true);
-        expect(
-            el.shadowRoot.querySelector('[data-id="placeholder"]')
-        ).toBeNull();
-    });
-
-    it('reflects the loaded calm preference and passes it to children', async () => {
-        getCalmModePreference.mockResolvedValue(true);
-        const el = create();
-        await flush();
-
-        const shell = el.shadowRoot.querySelector('[data-id="shell"]');
-        expect(shell.className).toContain('ohm-app--calm');
-
-        const toggle = el.shadowRoot.querySelector('c-ohm-calm-mode-toggle');
-        expect(toggle.calmMode).toBe(true);
-        const fleet = el.shadowRoot.querySelector('[data-id="fleet"]');
-        expect(fleet.calmMode).toBe(true);
-    });
-
-    it('toggles calm mode from the child event and persists it', async () => {
-        const el = create();
-        await flush();
-
-        const toggle = el.shadowRoot.querySelector('c-ohm-calm-mode-toggle');
-        toggle.dispatchEvent(
-            new CustomEvent('calmtoggle', { detail: { enabled: true } })
-        );
-        await flush();
-
-        expect(setCalmModePreference).toHaveBeenCalledWith({ enabled: true });
-        const shell = el.shadowRoot.querySelector('[data-id="shell"]');
-        expect(shell.className).toContain('ohm-app--calm');
-        expect(
-            el.shadowRoot.querySelector('c-ohm-calm-mode-toggle').calmMode
-        ).toBe(true);
-    });
-
-    it('opens the process page + breadcrumb from openprocess, and returns via backtofleet', async () => {
-        const el = create();
-        await flush();
-
-        const fleet = el.shadowRoot.querySelector('[data-id="fleet"]');
-        fleet.dispatchEvent(
-            new CustomEvent('openprocess', {
-                detail: { plannerId: '0Ai000000000001', label: 'Lead Concierge' },
-                bubbles: true,
-                composed: true
-            })
-        );
-        await flush();
-
-        const crumb = el.shadowRoot.querySelector('[data-id="breadcrumb"]');
-        expect(crumb.textContent).toContain('Fleet');
-        expect(crumb.textContent).toContain('Lead Concierge');
-        // fleet table swapped out for the process page
-        const page = el.shadowRoot.querySelector('[data-id="process-page"]');
-        expect(page).not.toBeNull();
-        expect(page.plannerId).toBe('0Ai000000000001');
-        expect(el.shadowRoot.querySelector('[data-id="fleet"]')).toBeNull();
-
-        // backtofleet returns to the fleet list
-        page.dispatchEvent(
-            new CustomEvent('backtofleet', { bubbles: true, composed: true })
-        );
-        await flush();
-        expect(
-            el.shadowRoot.querySelector('[data-id="process-page"]')
-        ).toBeNull();
-        expect(el.shadowRoot.querySelector('[data-id="fleet"]')).not.toBeNull();
-    });
-
-    it('moves between tabs with arrow keys', async () => {
-        const el = create();
-        await flush();
-
-        const strip = tabs(el);
-        strip[0].dispatchEvent(
-            new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })
-        );
-        await flush();
-
-        expect(tabs(el)[1].getAttribute('aria-selected')).toBe('true');
-    });
+jest.mock('@salesforce/apex/OhmAuditController.getCalmModePreference', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock('@salesforce/apex/OhmAuditController.getFleet', () => ({ default: jest.fn(() => Promise.resolve([])) }), { virtual: true });
+jest.mock('@salesforce/apex/OhmAuditController.auditProcess', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock('@salesforce/apex/OhmAuditController.getProcessDetail', () => ({ default: jest.fn(() => Promise.resolve({ plannerId: 'P1', label: 'Bundle', nodes: [], findings: [] })) }), { virtual: true });
+jest.mock('@salesforce/apex/OhmAuditController.getFindings', () => ({ default: jest.fn(() => Promise.resolve([])) }), { virtual: true });
+jest.mock('@salesforce/apex/OhmAuditController.createRemediationTask', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock('@salesforce/apex/OhmAuditController.updateFindingStatus', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock('@salesforce/apex/OhmAuditController.assignFinding', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock('@salesforce/apex/OhmReviewRecommendationService.getReviewRecommendations', () => ({ default: jest.fn(() => Promise.resolve({ items: [] })) }), { virtual: true });
+async function flush() { for (let i=0; i<12; i+=1) await Promise.resolve(); }
+function create() { const el = createElement('c-ohm-app', { is: OhmApp }); document.body.appendChild(el); return el; }
+const tabs = (el) => [...el.shadowRoot.querySelectorAll('[data-id="tab"]')];
+afterEach(() => { document.body.replaceChildren(); jest.clearAllMocks(); });
+it('opens immediately on Overview with four destinations and no legacy controls', async () => {
+    const el=create();
+    expect(el.shadowRoot.querySelector('[data-id="overview"]')).not.toBeNull();
+    await flush();
+    expect(tabs(el).map((tab) => tab.textContent.trim())).toEqual(['Overview', 'Bundles', 'Recommendations', 'How it works']);
+    expect(tabs(el)[0].getAttribute('aria-selected')).toBe('true');
+    expect(el.shadowRoot.querySelector('c-ohm-calm-mode-toggle')).toBeNull();
+    expect(el.shadowRoot.querySelector('c-ohm-trends')).toBeNull();
+    expect(getCalmModePreference).not.toHaveBeenCalled();
+});
+it('takes the overview action to bundles and returns through the wordmark', async () => {
+    const el=create(); await flush();
+    el.shadowRoot.querySelector('c-ohm-overview').dispatchEvent(new CustomEvent('navigate', { detail: { tab: 'FLEET' } })); await flush();
+    expect(el.shadowRoot.querySelector('c-ohm-fleet-table')).not.toBeNull();
+    el.shadowRoot.querySelector('[aria-label="Ohm overview"]').click(); await flush();
+    expect(el.shadowRoot.querySelector('c-ohm-overview')).not.toBeNull();
+});
+it('routes recommendation identity to the exact source and clears it on back', async () => {
+    const el=create(); await flush(); tabs(el)[2].click(); await flush();
+    const recs=el.shadowRoot.querySelector('c-ohm-recommendations');
+    expect(recs.standalone).toBe(true);
+    recs.dispatchEvent(new CustomEvent('openprocess', { detail: { plannerId:'P1', label:'Bundle', nodeId:'N1', artifactKey:'K1', intent:'source', question:'Review this change' } })); await flush();
+    const page=el.shadowRoot.querySelector('c-ohm-process-page');
+    expect(page.plannerId).toBe('P1'); expect(page.initialNodeId).toBe('N1'); expect(page.initialArtifactKey).toBe('K1'); expect(page.initialIntent).toBe('source'); expect(page.initialQuestion).toBe('Review this change');
+    page.dispatchEvent(new CustomEvent('backtofleet')); await flush();
+    const fleet=el.shadowRoot.querySelector('c-ohm-fleet-table'); expect(fleet).not.toBeNull();
+    fleet.dispatchEvent(new CustomEvent('openprocess', { detail: { plannerId:'P2' } })); await flush();
+    const next=el.shadowRoot.querySelector('c-ohm-process-page'); expect(next.initialNodeId).toBeUndefined(); expect(next.initialIntent).toBeUndefined();
+});
+it('supports Arrow, Home and End navigation and clears a prior open bundle', async () => {
+    const el=create(); await flush();
+    el.shadowRoot.querySelector('c-ohm-overview').dispatchEvent(new CustomEvent('openprocess', { detail: { plannerId:'P1' } })); await flush();
+    tabs(el)[1].dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true})); await flush();
+    expect(tabs(el)[2].getAttribute('aria-selected')).toBe('true');
+    tabs(el)[2].dispatchEvent(new KeyboardEvent('keydown',{key:'Home',bubbles:true})); await flush(); expect(tabs(el)[0].getAttribute('aria-selected')).toBe('true');
+    tabs(el)[0].dispatchEvent(new KeyboardEvent('keydown',{key:'End',bubbles:true})); await flush(); expect(tabs(el)[3].getAttribute('aria-selected')).toBe('true'); expect(el.shadowRoot.querySelector('c-ohm-how-it-works')).not.toBeNull();
+    tabs(el)[1].click(); await flush(); expect(el.shadowRoot.querySelector('c-ohm-process-page')).toBeNull();
 });

@@ -1,0 +1,98 @@
+{
+  "reports": [
+    {
+      "Id": "a00Ec00000lsiAjIAI",
+      "Target_Planner_Api_Name__c": "ActionChaining_v1",
+      "Run_Status__c": "Complete",
+      "Run_Stage_Message__c": "Audit complete with coverage gaps",
+      "Findings_Count__c": 0,
+      "Coverage_Status__c": "Incomplete",
+      "Modeled_Energy_Wh__c": 11116.44,
+      "CreatedDate": "2026-09-07T17:55:06.000+0000"
+    },
+    {
+      "Id": "a00Ec00000lsiAkIAI",
+      "Target_Planner_Api_Name__c": "ActionDefinitions_v1",
+      "Run_Status__c": "Complete",
+      "Run_Stage_Message__c": "Audit complete with coverage gaps",
+      "Findings_Count__c": 0,
+      "Coverage_Status__c": "Incomplete",
+      "Modeled_Energy_Wh__c": 14782.5,
+      "CreatedDate": "2026-09-07T17:55:06.000+0000"
+    },
+    {
+      "Id": "a00Ec00000lsiAlIAI",
+      "Target_Planner_Api_Name__c": "Ohm_Weather_Demo_v4",
+      "Run_Status__c": "Complete",
+      "Run_Stage_Message__c": "Audit complete with coverage gaps",
+      "Findings_Count__c": 0,
+      "Coverage_Status__c": "Incomplete",
+      "Modeled_Energy_Wh__c": 14782.5,
+      "CreatedDate": "2026-09-07T17:55:06.000+0000"
+    },
+    {
+      "Id": "a00Ec00000lsiAmIAI",
+      "Target_Planner_Api_Name__c": "PromptTemplateActions_v1",
+      "Run_Status__c": "Complete",
+      "Run_Stage_Message__c": "Audit complete with coverage gaps",
+      "Findings_Count__c": 1,
+      "Coverage_Status__c": "Incomplete",
+      "Modeled_Energy_Wh__c": 14723.37,
+      "CreatedDate": "2026-09-07T17:55:06.000+0000"
+    }
+  ],
+  "sources": [
+    {
+      "Id": "a07Ec00002Xpt6JIAR",
+      "Planner_Id__c": "16jEc000000PAIjIAO",
+      "Provenance__c": "Retrieved",
+      "artifactCount": 3,
+      "warnings": [
+        "Retrieved Agent Script retains conditional branches. Static instruction size is not measured rendered prompt usage."
+      ],
+      "hashesVerified": true,
+      "allBindingsVerified": true
+    },
+    {
+      "Id": "a07Ec00002Xq5y7IAB",
+      "Planner_Id__c": "16jEc000000PAKLIA4",
+      "Provenance__c": "Retrieved",
+      "artifactCount": 4,
+      "warnings": [
+        "Retrieved Agent Script retains conditional branches. Static instruction size is not measured rendered prompt usage."
+      ],
+      "hashesVerified": true,
+      "allBindingsVerified": true
+    },
+    {
+      "Id": "a07Ec00002XqJh3IAF",
+      "Planner_Id__c": "16jEc000000PBBZIA4",
+      "Provenance__c": "Retrieved",
+      "artifactCount": 3,
+      "warnings": [
+        "Retrieved Agent Script retains conditional branches. Static instruction size is not measured rendered prompt usage."
+      ],
+      "hashesVerified": true,
+      "allBindingsVerified": true
+    },
+    {
+      "Id": "a07Ec00002XqMrkIAF",
+      "Planner_Id__c": "16jEc000000PAH7IAO",
+      "Provenance__c": "Retrieved",
+      "artifactCount": 3,
+      "warnings": [
+        "Retrieved Agent Script retains conditional branches. Static instruction size is not measured rendered prompt usage."
+      ],
+      "hashesVerified": true,
+      "allBindingsVerified": true
+    }
+  ],
+  "findings": [
+    {
+      "Id": "a01Ec00002XdEyXIAV",
+      "Signal_Type__c": "INSTRUCTION_BLOAT",
+      "Finding_Status__c": "Open",
+      "Remediation_Task_Id__c": null
+    }
+  ]
+}

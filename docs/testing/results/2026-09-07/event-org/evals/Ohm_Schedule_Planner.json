@@ -1,0 +1,43 @@
+{
+  "bundle": "Ohm_Schedule_Planner",
+  "tests": [
+    {
+      "id": "schedule-day",
+      "status": "failed",
+      "evaluations": [
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "compute_status": "COMPLETED",
+          "score": 2,
+          "is_pass": false,
+          "label": null,
+          "explainability": "The bot's response includes all activities, including Clay studio, which the expected response explicitly states to omit. The bot also mentions potential adjustments and asks for confirmation, which is not required by the expected response. This deviation from the expected outcome indicates a lack of alignment.",
+          "error_message": null,
+          "actual_value": "Here is a draft guest day plan for Cedar Bay Retreat based on your activities:\n\nKayaking\n\nStart Time: 09:00\nEnd Time: 09:45\nLocation: Boathouse\nDuration: 45 minutes\n\nClay studio\n\nStart Time: 10:30\nEnd Time: 11:00\nLocation: Art room\nDuration: 30 minutes\n\nGarden tour\n\nStart Time: 10:45\nEnd Time: 11:30\nLocation: Garden\nDuration: 45 minutes\n\nForest walk\n\nStart Time: 13:00\nEnd Time: 14:00\nLocation: Trailhead\nDuration: 60 minutes\n\nNote: The Garden tour overlaps with the Clay studio session. If you want to adjust the timing or activities, let me know which changes to make. Would you like to revise the plan or proceed as is?",
+          "expected_value": "Include Kayaking at 09:00\u201309:45, Garden tour at 10:45\u201311:30, and Forest walk at 13:00\u201314:00, in that order. Omit Clay studio because the gap after Kayaking is too short. Do not claim any booking was created."
+        }
+      ],
+      "response": "Here is a draft guest day plan for Cedar Bay Retreat based on your activities:\n\nKayaking\n\nStart Time: 09:00\nEnd Time: 09:45\nLocation: Boathouse\nDuration: 45 minutes\n\nClay studio\n\nStart Time: 10:30\nEnd Time: 11:00\nLocation: Art room\nDuration: 30 minutes\n\nGarden tour\n\nStart Time: 10:45\nEnd Time: 11:30\nLocation: Garden\nDuration: 45 minutes\n\nForest walk\n\nStart Time: 13:00\nEnd Time: 14:00\nLocation: Trailhead\nDuration: 60 minutes\n\nNote: The Garden tour overlaps with the Clay studio session. If you want to adjust the timing or activities, let me know which changes to make. Would you like to revise the plan or proceed as is?"
+    },
+    {
+      "id": "schedule-invalid",
+      "status": "passed",
+      "evaluations": [
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "compute_status": "COMPLETED",
+          "score": 5,
+          "is_pass": true,
+          "label": null,
+          "explainability": "The bot correctly identifies the invalid time '25:00' and asks the user to provide a valid time within the 24-hour day, which aligns with the expected response. The bot does not invent a valid time or make a reservation, adhering to the instructions. The response is clear, precise, and contains no irrelevant information.",
+          "error_message": null,
+          "actual_value": "The activity time \"25:00\" extends beyond the normal daily schedule. Please provide a time within the 24-hour day (for example, 21:00 for 9 PM) so I can prepare your plan. What time would you like to schedule the Evening yoga activity?",
+          "expected_value": "Ask for a corrected time rather than inventing a valid time or a reservation."
+        }
+      ],
+      "response": "The activity time \"25:00\" extends beyond the normal daily schedule. Please provide a time within the 24-hour day (for example, 21:00 for 9 PM) so I can prepare your plan. What time would you like to schedule the Evening yoga activity?"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+<template>
+    <section class="strip" aria-label={heading} data-id="footprint-strip">
+        <header class="strip__head">
+            <h3 class="strip__heading">{heading}</h3>
+            <span class="strip__badge" data-id="badge">Modeled, not measured</span>
+        </header>
+        <template lwc:if={hasData}>
+            <div class="strip__grid">
+                <div class="strip__lead">
+                    <p class="strip__kicker" data-id="kicker">{kickerText}</p>
+                    <p class="strip__figure"><strong data-id="savings-central">{leadFigureText}</strong><span class="strip__basis" data-id="basis">{basisText}</span></p>
+                    <div class="meter" role="img" aria-label={meterLabel} data-id="meter">
+                        <span class="meter__central" data-id="meter-central" style={centralStyle}></span>
+                        <span class="meter__savings" data-id="meter-savings" style={savingsStyle}></span>
+                    </div>
+                    <p class="strip__band" data-id="footprint-context">{footprintContextText}</p>
+                </div>
+                <dl class="strip__facts">
+                    <div><dt>Carbon avoided</dt><dd data-id="co2e-saved">{co2eSavedText}<span>a year</span></dd></div>
+                    <div><dt>Water avoided</dt><dd data-id="water-saved">{waterSavedText}<span>a year</span></dd></div>
+                    <div><dt>Saved per request</dt><dd data-id="per-request-saved">{perRequestSavedText}<span>of <span data-id="per-request">{perRequestText}</span> today</span></dd></div>
+                    <div><dt>Footprint today</dt><dd data-id="energy-central">{energyCentralText}<span><span data-id="co2e">{co2eText}</span> CO2e and <span data-id="water">{waterText}</span> of water a year</span></dd></div>
+                </dl>
+                <div class="strip__volume" role="group" aria-label="Requests a day">
+                    <span class="strip__volume-label">Requests a day</span>
+                    <div class="strip__volume-buttons">
+                        <template for:each={volumeOptions} for:item="option">
+                            <button key={option.value} type="button" class={option.className} data-id="volume" data-volume={option.value} aria-pressed={option.pressed} onclick={handleVolume}>{option.label}</button>
+                        </template>
+                    </div>
+                </div>
+            </div>
+            <template lwc:if={isFleet}><p class="strip__coverage" data-id="coverage">{coverageText}</p></template>
+            <details class="strip__assumptions" data-id="assumptions">
+                <summary>Assumptions behind these figures</summary>
+                <ul>
+                    <template for:each={assumptions} for:item="item"><li key={item.key} data-id="assumption">{item.text}</li></template>
+                </ul>
+            </details>
+        </template>
+        <template lwc:else><p class="strip__empty" data-id="empty">{emptyText}</p></template>
+    </section>
+</template>

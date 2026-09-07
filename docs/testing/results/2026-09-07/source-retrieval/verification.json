@@ -1,0 +1,87 @@
+{
+  "verifiedAt": "2026-09-07T17:20:10.171245+00:00",
+  "orgAlias": "ohm-audit-lab",
+  "apiVersion": "67.0",
+  "sentinelCommit": "a6d3d9f",
+  "originalSentinelOrgAuthAvailable": false,
+  "applicationAuthenticationVerified": false,
+  "applicationRetrievalImplemented": false,
+  "prompt": {
+    "templateId": "0hfEc000002KWx3IAG",
+    "activeVersionId": "3vNEc0000005mf7MAA",
+    "activeVersionIdentifier": "ul8eo8Wmi00b0AAaWZ5z5Q0cwb3Wq2HdIrEhx41Dtl4=_1",
+    "status": "Published",
+    "primaryModel": "sfdc_ai__DefaultOpenAIGPT4OmniMini",
+    "restContentChars": 903,
+    "xmlContentChars": 832,
+    "sameVersionIdentifier": true,
+    "rawContentEqual": false,
+    "htmlDecodedContentEqual": false,
+    "restContentSha256": "292477d7622d4ef633be761c5226adacc775d3c15881d641a2d260212aa484d3",
+    "xmlContentSha256": "dce551c323ad092321d0f2389dc1247dbaeecf140cf968ff071354827bb47628",
+    "explicitTransportDecodingEqual": true,
+    "canonicalChars": 832,
+    "canonicalSha256": "dce551c323ad092321d0f2389dc1247dbaeecf140cf968ff071354827bb47628",
+    "newlineEntityCount": 11,
+    "apostropheEntityCount": 4,
+    "normalizationScope": "Only observed REST entity representations; not a general escape-decoding contract."
+  },
+  "authoringBundles": [
+    {
+      "archive": "metadata",
+      "file": "metadata/unpackaged/unpackaged/aiAuthoringBundles/Ohm_Weather_Demo_1/Ohm_Weather_Demo_1.agent",
+      "target": "Ohm_Weather_Demo.v1",
+      "bytes": 10065,
+      "sha256": "6946581b3aef7b33c52b21ef90c9f080ad1de8705a94a42d87d2fcbb29a4dbc0",
+      "matchesLocalReviewedFile": false
+    },
+    {
+      "archive": "metadata",
+      "file": "metadata/unpackaged/unpackaged/aiAuthoringBundles/Ohm_Weather_Demo_3/Ohm_Weather_Demo_3.agent",
+      "target": "Ohm_Weather_Demo.v3",
+      "bytes": 10065,
+      "sha256": "6946581b3aef7b33c52b21ef90c9f080ad1de8705a94a42d87d2fcbb29a4dbc0",
+      "matchesLocalReviewedFile": false
+    },
+    {
+      "archive": "metadata",
+      "file": "metadata/unpackaged/unpackaged/aiAuthoringBundles/Ohm_Weather_Demo_2/Ohm_Weather_Demo_2.agent",
+      "target": "Ohm_Weather_Demo.v2",
+      "bytes": 6429,
+      "sha256": "5f054b92b76b8ec97f04bf19570633cda61d5bbdb76e59b2f9cc11e8cc0482b6",
+      "matchesLocalReviewedFile": true
+    },
+    {
+      "archive": "metadata",
+      "file": "metadata/unpackaged/unpackaged/aiAuthoringBundles/Ohm_Weather_Demo/Ohm_Weather_Demo.agent",
+      "target": "Ohm_Weather_Demo.v4",
+      "bytes": 6429,
+      "sha256": "5f054b92b76b8ec97f04bf19570633cda61d5bbdb76e59b2f9cc11e8cc0482b6",
+      "matchesLocalReviewedFile": true
+    },
+    {
+      "archive": "agent-metadata",
+      "file": "agent-metadata/unpackaged/unpackaged/aiAuthoringBundles/PromptTemplateActions/PromptTemplateActions.agent",
+      "target": "PromptTemplateActions.v1",
+      "bytes": 2998,
+      "sha256": "ac4da8df29a7fabaf01c7e96d45257bf0e0833e1616f224d2c47fbc6ee4c87bb",
+      "matchesLocalReviewedFile": true
+    },
+    {
+      "archive": "agent-metadata",
+      "file": "agent-metadata/unpackaged/unpackaged/aiAuthoringBundles/Ohm_Weather_Demo/Ohm_Weather_Demo.agent",
+      "target": "Ohm_Weather_Demo.v4",
+      "bytes": 6429,
+      "sha256": "5f054b92b76b8ec97f04bf19570633cda61d5bbdb76e59b2f9cc11e8cc0482b6",
+      "matchesLocalReviewedFile": true
+    }
+  ],
+  "standardSoqlPromptVersion": {
+    "status": "INVALID_TYPE",
+    "message": "sObject type 'GenAiPromptTemplateVersion' is not supported."
+  },
+  "authoringRetrievalMethod": "SOAP Metadata API retrieve -> checkRetrieveStatus -> base64 zipFile extraction; verified in installed Salesforce CLI/SDR/JSforce implementation",
+  "orgBusinessDataOrMetadataChanged": false,
+  "authoringApiTransportVerified": true,
+  "authoringSoapEndpoint": "/services/Soap/m/67.0"
+}

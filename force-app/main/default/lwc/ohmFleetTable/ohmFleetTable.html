@@ -1,193 +1,38 @@
 <template>
-    <div class={hostClass} data-id="fleet-root">
-        <!-- Summary strip -------------------------------------------------- -->
-        <div class="ohm-fleet__summary" data-id="summary">
-            <div class="ohm-fleet__stat">
-                <span class="ohm-fleet__stat-value" data-id="stat-audited">
-                    {auditedCount}<span class="ohm-fleet__stat-of">/{discoveredCount}</span>
-                </span>
-                <span class="ohm-fleet__stat-label">Audited / discovered</span>
+    <section class={hostClass} aria-label="Agent bundles">
+        <header class="fleet__heading"><div><p class="eyebrow">Your workspace</p><h1>Agent bundles.</h1><p class="fleet__intro">Your published agents and their linked prompts. Start with a review, leave with a next step.</p></div><button class="button button--quiet" onclick={handleRetry} disabled={isLoading}>Refresh <span aria-hidden="true">↻</span></button></header>
+        <template for:each={progressRuns} for:item="run"><c-ohm-audit-progress key={run.plannerId} run={run} onretry={handleRunRetry}></c-ohm-audit-progress></template>
+        <template lwc:if={isLoading}><c-ohm-loading-state data-id="loading" heading="Finding your bundles" detail="Reading published agents and their latest reviews."></c-ohm-loading-state></template>
+        <template lwc:elseif={loadError}><div class="fleet__state" data-id="load-error" role="alert"><p>{loadError}</p><button class="button" onclick={handleRetry}>Try again →</button></div></template>
+        <template lwc:else>
+            <div class="fleet__toolbar">
+                <label class="fleet__search"><span class="sr-only">Search bundles</span><input data-id="search" type="search" placeholder="Search bundles" value={searchTerm} oninput={handleSearch} /></label>
+                <label><span class="sr-only">Filter by review rating</span><select data-id="filter-grade" onchange={handleGradeChange}><template for:each={gradeOptions} for:item="option"><option key={option.value} value={option.value} selected={option.selected}>{option.label}</option></template></select></label>
+                <span class="fleet__count"><strong data-id="stat-audited">{auditedCount}/{discoveredCount}</strong> reviewed</span>
             </div>
-            <div class="ohm-fleet__stat">
-                <span class="ohm-fleet__stat-value ohm-fleet__stat-value--energy" data-id="stat-energy">
-                    {totalEnergyText}
-                </span>
-                <span class="ohm-fleet__stat-label">Fleet energy (audited)</span>
-            </div>
-            <div class="ohm-fleet__stat">
-                <span class="ohm-fleet__stat-value" data-id="stat-worst">
-                    {worstGradeText}
-                </span>
-                <span class="ohm-fleet__stat-label">Worst grade</span>
-            </div>
-        </div>
-
-        <!-- Controls ------------------------------------------------------- -->
-        <div class="ohm-fleet__controls" role="group" aria-label="Fleet filters">
-            <label class="ohm-fleet__control">
-                <span class="ohm-fleet__control-label">Domain</span>
-                <select
-                    class="ohm-fleet__select"
-                    data-id="filter-domain"
-                    onchange={handleDomainChange}
-                >
-                    <template for:each={domainOptions} for:item="opt">
-                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+            <template lwc:if={hasRows}>
+                <div class="fleet__list" data-id="table">
+                    <template for:each={visibleRows} for:item="row">
+                        <article key={row.plannerId} class="fleet__bundle" data-id="row">
+                            <div class="fleet__identity"><span class="fleet__icon" aria-hidden="true">◇</span><div><h2>{row.displayLabel}</h2><p>{row.topicText} {row.topicNoun} <span aria-hidden="true">·</span> {row.actionText} {row.actionNoun}</p><template lwc:if={row.opportunityLabel}><span class="fleet__opportunity">{row.opportunityLabel}</span></template></div></div>
+                            <div class="fleet__ratings">
+                                <template lwc:if={row.hasReview}><div class="ohm-fleet__review-chips" data-id="review-chips"><template for:each={row.reviewCategories} for:item="category"><span key={category.id} class={category.chipCss} title={category.accessibleLabel}><span>{category.shortLabel}</span><strong>{category.rating}</strong></span></template></div></template>
+                                <template lwc:else><span class="fleet__muted" data-id="review-state">{row.reviewStateLabel}</span></template>
+                                <template lwc:if={row.hasPriorResults}><p class="fleet__muted">Previous completed audit shown below</p></template>
+                                <template lwc:if={row.isAuditing}><p class="fleet__muted" role="status">{row.progressLabel}</p></template>
+                            </div>
+                            <div class="fleet__action">
+                                <template lwc:if={row.audited}><button class="button button--outline" data-id="open" data-planner={row.plannerId} onclick={handleOpen}>Open review <span aria-hidden="true">→</span></button></template>
+                                <template lwc:else><button class="button button--primary" data-id="audit" data-planner={row.plannerId} onclick={handleAudit} disabled={row.auditDisabled}><template lwc:if={row.isAuditing}>Reviewing…</template><template lwc:else>Review bundle →</template></button></template>
+                            </div>
+                            <template lwc:if={row.rowError}><p class="fleet__error" data-id="row-error" role="alert">{row.rowError}</p></template>
+                        </article>
                     </template>
-                </select>
-            </label>
-
-            <label class="ohm-fleet__control">
-                <span class="ohm-fleet__control-label">Grade</span>
-                <select
-                    class="ohm-fleet__select"
-                    data-id="filter-grade"
-                    onchange={handleGradeChange}
-                >
-                    <template for:each={gradeOptions} for:item="opt">
-                        <option key={opt.value} value={opt.value}>{opt.label}</option>
-                    </template>
-                </select>
-            </label>
-
-            <button
-                type="button"
-                class="ohm-fleet__sort"
-                data-id="sort-energy"
-                onclick={handleSortToggle}
-                aria-label="Sort by energy"
-            >
-                Sort: {sortLabel}
-            </button>
-
-            <label class="ohm-fleet__control ohm-fleet__control--search">
-                <span class="ohm-fleet__control-label">Search</span>
-                <input
-                    type="search"
-                    class="ohm-fleet__search"
-                    data-id="search"
-                    placeholder="Search processes…"
-                    value={searchTerm}
-                    oninput={handleSearch}
-                />
-            </label>
-        </div>
-
-        <!-- Loading -------------------------------------------------------- -->
-        <template lwc:if={isLoading}>
-            <div class="ohm-fleet__loading" data-id="loading" role="status">
-                <span class="ohm-fleet__spinner" aria-hidden="true"></span>
-                Discovering the fleet…
-            </div>
+                </div>
+                <p class="fleet__key"><b>A</b> No material issue <b>B</b> Improvement opportunity <b>C</b> Priority fix <span>Unrated · More evidence needed</span></p>
+            </template>
+            <template lwc:if={isEmptyAfterLoad}><div class="fleet__state" data-id="empty"><h2>Your first bundle starts in Salesforce.</h2><p>Publish an Agent Script bundle, then refresh to find it here.</p><button class="button button--outline" onclick={handleRetry}>Refresh bundles →</button></div></template>
+            <template lwc:if={isFilteredEmpty}><div class="fleet__state" data-id="empty-filtered"><h2>No bundles match.</h2><p>Try another search or clear your filters.</p><button class="button button--outline" onclick={handleClearFilters}>Clear filters →</button></div></template>
         </template>
-
-        <!-- Load error ----------------------------------------------------- -->
-        <template lwc:if={loadError}>
-            <div class="ohm-fleet__error" data-id="load-error" role="alert">
-                <p>{loadError}</p>
-                <button type="button" class="ohm-fleet__btn" onclick={handleRetry}>
-                    Retry
-                </button>
-            </div>
-        </template>
-
-        <!-- Table ---------------------------------------------------------- -->
-        <template lwc:if={hasRows}>
-            <div class="ohm-fleet__table-wrap">
-                <table class="ohm-fleet__table" data-id="table">
-                    <thead>
-                        <tr>
-                            <th scope="col" class="ohm-fleet__th">Process</th>
-                            <th scope="col" class="ohm-fleet__th">Domain</th>
-                            <th scope="col" class="ohm-fleet__th ohm-fleet__th--num">Topics</th>
-                            <th scope="col" class="ohm-fleet__th ohm-fleet__th--num">Actions</th>
-                            <th scope="col" class="ohm-fleet__th ohm-fleet__th--status">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <template for:each={visibleRows} for:item="row">
-                            <tr key={row.plannerId} class="ohm-fleet__tr" data-id="row">
-                                <td class="ohm-fleet__td ohm-fleet__td--name">
-                                    <span class="ohm-fleet__name">{row.label}</span>
-                                    <span class="ohm-fleet__api">{row.plannerApiName}</span>
-                                </td>
-                                <td class="ohm-fleet__td">{row.domain}</td>
-                                <td class="ohm-fleet__td ohm-fleet__td--num">{row.topicText}</td>
-                                <td class="ohm-fleet__td ohm-fleet__td--num">{row.actionText}</td>
-                                <td class="ohm-fleet__td ohm-fleet__td--status">
-                                    <!-- Audited row -->
-                                    <template lwc:if={row.audited}>
-                                        <div class="ohm-fleet__status-audited">
-                                            <span
-                                                class={row.chipClass}
-                                                title={row.gradeWord}
-                                            >
-                                                <span class="ohm-fleet__chip-letter">{row.grade}</span>
-                                                <span class="ohm-fleet__chip-word">{row.gradeWord}</span>
-                                            </span>
-                                            <span class="ohm-fleet__energy" data-id="energy">
-                                                {row.energyText}
-                                            </span>
-                                            <button
-                                                type="button"
-                                                class="ohm-fleet__open"
-                                                data-id="open"
-                                                data-planner={row.plannerId}
-                                                onclick={handleOpen}
-                                            >
-                                                Open ▸
-                                            </button>
-                                        </div>
-                                    </template>
-
-                                    <!-- Un-audited row -->
-                                    <template lwc:if={row.audited}>
-                                    </template>
-                                    <template lwc:else>
-                                        <div class="ohm-fleet__status-pending">
-                                            <span class="ohm-fleet__notaudited">
-                                                Not audited yet
-                                            </span>
-                                            <button
-                                                type="button"
-                                                class="ohm-fleet__btn ohm-fleet__btn--audit"
-                                                data-id="audit"
-                                                data-planner={row.plannerId}
-                                                onclick={handleAudit}
-                                                disabled={row.isAuditing}
-                                            >
-                                                <template lwc:if={row.isAuditing}>
-                                                    <span class="ohm-fleet__spinner ohm-fleet__spinner--sm" aria-hidden="true"></span>
-                                                    Auditing…
-                                                </template>
-                                                <template lwc:else>Audit</template>
-                                            </button>
-                                        </div>
-                                    </template>
-
-                                    <template lwc:if={row.rowError}>
-                                        <p class="ohm-fleet__row-error" data-id="row-error" role="alert">
-                                            {row.rowError}
-                                        </p>
-                                    </template>
-                                </td>
-                            </tr>
-                        </template>
-                    </tbody>
-                </table>
-            </div>
-        </template>
-
-        <!-- Empty states --------------------------------------------------- -->
-        <template lwc:if={isEmptyAfterLoad}>
-            <div class="ohm-fleet__empty" data-id="empty">
-                No processes discovered yet.
-            </div>
-        </template>
-        <template lwc:if={isFilteredEmpty}>
-            <div class="ohm-fleet__empty" data-id="empty-filtered">
-                No processes match these filters.
-            </div>
-        </template>
-    </div>
+    </section>
 </template>

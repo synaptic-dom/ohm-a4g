@@ -53,26 +53,38 @@ public with sharing class ModelRegistry {
         if (String.isBlank(name)) {
             return null;
         }
-        String n = name.toUpperCase();
+        String n = name.trim().toUpperCase();
+        String words = name.trim().replaceAll('([A-Z])([A-Z][a-z])', '$1 $2')
+            .replaceAll('([a-z0-9])([A-Z])', '$1 $2').replace('_', ' ').toLowerCase();
         // direct tier keywords
         if (n == 'SMALL' || n == 'MEDIUM' || n == 'LARGE') {
             return n;
         }
-        // large-class model families
-        if (n.contains('GPT4') || n.contains('GPT-4') || n.contains('OMNI') ||
-            n.contains('OPUS') || n.contains('ULTRA') || n.contains('4O')) {
-            return 'LARGE';
-        }
-        // small-class model families
-        if (n.contains('MINI') || n.contains('SMALL') || n.contains('HAIKU') ||
-            n.contains('FLASH') || n.contains('NANO') || n.contains('LITE')) {
+        // Specific size variants take precedence over their parent family:
+        // DefaultOpenAIGPT4OmniMini is SMALL, even though it also contains GPT4/OMNI.
+        if (variant(n, words, 'mini') || variant(n, words, 'small') || variant(n, words, 'haiku') ||
+            variant(n, words, 'flash') || variant(n, words, 'nano') || variant(n, words, 'lite')) {
             return 'SMALL';
         }
+        // large-class model families
+        if (n.contains('GPT4') || n.contains('GPT-4') || variant(n, words, 'omni') ||
+            variant(n, words, 'opus') || variant(n, words, 'ultra') || OhmIntentEvidence.containsTerm(words, '4o')) {
+            return 'LARGE';
+        }
         // medium-class model families
-        if (n.contains('GPT35') || n.contains('GPT-3.5') || n.contains('TURBO') ||
-            n.contains('SONNET') || n.contains('MEDIUM') || n.contains('PRO')) {
+        if (n.contains('GPT35') || n.contains('GPT-3.5') || variant(n, words, 'turbo') ||
+            variant(n, words, 'sonnet') || variant(n, words, 'medium') || variant(n, words, 'pro')) {
             return 'MEDIUM';
         }
         return null; // unknown
+    }
+
+    private static Boolean variant(String upperName, String words, String term) {
+        if (OhmIntentEvidence.containsTerm(words, term)) { return true; }
+        // Fully upper/lower-cased API names lose CamelCase boundaries. Preserve suffixes
+        // only for recognized model families; PROVIDER must not match PRO, nor ADMINISTER MINI.
+        Boolean knownFamily = upperName.contains('GPT') || upperName.contains('CLAUDE') ||
+            upperName.contains('GEMINI');
+        return knownFamily && upperName.endsWith(term.toUpperCase());
     }
 }

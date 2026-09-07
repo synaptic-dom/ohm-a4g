@@ -1,41 +1,66 @@
 <template>
     <article class={cardClass} data-id="rec-card">
-        <h3 class="ohm-rec-card__signal" data-id="rec-signal">{signalLabel}</h3>
-
-        <p class="ohm-rec-card__severity" data-id="rec-severity">{severityText}</p>
-        <p class="ohm-rec-card__effort" data-id="rec-effort">{effortText}</p>
-
-        <span
-            class="ohm-rec-card__generated-by"
-            data-id="rec-generated-by"
-            data-generated-by={generatedByText}
-            >{generatedByText}</span
-        >
-
-        <p class="ohm-rec-card__recommendation" data-id="rec-text">
-            {displayRecommendation}
-        </p>
-
-        <p class="ohm-rec-card__savings" data-id="rec-savings">{savingsText}</p>
-        <p class="ohm-rec-card__provenance" data-id="rec-provenance">{provenance}</p>
-
-        <template lwc:if={created}>
-            <p class="ohm-rec-card__done" data-id="rec-done">Task created</p>
+        <template lwc:if={isReview}>
+            <div class="ohm-rec-card__meta">
+                <span class="ohm-rec-card__category" data-id="rec-category">{categoryLabel}</span>
+                <span class="ohm-rec-card__rating">{ratingLabel}</span>
+            </div>
+            <p class="ohm-rec-card__source" data-id="rec-source">{bundleLabel}<span aria-hidden="true"> / </span>{sourceLabel}</p>
+            <h3 class="ohm-rec-card__change" data-id="rec-text">{displayRecommendation}</h3>
+            <div class="ohm-rec-card__actions">
+                <template lwc:if={canOpen}>
+                    <button type="button" class="ohm-rec-card__button ohm-rec-card__button--primary" data-id="rec-open" onclick={handleOpen}>Open recommendation <span aria-hidden="true">↗</span></button>
+                </template>
+                <button type="button" class="ohm-rec-card__link" data-id="rec-details" aria-expanded={expanded} onclick={handleToggleDetails}>{detailsLabel}</button>
+            </div>
+            <template lwc:if={expanded}>
+                <div class="ohm-rec-card__details" data-id="rec-reasoning">
+                    <div class="ohm-rec-card__detail"><h4>Why</h4><p>{item.explanation}</p></div>
+                    <template lwc:if={hasEvidence}>
+                        <div class="ohm-rec-card__detail">
+                            <h4>Source evidence</h4>
+                            <template for:each={evidence} for:item="entry">
+                                <figure key={entry.key} class="ohm-rec-card__evidence">
+                                    <figcaption>{entry.label}</figcaption>
+                                    <blockquote>{entry.quote}</blockquote>
+                                    <template lwc:if={entry.canOpen}>
+                                        <button type="button" class="ohm-rec-card__link" data-id="rec-evidence-open" data-index={entry.index} onclick={handleOpenEvidence}>Review source <span aria-hidden="true">↗</span></button>
+                                    </template>
+                                </figure>
+                            </template>
+                        </div>
+                    </template>
+                    <div class="ohm-rec-card__detail"><h4>Keep intact</h4><p>{item.preserve}</p></div>
+                    <div class="ohm-rec-card__detail"><h4>How to validate</h4><p>{item.validation}</p></div>
+                </div>
+            </template>
+            <div class="ohm-rec-card__task">
+                <template lwc:if={created}>
+                    <span class="ohm-rec-card__done" data-id="rec-done">{taskText}</span>
+                    <a class="ohm-rec-card__link" data-id="rec-task-link" href={taskUrl}>Open task <span aria-hidden="true">↗</span></a>
+                </template>
+                <template lwc:else>
+                    <span class="ohm-rec-card__task-note">Track the change, then validate it.</span>
+                    <button type="button" class="ohm-rec-card__link" data-id="rec-create-task" disabled={busy} onclick={handleCreateTask}>{taskButtonLabel}</button>
+                </template>
+            </div>
         </template>
         <template lwc:else>
-            <lightning-button
-                variant="neutral"
-                label="Create remediation task"
-                title="Create remediation task"
-                onclick={handleCreateTask}
-                data-id="rec-create-task"
-            ></lightning-button>
+            <p class="ohm-rec-card__eyebrow">Supporting check</p>
+            <h3 class="ohm-rec-card__signal" data-id="rec-signal">{signalLabel}</h3>
+            <div class="ohm-rec-card__meta">
+                <span data-id="rec-severity">{severityText}</span>
+                <span data-id="rec-effort">{effortText}</span>
+                <span data-id="rec-generated-by">{generatedByText}</span>
+            </div>
+            <p class="ohm-rec-card__legacy-change" data-id="rec-text">{displayRecommendation}</p>
+            <template lwc:if={created}>
+                <div class="ohm-rec-card__task"><span class="ohm-rec-card__done" data-id="rec-done">Task created</span><a class="ohm-rec-card__link" href={taskUrl}>Open task <span aria-hidden="true">↗</span></a></div>
+            </template>
+            <template lwc:else>
+                <button type="button" class="ohm-rec-card__button" data-id="rec-create-task" disabled={busy} onclick={handleCreateTask}>Create remediation task</button>
+            </template>
         </template>
-
-        <template lwc:if={errorMessage}>
-            <p class="ohm-rec-card__error" data-id="rec-error" role="alert">
-                {errorMessage}
-            </p>
-        </template>
+        <template lwc:if={errorMessage}><p class="ohm-rec-card__error" data-id="rec-error" role="alert">{errorMessage}</p></template>
     </article>
 </template>

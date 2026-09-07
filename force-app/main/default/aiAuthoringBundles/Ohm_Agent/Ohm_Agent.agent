@@ -1,0 +1,122 @@
+# Ohm: an Agentforce agent that audits Agentforce agents. Every action is Ohm's own Apex.
+config:
+    developer_name: "Ohm_Agent"
+    agent_label: "Ohm"
+    agent_type: "AgentforceServiceAgent"
+    default_agent_user: "ohm.fixture.agent@orgfarm-08e0e83a93.ohm"
+    description: "Finds unnecessary inference inside published Agentforce agents and shows what fixing it saves in energy, carbon and water."
+
+variables:
+    last_report_id: mutable string = ""
+        description: "The most recent audit report started in this conversation."
+
+system:
+    instructions: "You are Ohm, an assistant for Agentforce builders. You audit published Agent Script bundles for wasted inference and explain what to change. Every figure you give comes from an action result; never invent numbers, grades or quotes. Energy, carbon and water figures are modeled from source tokens, so call them modeled when you state them. Be concise and concrete. You never change agents, publish source or send messages; you recommend, start audits and create tasks."
+    messages:
+        welcome: "I'm Ohm. Ask me which of your agents waste the most, what to change in one of them, or tell me to audit one now."
+        error: "That didn't work. Try asking again or name the bundle exactly as it appears in Ohm."
+
+start_agent agent_router:
+    description: "Route every request to the Ohm auditor."
+    reasoning:
+        instructions:|
+            Send every question about agents, bundles, waste, energy, footprint, recommendations, audits or tasks to the auditor. Briefly explain the scope for unrelated requests.
+        actions:
+            begin: @utils.transition to @subagent.ohm_auditor
+                description: "Audit agents, explain recommendations, start audits, create tasks."
+
+subagent ohm_auditor:
+    description: "Lists bundles with grades and modeled savings, explains recommendations, starts and checks audits, and creates tasks."
+    reasoning:
+        instructions: ->
+            | When the user asks which agents waste the most, how much they could save, or about energy, carbon or water, use {!@actions.list_bundles}. If they name a request volume such as 10,000 a day, pass it as requestsPerDay; otherwise omit it. Answer with the ranked bundles, their Input, Output and Calls grades, and the modeled energy avoided per year.
+            | When the user asks what to change, fix or improve in a bundle, use {!@actions.get_recommendations} with the bundle name they gave. Report each recommendation as the change, what must stay intact, and how to validate it.
+            | When the user asks to audit, re-audit or review a bundle now, use {!@actions.start_audit}. Tell them the audit is running, remember the report id, and offer to check on it.
+            | When the user asks whether an audit is done or how it is going, use {!@actions.audit_status} with the report id from this conversation or one they provide.
+            | When the user asks to create a task, assign the work or track a change, use {!@actions.create_task} with the bundle name and, if they mentioned one, the category Input, Output or Calls. Confirm the task id.
+            | If an action reports that a bundle was not found, list the available bundles from its summary and ask the user to pick one. Do not retry automatically.
+            if @variables.last_report_id:
+                | The most recent audit started here is report {!@variables.last_report_id}.
+        actions:
+            list_bundles: @actions.list_bundles
+                with requestsPerDay=...
+            get_recommendations: @actions.get_recommendations
+                with bundle=...
+            start_audit: @actions.start_audit
+                with bundle=...
+                set @variables.last_report_id = @outputs.reportId
+            audit_status: @actions.audit_status
+                with reportId=...
+            create_task: @actions.create_task
+                with bundle=...
+                with category=...
+    actions:
+        list_bundles:
+            description: "List every reviewed Agent Script bundle with its Input, Output and Calls grades and the modeled energy, carbon and water avoided by applying its recommendations, at a chosen request volume."
+            inputs:
+                requestsPerDay: number
+                    description: "Requests a day to model. Optional; defaults to 300."
+                    is_required: False
+            outputs:
+                summary: string
+                    description: "Readable ranked list of bundles with grades and modeled savings."
+                    is_used_by_planner: True
+                    is_displayable: True
+            target: "apex://OhmAgentListBundles"
+        get_recommendations:
+            description: "Return the saved recommendations for one bundle: what to change, what to keep intact, how to validate, with the quoted source evidence."
+            inputs:
+                bundle: string
+                    description: "The bundle's display name or API name as shown in Ohm."
+                    is_required: True
+            outputs:
+                summary: string
+                    description: "Readable recommendations for the bundle, or the list of available bundles if it was not found."
+                    is_used_by_planner: True
+                    is_displayable: True
+            target: "apex://OhmAgentRecommendations"
+        start_audit:
+            description: "Start a real audit of one bundle now. Retrieves the published source, reviews it, and saves verified results."
+            inputs:
+                bundle: string
+                    description: "The bundle's display name or API name as shown in Ohm."
+                    is_required: True
+            outputs:
+                reportId: string
+                    description: "The audit report id to check on later."
+                    is_used_by_planner: True
+                summary: string
+                    description: "What was started and how to check on it."
+                    is_used_by_planner: True
+                    is_displayable: True
+            target: "apex://OhmAgentStartAudit"
+        audit_status:
+            description: "Check how a running audit is doing and report its grades once it completes."
+            inputs:
+                reportId: string
+                    description: "The audit report id returned when the audit was started."
+                    is_required: True
+            outputs:
+                summary: string
+                    description: "Current stage, percent complete, and the grades when finished."
+                    is_used_by_planner: True
+                    is_displayable: True
+            target: "apex://OhmAgentAuditStatus"
+        create_task:
+            description: "Create a real Salesforce Task for one of a bundle's saved recommendations so a builder can own the change."
+            inputs:
+                bundle: string
+                    description: "The bundle's display name or API name as shown in Ohm."
+                    is_required: True
+                category: string
+                    description: "Optional: Input, Output or Calls to pick which recommendation. Defaults to the highest-priority one."
+                    is_required: False
+            outputs:
+                taskId: string
+                    description: "The created Task id."
+                    is_used_by_planner: True
+                summary: string
+                    description: "What the task covers and its id."
+                    is_used_by_planner: True
+                    is_displayable: True
+            target: "apex://OhmAgentCreateTask"

@@ -12,6 +12,10 @@
                         >{typeLabel}</span
                     >
                 </div>
+            </header>
+
+            <details class={sourcePanelClass} aria-label="Instruction source provenance" data-id="source-handoff">
+                <summary>{sourceTitle}</summary>
                 <div class="ohm-inspector__meta">
                     <span class="ohm-inspector__api" data-id="node-api"
                         >{node.apiName}</span
@@ -30,16 +34,27 @@
                             </span>
                         </template>
                     </template>
-                    <template lwc:if={boundModel}>
-                        <span class="ohm-inspector__kv" data-id="node-model">
-                            Model: <b>{boundModel}</b>
-                        </span>
-                    </template>
+
                 </div>
-            </header>
+                <p class="ohm-inspector__source-status" data-id="source-status">{sourceStatus}</p>
+                <template lwc:if={hasInstructions}>
+                    <dl class="ohm-inspector__source-facts">
+                        <div><dt>Version</dt><dd data-id="source-version">{sourceVersionLabel}</dd></div>
+                        <div><dt>Retrieved</dt><dd data-id="source-time">{sourceTimeText}</dd></div>
+                        <template lwc:if={sourceApiName}><div><dt>Artifact</dt><dd>{sourceApiName}</dd></div></template>
+                    </dl>
+                    <details><summary>Source identity and location</summary>
+                        <p class="ohm-inspector__api">{sourcePath}</p>
+                        <p class="ohm-inspector__api">SHA-256 · {sourceHash}</p>
+                        <p class="ohm-inspector__api">{sourceKind}</p>
+                    </details>
+                    <p class="ohm-inspector__handoff">{sourceHandoffText}</p>
+                </template>
+            </details>
 
             <!-- Finding summary (wasteful only) ---------------------------- -->
             <template lwc:if={isWasteful}>
+                <details class="ohm-inspector__legacy"><summary>Detector evidence</summary>
                 <section class="ohm-inspector__finding" data-id="node-finding">
                     <div class="ohm-inspector__finding-head">
                         <span class="ohm-inspector__signal" data-id="node-signal"
@@ -65,6 +80,7 @@
                         </div>
                     </template>
                 </section>
+                </details>
             </template>
 
             <!-- Instructions (with highlighted excess) --------------------- -->
@@ -84,13 +100,15 @@
                 </template>
                 <template lwc:else>
                     <p class="ohm-inspector__no-instr" data-id="no-instructions">
-                        This node has no instruction text.
+                        Instruction text is unavailable for this node. See audit coverage.
                     </p>
                 </template>
             </section>
+            <template lwc:if={hasInstructions}><button type="button" class="ohm-inspector__ask" data-id="ask-source" onclick={handleAskSource}>Ask Ohm about this source ↗</button></template>
 
             <!-- Fix CTAs --------------------------------------------------- -->
             <template lwc:if={isWasteful}>
+                <details class="ohm-inspector__legacy"><summary>Existing remediation</summary>
                 <section class="ohm-inspector__fixes" data-id="node-fixes">
                     <div class="ohm-inspector__cta-row">
                         <template for:each={fixCtas} for:item="cta">
@@ -168,11 +186,12 @@
                         </div>
                     </template>
                 </section>
+                </details>
             </template>
 
             <template lwc:else>
                 <p class="ohm-inspector__clean" data-id="node-clean">
-                    No waste found on this node.
+                    No detector finding recorded for this source.
                 </p>
             </template>
         </template>
@@ -182,7 +201,7 @@
                 <span class="ohm-inspector__empty-glyph" aria-hidden="true"
                     >◎</span
                 >
-                <p>Select a node to inspect it.</p>
+                <p>Select a source above or open one from a recommendation.</p>
             </div>
         </template>
     </div>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 452 160" width="452" height="160" role="img" aria-label="Ohm">
+  <title>Ohm</title>
+  <rect width="452" height="160" rx="20" fill="#0b1010"/>
+  <g transform="translate(48 34)">
+    <circle cx="46" cy="46" r="45" fill="none" stroke="#b8f36b" stroke-width="2"/>
+    <circle cx="46" cy="46" r="62" fill="none" stroke="#35442c" stroke-width="1.5" stroke-dasharray="4 7"/>
+    <text x="46" y="68" font-family="Georgia, 'Times New Roman', serif" font-size="58" fill="#c8f596" text-anchor="middle">&#937;</text>
+  </g>
+  <text x="176" y="106" font-family="'Avenir Next', 'Segoe UI', Helvetica, Arial, sans-serif" font-weight="700" font-size="86" letter-spacing="-5" fill="#f4f1e8">ohm<tspan fill="#b8f36b">.</tspan></text>
+</svg>

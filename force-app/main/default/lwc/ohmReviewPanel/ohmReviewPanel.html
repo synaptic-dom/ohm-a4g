@@ -1,0 +1,55 @@
+<template>
+    <section class={rootClass} aria-label="Efficiency review" data-id="review-root">
+        <template lwc:if={reviewed}>
+            <div class="review__categories">
+                <template for:each={categories} for:item="category">
+                    <article key={category.id} class={category.css} aria-label={category.accessibleLabel} data-id="category-card">
+                        <div class="review-category__head"><h3>{category.shortLabel}</h3><span class="review-category__grade">{category.rating}</span></div>
+                        <p class="review-category__rating">{category.ratingLabel}</p>
+                        <details class="review-category__detail"><summary>What this means</summary><p>{category.assessment}</p><p>Coverage: {category.coverageStatus}. {category.coverageNote}</p><p>{category.environmentalMechanism}</p></details>
+                    </article>
+                </template>
+            </div>
+            <header class="review__header"><div><p class="review__eyebrow">{recommendationCountText}</p><h2 data-focus-heading tabindex="-1">{summaryText}</h2></div><p class="review__coverage">{review.coverageText}</p></header>
+            <template lwc:if={hasBundleIssues}>
+                <div class="review__recommendations">
+                    <template for:each={visibleRecommendations} for:item="issue">
+                        <article key={issue.index} class="review-issue" data-id="bundle-issue">
+                            <div class="review-issue__top"><span class="review-issue__category">{issue.categoryLabel}</span></div>
+                            <h3>{issue.label}</h3>
+                            <p class="review-issue__recommendation">{issue.recommendation}</p>
+                            <div class="review-issue__actions"><button type="button" class={issue.buttonClass} data-id="review-change" data-issue={issue.index} onclick={handleReviewAction}>Review this change <span aria-hidden="true">↗</span></button></div>
+                            <details class="review-issue__details"><summary>Evidence &amp; validation</summary>
+                                <p class="review-issue__explanation">{issue.explanation}</p>
+                                <template for:each={issue.evidence} for:item="evidence">
+                                    <div key={evidence.key} class="review-issue__evidence"><p class="review-issue__source">{evidence.label}</p><template lwc:if={evidence.quote}><blockquote>{evidence.quote}</blockquote></template><template lwc:if={evidence.missing}><p>Evidence could not be matched to a retrieved source artifact.</p></template></div>
+                                </template>
+                                <dl class="review-issue__steps"><div><dt>Preserve</dt><dd>{issue.preserve}</dd></div><div><dt>Validate</dt><dd>{issue.validation}</dd></div></dl>
+                            </details>
+                        </article>
+                    </template>
+                </div>
+                <template lwc:if={hasMoreRecommendations}><button type="button" class="review__more" data-id="more-recommendations" onclick={handleMore} aria-expanded={showAllRecommendations}>{moreLabel}</button></template>
+            </template>
+            <template lwc:else><p class="review__qualification">No material issue was found in the reviewed evidence. Unrated categories still need more evidence.</p></template>
+            <details class="review__supporting" data-id="instruction-reviews"><summary>Instruction &amp; prompt reviews <span>{review.coverageText}</span></summary>
+                <div class="review__artifacts"><template for:each={artifacts} for:item="artifact">
+                    <details key={artifact.artifactId} class="review-artifact" data-id="artifact-review">
+                        <summary><span class="review-artifact__identity"><strong>{artifact.label}</strong><span>{artifact.artifactType}</span></span><span class="review-artifact__ratings"><template for:each={artifact.categories} for:item="category"><span key={category.id} class={category.css} title={category.accessibleLabel}>{category.shortLabel} <strong>{category.rating}</strong></span></template></span></summary>
+                        <div class="review-artifact__body"><p class="review-artifact__facts">{artifact.factsText}</p><button type="button" class="review__secondary" data-id="open-source" data-artifact={artifact.artifactId} onclick={handleSourceAction}>Open this source ↗</button>
+                            <template for:each={artifact.categories} for:item="category"><section key={category.id} class="review-assessment" aria-label={category.accessibleLabel}><h4>{category.label} <span>{category.rating} · {category.ratingLabel}</span></h4><p>{category.assessment}</p><template for:each={category.issues} for:item="issue"><div key={issue.key} class="review-assessment__issue"><p><strong>{issue.label}</strong> · {issue.recommendation}</p><p>Preserve: {issue.preserve}</p><p>Validate: {issue.validation}</p></div></template></section></template>
+                            <details class="review__source-details"><summary>Source identity</summary><dl class="review__provenance"><div><dt>Published version</dt><dd>{artifact.sourceVersion}</dd></div><div><dt>Source path</dt><dd>{artifact.sourcePath}</dd></div><div><dt>SHA-256</dt><dd>{artifact.sourceHash}</dd></div></dl></details>
+                        </div>
+                    </details>
+                </template></div>
+            </details>
+            <details class="review__supporting" data-id="review-method"><summary>How this review works</summary>
+                <p class="review__legend"><strong>A</strong> No material issue · <strong>B</strong> Improvement opportunity · <strong>C</strong> Priority fix · <strong>Unrated</strong> Insufficient evidence</p>
+                <p class="review__qualification">Source-based ratings describe available evidence. Environmental mechanisms are qualitative; they do not measure runtime savings.</p>
+                <template lwc:if={hasLimitations}><ul class="review__limitations"><template for:each={limitations} for:item="limitation"><li key={limitation}>{limitation}</li></template></ul></template>
+                <footer class="review__footer"><p>Reviewer: {review.reviewer} · {reviewedAtText}</p><p>Template: {templateText} · declared reviewer version</p><p>Ratings follow OHM’s rules. Rubric: {review.rubricVersion}</p></footer>
+            </details>
+        </template>
+        <template lwc:else><div class="review__empty" data-id="review-empty"><p class="review__eyebrow">Published source, independent ratings</p><h2 data-focus-heading tabindex="-1">{emptyHeading}</h2><p>{emptyMessage}</p></div></template>
+    </section>
+</template>

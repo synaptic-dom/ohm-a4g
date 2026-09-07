@@ -1,0 +1,129 @@
+{
+  "kind": "Controlled test fixtures adapted from public Salesforce recipes; added issues are not upstream defects.",
+  "upstreamRepository": "https://github.com/trailheadapps/agent-script-recipes",
+  "upstreamCommit": "ac5ccac8f675153035370abbdce174e2b769c89c",
+  "license": "Apache-2.0",
+  "upstreamFiles": [
+    {
+      "path": "force-app/main/02_actionConfiguration/promptTemplateActions/aiAuthoringBundles/PromptTemplateActions/PromptTemplateActions.agent",
+      "sha256": "ac4da8df29a7fabaf01c7e96d45257bf0e0833e1616f224d2c47fbc6ee4c87bb"
+    },
+    {
+      "path": "force-app/main/02_actionConfiguration/promptTemplateActions/genAiPromptTemplates/Generate_Personalized_Schedule.genAiPromptTemplate-meta.xml",
+      "sha256": "dd45b1b669fb6f6ad4154fafa18dd61bed81cf86a44750e303992b9874c5d7d2"
+    },
+    {
+      "path": "force-app/main/02_actionConfiguration/actionChaining/aiAuthoringBundles/ActionChaining/ActionChaining.agent",
+      "sha256": "7b0b6ef2d8140d20a34a31f142f0ccb369e3a194b6621f78479e347269cc7bef"
+    },
+    {
+      "path": "force-app/main/02_actionConfiguration/actionDefinitions/classes/WeatherAlertService.cls",
+      "sha256": "9a1bc86237fbea484023af530e729d3b7a33a58dd7035c692af0fb8a5ba44deb"
+    }
+  ],
+  "changes": [
+    "New fixture agent identities and synthetic support, sales, and retreat scenarios.",
+    "Reuse public transition, linked prompt, invocable Apex, and run/set action wiring.",
+    "Published as AgentforceServiceAgent with a dedicated Einstein Agent User (default_agent_user) because the hackathon trial org is not licensed for the Employee Agent template; the upstream recipes use AgentforceEmployeeAgent.",
+    "Linked prompts run on sfdc_ai__DefaultGPT55 (the newest alias available in the hackathon org) instead of the recipe default sfdc_ai__DefaultOpenAIGPT4OmniMini.",
+    "Replace the original Salesforce-data provider with required primitive String inputs so there are no custom object or Data Cloud dependencies.",
+    "Support prompt deliberately repeats policy. Sales prompt deliberately overproduces formats. Schedule prompt explicitly performs bounded scheduling rules.",
+    "New pure Apex schedule preparation and its tests form the efficient control; its linked prompt only presents the prepared result."
+  ],
+  "fixtures": [
+    {
+      "api": "Ohm_Support_Desk",
+      "label": "Customer Support",
+      "template": "Ohm_Support_Reply",
+      "expected": "INPUT_REDUNDANCY"
+    },
+    {
+      "api": "Ohm_Sales_Follow_Up",
+      "label": "Sales Follow-up",
+      "template": "Ohm_Sales_Follow_Up_Email",
+      "expected": "OUTPUT_UNNECESSARY_VERBOSITY or OUTPUT_FORMAT_MISMATCH"
+    },
+    {
+      "api": "Ohm_Schedule_Planner",
+      "label": "Schedule Planning",
+      "template": "Ohm_Plan_Day",
+      "expected": "CALLS_DETERMINISTIC_ALTERNATIVE"
+    },
+    {
+      "api": "Ohm_Schedule_Desk",
+      "label": "Efficient Schedule Desk",
+      "template": "Ohm_Present_Validated_Plan",
+      "expected": "No CALLS_DETERMINISTIC_ALTERNATIVE for existing Apex/run/set work; A is not preassigned."
+    }
+  ],
+  "files": [
+    {
+      "path": "force-app/main/default/aiAuthoringBundles/Ohm_Sales_Follow_Up/Ohm_Sales_Follow_Up.agent",
+      "sha256": "69656a6d36effb77f4418c50cb8b150d0b7f0b1767876befdfcfdaed21ac7509"
+    },
+    {
+      "path": "force-app/main/default/aiAuthoringBundles/Ohm_Sales_Follow_Up/Ohm_Sales_Follow_Up.bundle-meta.xml",
+      "sha256": "2339b1a3db948cc5524bb76e5449bc4d7f96be120df68f39455f2321c05918c2"
+    },
+    {
+      "path": "force-app/main/default/aiAuthoringBundles/Ohm_Schedule_Desk/Ohm_Schedule_Desk.agent",
+      "sha256": "15bd722054af9ff346143bfb0dc173247d8e596299f9e86710930b67afd6dc6c"
+    },
+    {
+      "path": "force-app/main/default/aiAuthoringBundles/Ohm_Schedule_Desk/Ohm_Schedule_Desk.bundle-meta.xml",
+      "sha256": "2339b1a3db948cc5524bb76e5449bc4d7f96be120df68f39455f2321c05918c2"
+    },
+    {
+      "path": "force-app/main/default/aiAuthoringBundles/Ohm_Schedule_Planner/Ohm_Schedule_Planner.agent",
+      "sha256": "d1811864aa91c01fb79a439f4a298e69da87086b8c021e792a3e3191a9d20261"
+    },
+    {
+      "path": "force-app/main/default/aiAuthoringBundles/Ohm_Schedule_Planner/Ohm_Schedule_Planner.bundle-meta.xml",
+      "sha256": "2339b1a3db948cc5524bb76e5449bc4d7f96be120df68f39455f2321c05918c2"
+    },
+    {
+      "path": "force-app/main/default/aiAuthoringBundles/Ohm_Support_Desk/Ohm_Support_Desk.agent",
+      "sha256": "0b4b2828d9a0d9ee2e2dd41b79086e1cf83efb7b0cb4f98c5cf4d479f48f1708"
+    },
+    {
+      "path": "force-app/main/default/aiAuthoringBundles/Ohm_Support_Desk/Ohm_Support_Desk.bundle-meta.xml",
+      "sha256": "2339b1a3db948cc5524bb76e5449bc4d7f96be120df68f39455f2321c05918c2"
+    },
+    {
+      "path": "force-app/main/default/classes/OhmDemoScheduleService.cls",
+      "sha256": "63bb338d0508e38fc0e8d0ce18ae722b42c3ed6d29f2b419534d506385a56345"
+    },
+    {
+      "path": "force-app/main/default/classes/OhmDemoScheduleService.cls-meta.xml",
+      "sha256": "17e31f2473b0c9f7048b434edab7d12261a9b8a0b9ede833cb9c3141eeeccb7b"
+    },
+    {
+      "path": "force-app/main/default/classes/OhmDemoScheduleServiceTest.cls",
+      "sha256": "fd3bb12240464e253578fa1f92eb44fdf64605c0b01a8cf9cad907f3dffb2ce9"
+    },
+    {
+      "path": "force-app/main/default/classes/OhmDemoScheduleServiceTest.cls-meta.xml",
+      "sha256": "17e31f2473b0c9f7048b434edab7d12261a9b8a0b9ede833cb9c3141eeeccb7b"
+    },
+    {
+      "path": "force-app/main/default/genAiPromptTemplates/Ohm_Plan_Day.genAiPromptTemplate-meta.xml",
+      "sha256": "52e12f3887605062c504b6ad840a72c0890ed5429099fd14408ecc9b8fe9518a"
+    },
+    {
+      "path": "force-app/main/default/genAiPromptTemplates/Ohm_Present_Validated_Plan.genAiPromptTemplate-meta.xml",
+      "sha256": "52d8d706650cd87e4d89a34ba9bfd76ebf4896c4123f2cbe7467741b2d30aee2"
+    },
+    {
+      "path": "force-app/main/default/genAiPromptTemplates/Ohm_Sales_Follow_Up_Email.genAiPromptTemplate-meta.xml",
+      "sha256": "4e4b00cb75b9243e5af53cbd552064d92588fd12030337d19bf088af7ef41688"
+    },
+    {
+      "path": "force-app/main/default/genAiPromptTemplates/Ohm_Support_Reply.genAiPromptTemplate-meta.xml",
+      "sha256": "56e94293f1568a065c60af1ab06a7a60dae7b0a9fe07c4b70408fdbdf766e250"
+    },
+    {
+      "path": "force-app/main/default/permissionsets/Ohm_Event_Fixture_Access.permissionset-meta.xml",
+      "sha256": "479ff8f943adb99083ecaceeac26a37ffd0b03989a9d662f05da47eaba875a8c"
+    }
+  ]
+}

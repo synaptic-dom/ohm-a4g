@@ -1,0 +1,73 @@
+{
+  "recordedAt": "2026-09-07T21:00:00Z",
+  "targetOrg": "ohm-hackathon",
+  "model": "sfdc_ai__DefaultGPT55 (gpt-5.5-2026-04-23)",
+  "method": "aiplatform.ModelsAPI createChatGenerations from anonymous Apex; usage read from generationDetails.parameters.properties.usage; identical user input for before/after; n=1 per variant",
+  "whatIsMeasured": "token counts only",
+  "whatIsModeled": "watt-hours, derived from measured token deltas with disclosed constants",
+  "caveats": [
+    "single sample per variant; rerun for variance",
+    "Sales 'before' completion was only 165 tokens, so the model did not produce the eight alternatives in this sample; the measured Sales saving is input-side only",
+    "energy is never measured anywhere in this stack"
+  ],
+  "cases": {
+    "support": {
+      "before": {
+        "total_tokens": 440,
+        "completion_tokens": 68,
+        "prompt_tokens": 372,
+        "prompt_chars": 1942,
+        "model": "gpt-5.5-2026-04-23",
+        "variant": "support_before_6x_policy"
+      },
+      "after": {
+        "total_tokens": 204,
+        "completion_tokens": 67,
+        "prompt_tokens": 137,
+        "prompt_chars": 677,
+        "model": "gpt-5.5-2026-04-23",
+        "variant": "support_after_1x_policy"
+      },
+      "measured": {
+        "promptTokenDelta": 235,
+        "promptTokenReductionPct": 63.2,
+        "completionTokenDelta": 1
+      },
+      "modeled": {
+        "method": "delta prompt tokens / 500 reference tokens x 0.27 Wh central (OhmConstants energyPerPromptWh central, Epoch AI GPT-4o median); NOT a measurement",
+        "whPerRequestCentral": 0.1269,
+        "kWhPerYearAt1000PerDay": 46.3,
+        "kWhPerYearAt10000PerDay": 463.2
+      }
+    },
+    "sales": {
+      "before": {
+        "total_tokens": 406,
+        "completion_tokens": 165,
+        "prompt_tokens": 241,
+        "prompt_chars": 1206,
+        "model": "gpt-5.5-2026-04-23",
+        "variant": "sales_before_8_alternatives_4_formats"
+      },
+      "after": {
+        "total_tokens": 337,
+        "completion_tokens": 166,
+        "prompt_tokens": 171,
+        "prompt_chars": 814,
+        "model": "gpt-5.5-2026-04-23",
+        "variant": "sales_after_one_plain_text_email"
+      },
+      "measured": {
+        "promptTokenDelta": 70,
+        "promptTokenReductionPct": 29.0,
+        "completionTokenDelta": -1
+      },
+      "modeled": {
+        "method": "delta prompt tokens / 500 reference tokens x 0.27 Wh central (OhmConstants energyPerPromptWh central, Epoch AI GPT-4o median); NOT a measurement",
+        "whPerRequestCentral": 0.0378,
+        "kWhPerYearAt1000PerDay": 13.8,
+        "kWhPerYearAt10000PerDay": 138.0
+      }
+    }
+  }
+}

@@ -21,35 +21,52 @@ public with sharing class OhmRecommendationService {
                 f.recommendedTarget = 'Flow or Apex rule';
             }
             f.effort = 'Medium';
-            f.recommendationText = 'This action performs deterministic work an LLM does not need to do. ' +
-                'Replace the prompt call with a Flow (or Apex) that returns the exact result — removing the ' +
-                'per-turn inference entirely.';
+            f.recommendationText = 'Review a Flow or Apex alternative for this prompt action. Specify the ' +
+                'rules, allowed inputs and edge cases, then compare outputs before replacing it. ' +
+                'The metadata does not prove equivalent behavior; savings are withheld until validated.';
 
         } else if (f.signalType == ModelRightSizingDetector.SIGNAL) {
-            f.fixType = 'Downsize_Model';
-            if (String.isBlank(f.recommendedTarget)) {
-                f.recommendedTarget = ModelRegistry.recommendedFor(ModelRegistry.TaskComplexity.TRIVIAL).tier;
+            if (f.reviewRequired == true || f.metricValue == null || String.isBlank(f.boundModel) ||
+                ModelRegistry.lookup(f.boundModel).assumed || String.isBlank(f.recommendedTarget) ||
+                ModelRegistry.lookup(f.recommendedTarget).assumed) {
+                f.fixType = null;
+                f.recommendedTarget = null;
+                f.effort = 'Low';
+                f.recommendationText = 'Retrieve the current prompt model and evaluate task requirements ' +
+                    'before recommending a different tier. Model reduction and savings are unavailable.';
+                f.savings = null;
+                return f;
             }
+            f.fixType = 'Downsize_Model';
             f.effort = 'Low';
-            f.recommendationText = 'The bound model is larger than this task requires. Re-point the action to a ' +
-                f.recommendedTarget + '-tier model, which covers the work at a lower per-inference cost.';
+            f.recommendationText = 'Evaluate a ' + f.recommendedTarget +
+                '-tier model with representative inputs, quality checks and edge cases. Any displayed ' +
+                'reduction is a modeled scenario, conditional on that model meeting the task requirements.';
 
         } else if (f.signalType == InstructionBloatDetector.SIGNAL) {
             f.fixType = 'Trim_Instructions';
             Integer soft = c.softThresholdFor(f.artifactType);
             f.recommendedTarget = soft + ' tokens';
             f.effort = 'Low';
-            f.recommendationText = 'The instruction block exceeds its token budget. Trim it to ≈ ' + soft +
-                ' tokens; the removed tokens are re-sent every turn, so the saving recurs across the run.';
+            f.recommendationText = 'The instruction block exceeds the review budget of approximately ' +
+                soft + ' tokens. Propose a shorter version, preserve required rules and action branches, ' +
+                'then validate behavior. The displayed reduction models a trim to that budget at the stated usage volume.';
 
         } else if (f.signalType == RedundantCallDetector.SIGNAL) {
             f.fixType = 'Consolidate_Calls';
             if (String.isBlank(f.recommendedTarget)) {
-                f.recommendedTarget = 'Single consolidated call per turn';
+                f.recommendedTarget = 'Review repeated prompt paths';
             }
             f.effort = 'Medium';
-            f.recommendationText = 'The agent makes more prompt calls per turn than the task requires. ' +
-                'Consolidate the redundant calls into one, eliminating the extra inferences each turn.';
+            f.recommendationText = 'Inspect the repeated prompt target or loop with representative ' +
+                'execution traces. Preserve calls that use changed inputs or serve distinct steps. ' +
+                'Metadata does not establish removable calls, so savings are withheld.';
+        }
+
+        if (f.signalType == LlmWhereDeterministicDetector.SIGNAL ||
+            f.signalType == RedundantCallDetector.SIGNAL) {
+            f.savings = null;
+            return f;
         }
 
         // fill savings via the single savings path

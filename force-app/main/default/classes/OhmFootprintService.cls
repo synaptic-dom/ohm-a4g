@@ -71,12 +71,7 @@ public with sharing class OhmFootprintService {
 
     // ---------- per-artifact convenience ----------
     public OhmDTO.FootprintResponse estimateForArtifact(OhmDTO.Finding f, OhmDTO.VolumeInput v) {
-        OhmDTO.FootprintResponse r = estimate(baseRequest(f, v));
-        // signal (b): the artifact actually runs on the (oversized) bound model
-        if (f != null && f.signalType == ModelRightSizingDetector.SIGNAL && f.metricValue != null) {
-            r = scale(r, f.metricValue);
-        }
-        return r;
+        return estimate(baseRequest(f, v));
     }
 
     /**
@@ -87,7 +82,7 @@ public with sharing class OhmFootprintService {
      *  (d) reduced callsPerTurn=> savings = baseline(1+extra) − baseline(1)
      */
     public OhmDTO.FootprintResponse savingsFor(OhmDTO.Finding f, OhmDTO.VolumeInput v) {
-        if (f == null) {
+        if (f == null || f.reviewRequired == true) {
             return zero();
         }
         OhmConstants c = OhmConstants.load();
@@ -95,17 +90,14 @@ public with sharing class OhmFootprintService {
         OhmDTO.FootprintResponse baseline = estimate(req);
 
         if (f.signalType == LlmWhereDeterministicDetector.SIGNAL) {
-            return baseline; // whole inference removed
+            return f.reviewRequired == false ? baseline : zero();
 
         } else if (f.signalType == ModelRightSizingDetector.SIGNAL) {
-            Decimal mBound = (f.metricValue == null) ? 1.0 : f.metricValue;
-            Decimal mRec = 1.0;
-            if (String.isNotBlank(f.recommendedTarget)) {
-                mRec = ModelRegistry.lookup(f.recommendedTarget).rateCardMultiplier;
-            }
-            Decimal delta = mBound - mRec;
-            if (delta < 0) { delta = 0; }
-            return scale(baseline, delta);
+            ModelRegistry.ModelInfo current = ModelRegistry.lookup(f.boundModel);
+            ModelRegistry.ModelInfo target = ModelRegistry.lookup(f.recommendedTarget);
+            if (current.assumed || target.assumed || String.isBlank(f.recommendedTarget)) { return zero(); }
+            Decimal ratio = 1 - target.rateCardMultiplier / current.rateCardMultiplier;
+            return scale(baseline, Math.max(0, ratio));
 
         } else if (f.signalType == InstructionBloatDetector.SIGNAL) {
             OhmDTO.FootprintRequest fixedReq = cloneReq(req);
@@ -113,6 +105,7 @@ public with sharing class OhmFootprintService {
             return subtract(baseline, estimate(fixedReq));
 
         } else if (f.signalType == RedundantCallDetector.SIGNAL) {
+            if (f.reviewRequired != false) { return zero(); }
             OhmDTO.FootprintRequest fixedReq = cloneReq(req);
             fixedReq.annualCalls = VOLUME.annualCalls(VOLUME.withCallsPerTurn(resolveVolume(v), 1));
             return subtract(baseline, estimate(fixedReq));
@@ -148,8 +141,8 @@ public with sharing class OhmFootprintService {
         OhmDTO.VolumeInput vol = resolveVolume(v);
         OhmDTO.FootprintRequest req = new OhmDTO.FootprintRequest();
         req.tokensPerInference = c.referencePromptTokens();
-        req.boundModel = null;         // per-artifact baseline at multiplier 1.0
-        req.modelAssumed = true;
+        req.boundModel = f == null ? null : f.boundModel;
+        req.modelAssumed = ModelRegistry.lookup(req.boundModel).assumed;
 
         if (f != null) {
             req.artifactId = f.artifactToolingId;

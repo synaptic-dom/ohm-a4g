@@ -32,7 +32,7 @@ export default class OhmCallGraph extends LightningElement {
     @api calmMode = false;
 
     get hostClass() {
-        return this.calmMode ? 'ohm-graph ohm-graph--calm' : 'ohm-graph';
+        return 'ohm-graph';
     }
 
     get hasNodes() {
@@ -164,12 +164,12 @@ export default class OhmCallGraph extends LightningElement {
                 const top = yOf(n.nodeType);
                 const selected = n.id === this.selectedNodeId;
                 const statusWord = n.wasteful
-                    ? `flagged wasteful${
+                    ? `finding to review${
                           n.signalType && SIGNAL_LABELS[n.signalType]
                               ? ' — ' + SIGNAL_LABELS[n.signalType]
                               : ''
                       }`
-                    : 'clean';
+                    : 'no findings in available evidence';
                 let cssClass = 'ohm-graph__node';
                 cssClass += n.wasteful
                     ? ' ohm-graph__node--waste'

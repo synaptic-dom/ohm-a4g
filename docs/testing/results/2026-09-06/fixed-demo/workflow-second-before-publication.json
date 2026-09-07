@@ -1,0 +1,53 @@
+{
+  "rehearsal": 2,
+  "phase": "before",
+  "plannerId": "16jEc000000PAU1IAO",
+  "plannerApiName": "Ohm_Weather_Demo_v3",
+  "metadataFingerprint": "c3ebeecb09e49efa0a9eb31d6b97da604abc32ba601cfcbf3551b429e6ee8628",
+  "sourceRevision": "controlled-weather-before-repeat",
+  "deployment": {
+    "id": "0AfEc00000nY4WPKA0",
+    "status": "Succeeded",
+    "success": true,
+    "numberComponentsDeployed": 1,
+    "numberComponentErrors": 0
+  },
+  "publication": {
+    "success": true,
+    "botDeveloperName": "Ohm_Weather_Demo",
+    "summary": {
+      "retrieved": 0,
+      "deployed": 3
+    }
+  },
+  "activation": {
+    "success": true,
+    "version": 3
+  },
+  "sourceImportApplied": true,
+  "behaviorSuiteRerun": false,
+  "behaviorEvidenceReused": "Same source hash as validated v1; metadata version reset only.",
+  "sourceArtifacts": [
+    {
+      "id": "16jEc000000PAU1IAO",
+      "characterCount": 103,
+      "sourceHash": "8f8dfca7d77a006c38bdb822a4be821c45da7f810114b8c18554a190861de2c3",
+      "sourceVersion": "controlled-weather-before-repeat:6946581b3aef7b33c52b21ef90c9f080ad1de8705a94a42d87d2fcbb29a4dbc0",
+      "sourcePath": "/Users/dom/Documents/ohm-a4g/test-fixtures/controlled-weather/before/force-app/main/default/aiAuthoringBundles/Ohm_Weather_Demo/Ohm_Weather_Demo.agent#system"
+    },
+    {
+      "id": "179Ec000006G6sPIAS",
+      "characterCount": 4085,
+      "sourceHash": "cf1d706095580fc6506fdb98c03a16a46d0ffdb6455a148e278e66a4ba085f10",
+      "sourceVersion": "controlled-weather-before-repeat:6946581b3aef7b33c52b21ef90c9f080ad1de8705a94a42d87d2fcbb29a4dbc0",
+      "sourcePath": "/Users/dom/Documents/ohm-a4g/test-fixtures/controlled-weather/before/force-app/main/default/aiAuthoringBundles/Ohm_Weather_Demo/Ohm_Weather_Demo.agent#weather_lookup"
+    },
+    {
+      "id": "179Ec000006G6sQIAS",
+      "characterCount": 117,
+      "sourceHash": "0204cc6cc8a8ed21695dd1d3fa64ccab53e0f0b66445612da8b90b0f3e72cec5",
+      "sourceVersion": "controlled-weather-before-repeat:6946581b3aef7b33c52b21ef90c9f080ad1de8705a94a42d87d2fcbb29a4dbc0",
+      "sourcePath": "/Users/dom/Documents/ohm-a4g/test-fixtures/controlled-weather/before/force-app/main/default/aiAuthoringBundles/Ohm_Weather_Demo/Ohm_Weather_Demo.agent#agent_router"
+    }
+  ]
+}

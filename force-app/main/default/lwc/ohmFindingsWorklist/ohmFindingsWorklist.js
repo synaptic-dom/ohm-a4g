@@ -3,18 +3,9 @@ import getFindings from '@salesforce/apex/OhmAuditController.getFindings';
 import updateFindingStatus from '@salesforce/apex/OhmAuditController.updateFindingStatus';
 import assignFinding from '@salesforce/apex/OhmAuditController.assignFinding';
 import USER_ID from '@salesforce/user/Id';
-import { SIGNAL_LABELS, formatNumber } from 'c/ohmConstants';
+import { SIGNAL_LABELS } from 'c/ohmConstants';
 
-/**
- * ohmFindingsWorklist — the FINDINGS tab (SPEC §2.3).
- * A cross-fleet, Task-backed backlog. connectedCallback fetches getFindings; the
- * status/severity filters re-query the server (the contract does the de-dup +
- * ordering), and the savings sort is applied client-side. Per row you can move a
- * finding through Open → Accepted → Dismissed → Applied (updateFindingStatus,
- * mirrored onto the linked Task) and assign it to yourself with a due date
- * (assignFinding). Severity + status are always rendered as TEXT, never colour
- * alone. Dark Instrument styling, Calm variant flips the tokens on the root.
- */
+/** Existing detector findings and their real Task assignment/status lifecycle. */
 const STATUS_CHOICES = ['Open', 'Accepted', 'Dismissed', 'Applied'];
 
 export default class OhmFindingsWorklist extends LightningElement {
@@ -27,7 +18,7 @@ export default class OhmFindingsWorklist extends LightningElement {
     // controls
     @track statusFilter = 'All';
     @track severityFilter = 'All';
-    @track sortDir = 'desc'; // savings sort: desc | asc
+    @track sortDir = 'desc'; // severity priority: desc | asc
 
     // per-row ui state
     @track expandedId;
@@ -58,11 +49,7 @@ export default class OhmFindingsWorklist extends LightningElement {
     }
 
     // ---- host + control models ---------------------------------------------
-    get hostClass() {
-        return this.calmMode
-            ? 'ohm-work ohm-work--calm'
-            : 'ohm-work';
-    }
+    get hostClass() { return 'ohm-work'; }
 
     get statusFilterOptions() {
         return [
@@ -84,19 +71,17 @@ export default class OhmFindingsWorklist extends LightningElement {
     }
 
     get sortLabel() {
-        return this.sortDir === 'asc' ? 'Savings ▲' : 'Savings ▼';
+        return this.sortDir === 'asc' ? 'Low priority first' : 'High priority first';
     }
 
     // ---- decorated, sorted rows --------------------------------------------
     get visibleRows() {
         const dir = this.sortDir === 'asc' ? 1 : -1;
-        const out = this.rows.slice().sort((a, b) => {
-            const av = a.savingsCentralWh;
-            const bv = b.savingsCentralWh;
-            const an = av === null || av === undefined ? -Infinity : Number(av);
-            const bn = bv === null || bv === undefined ? -Infinity : Number(bv);
-            return (an - bn) * dir;
-        });
+        const priority = { High: 3, Medium: 2, Low: 1 };
+        const out = this.rows.slice().sort((a, b) =>
+            ((priority[a.severity] || 0) - (priority[b.severity] || 0)) * dir ||
+            (a.processLabel || a.plannerApiName || '').localeCompare(b.processLabel || b.plannerApiName || '')
+        );
         return out.map((r) => this._decorate(r));
     }
 
@@ -116,11 +101,9 @@ export default class OhmFindingsWorklist extends LightningElement {
             signalLabel: SIGNAL_LABELS[r.signal] || r.signal || 'Unknown signal',
             processText: r.processLabel || r.plannerApiName || '—',
             artifactText: r.artifactLabel || '',
-            savingsText:
-                r.savingsCentralWh === null || r.savingsCentralWh === undefined
-                    ? '—'
-                    : `${formatNumber(r.savingsCentralWh)} Wh/yr`,
             assigned,
+            assignmentLabel: r.assigneeId === USER_ID ? 'Yours' : (r.assigneeName || 'Assigned'),
+            taskUrl: r.taskId ? `/lightning/r/Task/${r.taskId}/view` : null,
             assigneeText: assigned ? r.assigneeName || 'Assigned' : '—',
             dueText: r.dueDate ? r.dueDate : '—',
             statusValue: status,
@@ -138,7 +121,7 @@ export default class OhmFindingsWorklist extends LightningElement {
             assignOpen: this.assignOpenId === findingId,
             isBusy: this.busyId === findingId,
             rowError: this.rowErrors[findingId] || null,
-            assignDate: this.assignDates[findingId] || '',
+            assignDate: Object.prototype.hasOwnProperty.call(this.assignDates, findingId) ? this.assignDates[findingId] : (r.dueDate || ''),
             hasRecommendation: !!r.recommendationText,
             expandLabel: this.expandedId === findingId ? 'Hide' : 'Details'
         };

@@ -1,0 +1,72 @@
+{
+  "fleet": [
+    {
+      "topicCount": 2,
+      "score": null,
+      "plannerId": "16jEc000000PAIjIAO",
+      "plannerApiName": "ActionChaining_v1",
+      "latestReportId": null,
+      "lastAudited": null,
+      "label": "Action Chaining",
+      "grade": null,
+      "energyWhCentral": null,
+      "domain": "General",
+      "audited": null,
+      "actionCount": 4
+    },
+    {
+      "topicCount": 2,
+      "score": null,
+      "plannerId": "16jEc000000PAH7IAO",
+      "plannerApiName": "ActionDefinitions_v1",
+      "latestReportId": null,
+      "lastAudited": null,
+      "label": "Action Definitions",
+      "grade": null,
+      "energyWhCentral": null,
+      "domain": "General",
+      "audited": null,
+      "actionCount": 3
+    },
+    {
+      "topicCount": 2,
+      "score": null,
+      "plannerId": "16jEc000000PBBZIA4",
+      "plannerApiName": "Ohm_Weather_Demo_v4",
+      "latestReportId": null,
+      "lastAudited": null,
+      "label": "Controlled Weather Demo",
+      "grade": null,
+      "energyWhCentral": null,
+      "domain": "Internal",
+      "audited": null,
+      "actionCount": 3
+    },
+    {
+      "topicCount": 2,
+      "score": null,
+      "plannerId": "16jEc000000PAKLIA4",
+      "plannerApiName": "PromptTemplateActions_v1",
+      "latestReportId": null,
+      "lastAudited": null,
+      "label": "Prompt Template Actions",
+      "grade": null,
+      "energyWhCentral": null,
+      "domain": "General",
+      "audited": null,
+      "actionCount": 1
+    }
+  ],
+  "acquisition": {
+    "errors": [],
+    "linkedPromptTemplateCount": 1,
+    "actions": 11,
+    "topics": 8,
+    "planners": [
+      "ActionChaining_v1",
+      "ActionDefinitions_v1",
+      "Ohm_Weather_Demo_v4",
+      "PromptTemplateActions_v1"
+    ]
+  }
+}

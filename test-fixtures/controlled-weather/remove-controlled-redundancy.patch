@@ -1,0 +1,45 @@
+--- before/Ohm_Weather_Demo.agent
++++ after/Ohm_Weather_Demo.agent
+@@ -104,42 +104,6 @@
+    reasoning:
+       instructions:->
+          | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+-         | Help users get weather information for their requested locations and send weather alerts.
+ 
+            Current data:
+          

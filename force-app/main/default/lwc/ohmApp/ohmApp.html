@@ -1,106 +1,19 @@
 <template>
-    <template lwc:if={isReady}>
-        <div class={shellClass} data-id="shell">
-            <!-- Top bar: wordmark + tab strip + Calm toggle ---------------- -->
-            <header class="ohm-app__topbar">
-                <div class="ohm-app__brand">
-                    <span class="ohm-app__wordmark">Ohm</span>
-                    <span class="ohm-app__tagline">Fleet Workbench</span>
-                </div>
-
-                <div
-                    class="ohm-app__tabs"
-                    role="tablist"
-                    aria-label="Workbench sections"
-                    onkeydown={handleTabKeydown}
-                >
-                    <template for:each={tabs} for:item="tab">
-                        <button
-                            key={tab.id}
-                            type="button"
-                            role="tab"
-                            class={tab.cssClass}
-                            data-tab={tab.id}
-                            data-id="tab"
-                            aria-selected={tab.selected}
-                            tabindex={tab.tabindex}
-                            onclick={handleTabClick}
-                        >
-                            {tab.label}
-                        </button>
-                    </template>
-                </div>
-
-                <div class="ohm-app__calm">
-                    <c-ohm-calm-mode-toggle
-                        calm-mode={calmMode}
-                        oncalmtoggle={handleCalmToggle}
-                    ></c-ohm-calm-mode-toggle>
-                </div>
-            </header>
-
-            <!-- Breadcrumb / context line -------------------------------- -->
-            <div class="ohm-app__breadcrumb" data-id="breadcrumb">
-                {breadcrumb}
+    <div class="ohm-app" data-id="shell">
+        <header class="ohm-app__topbar">
+            <button class="ohm-app__brand" onclick={handleHome} aria-label="Ohm overview"><span class="ohm-app__symbol" aria-hidden="true">Ω</span><span class="ohm-app__wordmark">ohm<span class="ohm-app__period">.</span></span></button>
+            <div class="ohm-app__tabs" role="tablist" aria-label="Ohm sections" onkeydown={handleTabKeydown}>
+                <template for:each={tabs} for:item="tab"><button key={tab.id} type="button" role="tab" class={tab.cssClass} data-tab={tab.id} data-id="tab" aria-selected={tab.selected} aria-controls="workspace" tabindex={tab.tabindex} onclick={handleTabClick}>{tab.label}</button></template>
             </div>
-
-            <!-- Tab body ------------------------------------------------- -->
-            <main class="ohm-app__body">
-                <template lwc:if={isFleetList}>
-                    <c-ohm-fleet-table
-                        calm-mode={calmMode}
-                        onopenprocess={handleOpenProcess}
-                        data-id="fleet"
-                    ></c-ohm-fleet-table>
-                </template>
-
-                <template lwc:if={isProcessOpen}>
-                    <c-ohm-process-page
-                        planner-id={selectedPlannerId}
-                        calm-mode={calmMode}
-                        onbacktofleet={handleBackToFleet}
-                        data-id="process-page"
-                    ></c-ohm-process-page>
-                </template>
-
-                <template lwc:if={isFindings}>
-                    <c-ohm-findings-worklist
-                        calm-mode={calmMode}
-                        data-id="findings"
-                    ></c-ohm-findings-worklist>
-                </template>
-
-                <template lwc:if={isRecommendations}>
-                    <c-ohm-recommendations
-                        standalone
-                        calm-mode={calmMode}
-                        data-id="recommendations"
-                    ></c-ohm-recommendations>
-                </template>
-
-                <template lwc:if={isTrends}>
-                    <c-ohm-trends
-                        calm-mode={calmMode}
-                        data-id="trends"
-                    ></c-ohm-trends>
-                </template>
-
-                <template lwc:if={isPlaceholder}>
-                    <section
-                        class="ohm-app__placeholder"
-                        data-id="placeholder"
-                        role="status"
-                    >
-                        <div class="ohm-app__placeholder-badge">Coming in this build</div>
-                        <h2 class="ohm-app__placeholder-title">
-                            {placeholderTitle}
-                        </h2>
-                        <p class="ohm-app__placeholder-body">
-                            {placeholderBody}
-                        </p>
-                    </section>
-                </template>
-            </main>
-        </div>
-    </template>
+            <span class="ohm-app__signature"><span aria-hidden="true"></span>Agentforce efficiency</span>
+        </header>
+        <main id="workspace" class="ohm-app__body" role="tabpanel" aria-label={activePanelLabel} tabindex="0">
+            <template lwc:if={isOverview}><c-ohm-overview onnavigate={handleNavigate} onopenprocess={handleOpenProcess} data-id="overview"></c-ohm-overview></template>
+            <template lwc:if={isFleetList}><c-ohm-fleet-table onopenprocess={handleOpenProcess} data-id="fleet"></c-ohm-fleet-table></template>
+            <template lwc:if={isProcessOpen}><c-ohm-process-page planner-id={selectedPlannerId} initial-node-id={selectedNodeId} initial-artifact-key={selectedArtifactKey} initial-intent={selectedIntent} initial-question={selectedQuestion} onbacktofleet={handleBackToFleet} data-id="process-page"></c-ohm-process-page></template>
+            <template lwc:if={isRecommendations}><c-ohm-recommendations standalone onopenprocess={handleOpenProcess} onnavigate={handleNavigate} data-id="recommendations"></c-ohm-recommendations></template>
+            <template lwc:if={isHow}><c-ohm-how-it-works data-id="how"></c-ohm-how-it-works></template>
+        </main>
+        <footer class="ohm-app__footer"><span>Less waste. More intention.</span><span>Built for Agentforce</span></footer>
+    </div>
 </template>

@@ -1,0 +1,1147 @@
+{
+  "date": "2026-09-06",
+  "applicationCommit": "038b5a0",
+  "orgAlias": "ohm-audit-lab",
+  "orgId": "00DEc00000kvSbNMAU",
+  "expires": "2026-09-13",
+  "execution": "Live Salesforce scratch org, API 67.0",
+  "testRuns": {
+    "acceptance-results": {
+      "summary": {
+        "outcome": "Failed",
+        "testsRan": 10,
+        "passing": 1,
+        "failing": 9,
+        "skipped": 0,
+        "testRunId": "707Ec00002Xfz9O",
+        "testStartTime": "2026-09-06T23:25:55.000Z"
+      },
+      "tests": [
+        {
+          "class": "OhmAuditLifecycleAcceptanceTest",
+          "method": "cleanReauditRemovesStaleRecommendations",
+          "outcome": "Fail",
+          "message": "System.AssertException: Assertion Failed: A newer clean report must displace findings from the previous report: Expected: 0, Actual: 1"
+        },
+        {
+          "class": "OhmAuditLifecycleAcceptanceTest",
+          "method": "differentAgentsDoNotCreateRealizedSavings",
+          "outcome": "Fail",
+          "message": "System.AssertException: Assertion Failed: Two different agents, each audited once and never changed, cannot establish realized savings: Expected: 0, Actual: 70000.0000"
+        },
+        {
+          "class": "OhmAuditLifecycleAcceptanceTest",
+          "method": "missingCoverageMustNotReceiveAnA",
+          "outcome": "Fail",
+          "message": "System.AssertException: Assertion Failed: Unavailable evidence must be distinct from a passed audit: Same value: A"
+        },
+        {
+          "class": "OhmAuditLifecycleAcceptanceTest",
+          "method": "unchangedIssueKeepsItsTaskAndStatus",
+          "outcome": "Fail",
+          "message": "System.AssertException: Assertion Failed: Re-audit must retain the existing remediation Task: Expected: 00TEc00000a9WITMA2, Actual: null"
+        },
+        {
+          "class": "OhmAuditLifecycleAcceptanceTest",
+          "method": "unknownModelDoesNotPromiseSavings",
+          "outcome": "Fail",
+          "message": "System.AssertException: Assertion Failed: Unknown current model does not justify positive downsizing savings"
+        },
+        {
+          "class": "OhmPublicWorkflowAcceptanceTest",
+          "method": "informationIsNotEvidenceOfFormattingWork",
+          "outcome": "Fail",
+          "message": "System.AssertException: Assertion Failed: The substring format inside information does not establish deterministic replacement: Expected: 0, Actual: 1"
+        },
+        {
+          "class": "OhmPublicWorkflowAcceptanceTest",
+          "method": "paymentFlowChainIsNotRedundantLlmWork",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmPublicWorkflowAcceptanceTest",
+          "method": "promptInventoryRecognizesPublishedTargetType",
+          "outcome": "Fail",
+          "message": "System.AssertException: Assertion Failed: Actual generatePromptResponse actions must appear in the prompt inventory: Expected: 1, Actual: 0"
+        },
+        {
+          "class": "OhmPublicWorkflowAcceptanceTest",
+          "method": "publishedScheduleMiniModelIsSmall",
+          "outcome": "Fail",
+          "message": "System.AssertException: Assertion Failed: Mini model suffix must take precedence over GPT4/Omni family: Expected: SMALL, Actual: LARGE"
+        },
+        {
+          "class": "OhmPublicWorkflowAcceptanceTest",
+          "method": "weatherDiscoveryUsesRealRelationships",
+          "outcome": "Fail",
+          "message": "System.AssertException: Assertion Failed: Ohm must follow the real PlannerId relationships: Expected: 2, Actual: 0"
+        }
+      ]
+    },
+    "baseline-results": {
+      "summary": {
+        "outcome": "Passed",
+        "testsRan": 125,
+        "passing": 125,
+        "failing": 0,
+        "skipped": 0,
+        "testRunId": "707Ec00002Xg4c3",
+        "testStartTime": "2026-09-06T23:26:33.000Z"
+      },
+      "tests": [
+        {
+          "class": "OhmPersistenceServiceTest",
+          "method": "testCreateRemediationTaskInsertsTaskAndWritesBackId",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmPersistenceServiceTest",
+          "method": "testCreateRemediationTaskRequiresFindingId",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmPersistenceServiceTest",
+          "method": "testCreateReportInsertsQueuedAndUpdateProgressAdvances",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmPersistenceServiceTest",
+          "method": "testLoadReadoutMapsEveryField",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmPersistenceServiceTest",
+          "method": "testPersistFindingsInsertsChildrenAndComputesRollups",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmPersistenceServiceTest",
+          "method": "testPersistFindingsWithNoFindingsStillCompletesReport",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmPersistenceServiceTest",
+          "method": "testSaveDiscoveryGraphSerializesModel",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmPersistenceServiceTest",
+          "method": "testWriteAgentNarrativesEmptyOrForeignIdsReturnsZero",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmPersistenceServiceTest",
+          "method": "testWriteAgentNarrativesUpdatesMatchingFindings",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalServiceTest",
+          "method": "test_analyze_empty_noException",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalServiceTest",
+          "method": "test_analyze_fourSignalFixture_lowGrade",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalServiceTest",
+          "method": "test_rate_cleanModel_gradeA",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalServiceTest",
+          "method": "test_rate_mixedFindings_formula",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSeverityTest",
+          "method": "test_bandCutoffs",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmRecommendationServiceTest",
+          "method": "test_bulk",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmRecommendationServiceTest",
+          "method": "test_instructionBloat",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmRecommendationServiceTest",
+          "method": "test_llmWhereDeterministic",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmRecommendationServiceTest",
+          "method": "test_modelRightsizing",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmRecommendationServiceTest",
+          "method": "test_modelRightsizing_blankTarget_derivesDefault",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmRecommendationServiceTest",
+          "method": "test_nullFinding_safe",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmRecommendationServiceTest",
+          "method": "test_redundantCalls",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmRecommendationServiceTest",
+          "method": "test_redundant_blankTarget_derivesDefault",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmActionsTest",
+          "method": "createRemediationTaskBuildsTaskFromPersistedFinding",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmActionsTest",
+          "method": "createRemediationTaskReportsMissingFindingGracefully",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmActionsTest",
+          "method": "discoverAgenticWorkCreatesReportAndSavesGraph",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmActionsTest",
+          "method": "discoverAgenticWorkReusesExistingReport",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmActionsTest",
+          "method": "estimateFootprintReturnsOrderedBandsPerElement",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmActionsTest",
+          "method": "persistAuditReportWritesAgentNarratives",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmActionsTest",
+          "method": "recommendImprovementsAttachesDeterministicFixes",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmActionsTest",
+          "method": "runSignalsDetectsWasteFromGraphJson",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmActionsTest",
+          "method": "runSignalsReloadsGraphFromReportWhenJsonBlank",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "ModelRegistryTest",
+          "method": "test_knownModelName",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "ModelRegistryTest",
+          "method": "test_knownTiers",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "ModelRegistryTest",
+          "method": "test_recommendedFor",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "ModelRegistryTest",
+          "method": "test_unknownModelBaseline",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAssistantServiceTest",
+          "method": "testAskDraftReturnsRewriteWithDeltas",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAssistantServiceTest",
+          "method": "testAskReturnsGroundedAnswer",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAssistantServiceTest",
+          "method": "testBlankQuestionThrows",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAssistantServiceTest",
+          "method": "testBlankReplyThrowsInsteadOfEmptyDraft",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAssistantServiceTest",
+          "method": "testGetContextGroundsOnAudit",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAssistantServiceTest",
+          "method": "testGroundedContextCarriesAuditNumbers",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAssistantServiceTest",
+          "method": "testIntentMatrixClassifiesRealQuestions",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAssistantServiceTest",
+          "method": "testNullArgumentsThrow",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAssistantServiceTest",
+          "method": "testSignalLabelMapsKnownValues",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAssistantServiceTest",
+          "method": "testUnoptimizedLabelDoesNotTriggerDraft",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmFootprintServiceTest",
+          "method": "test_C3_vocabulary",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmFootprintServiceTest",
+          "method": "test_assumptions_disclosed",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmFootprintServiceTest",
+          "method": "test_bandOrdering",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmFootprintServiceTest",
+          "method": "test_estimate_centralPin",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmFootprintServiceTest",
+          "method": "test_savings_a_fullBaseline",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmFootprintServiceTest",
+          "method": "test_savings_b_multiplierRatio",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmFootprintServiceTest",
+          "method": "test_savings_c_tokenDelta",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmFootprintServiceTest",
+          "method": "test_savings_d_callDelta",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmFootprintServiceTest",
+          "method": "test_sumAll_orgWide",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmFootprintServiceTest",
+          "method": "test_tokenAndMultiplierScaling",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmFootprintServiceTest",
+          "method": "test_unknownModel_assumed",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmFootprintServiceTest",
+          "method": "test_zeroCalls_noDivideByZero",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testAssignFindingCreatesTaskWithOwnerAndDue",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testAuditProcessCapturesInstructionSnapshotForBloatFinding",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testAuditProcessPersistsScopedReportAndFleetReflectsGrade",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testCalmModePreferenceRoundTrip",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testCreateRemediationTaskDoorDelegatesToPersistence",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testEstimateFootprintPerElement",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testGetAuditStatusBadIdThrowsAuraHandled",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testGetAuditStatusReflectsInProgressReport",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testGetDiffAfterTwoAuditsReturnsBeforeAfterWithDeltas",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testGetDiffSingleAuditReturnsAfterOnly",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testGetFindingsAppliesStatusAndSeverityFilters",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testGetFindingsDedupsAcrossReAudits",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testGetFleetReturnsUnauditedFleet",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testGetProcessDetailMarksBloatedTopicWasteful",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testGetRecommendationsRanksQuickWinsBySavingsPerEffort",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testGetTrendsOrgReturnsPointsAndPerAgentHistory",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testGetTrendsPerProcessReturnsChronologicalPoints",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testStartAuditReturnsCompleteReportWithReadout",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testUpdateFindingStatusPersistsAndMirrorsTask",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmDiscoveryServiceTest",
+          "method": "test_deriveDomainKeywordMap",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmDiscoveryServiceTest",
+          "method": "test_discoverFindsLiveSpikeAgent",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmDiscoveryServiceTest",
+          "method": "test_discoverNeverThrowsOnRealOrgData",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmDiscoveryServiceTest",
+          "method": "test_discoverProcessScopedToWasteDemoHasBloatedLeadTriage",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmDiscoveryServiceTest",
+          "method": "test_listFleetReturnsProcessesWithCountsAndDomainsNoGrade",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmDiscoveryServiceTest",
+          "method": "test_promptTemplateCountIsDistinctPromptTargets",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmDiscoveryServiceTest",
+          "method": "test_treeMapsAreConsistentWithFlatLists",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "TokenEstimatorTest",
+          "method": "test_approxTokens",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "TokenEstimatorTest",
+          "method": "test_canonical5200",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "TokenEstimatorTest",
+          "method": "test_promptTurnTokens_noThrow",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmVolumeProviderTest",
+          "method": "test_defaultVolume_and_annualCalls",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmVolumeProviderTest",
+          "method": "test_scrubberLinearity",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmVolumeProviderTest",
+          "method": "test_withCallsPerTurn",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSpikeActionTest",
+          "method": "ping_echoesInputWithPongPrefix",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSpikeActionTest",
+          "method": "ping_handlesBulkRequests",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmDTOTest",
+          "method": "test_C3_vocabularyRoundTrip",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmDTOTest",
+          "method": "test_agentModel_defaults",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmDTOTest",
+          "method": "test_remediationInput_shape",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmConstantsTest",
+          "method": "test_bands",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmConstantsTest",
+          "method": "test_defaultVolume",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmConstantsTest",
+          "method": "test_happyOrFallback_values",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmConstantsTest",
+          "method": "test_parseOrDefault_fallbacks",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmConstantsTest",
+          "method": "test_partialJson_perKeyFallback",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmConstantsTest",
+          "method": "test_signalWeightsAndGrades",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmConstantsTest",
+          "method": "test_unknownModelBaseline",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_a_bulk_noGovernor",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_a_generatePromptResponse_fires",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_a_malformed_empty",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_a_negative_apex",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_a_negative_noLexicon",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_a_positive_oneHit",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_a_positive_twoHits_high",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_b_boundary_overshootOne",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_b_degrade_nullModel",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_b_negative_rightSized",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_b_neverCallout_bulk",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_b_positive_largeOnTrivial",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_c_agentThreshold",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_c_boundary_exactlySoft_noFire",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_c_boundary_softPlusOne_fires",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_c_bulk",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_c_negative_short",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_c_positive_excessNotTotal",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_d_degrade_malformed",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_d_emptyGraph_noThrow",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_d_negative_single",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_d_positive_cycle",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_d_positive_fixture",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "OhmSignalDetectorTest",
+          "method": "test_d_unknownKeys_ignored",
+          "outcome": "Pass",
+          "message": null
+        }
+      ]
+    },
+    "upstream-results": {
+      "summary": {
+        "outcome": "Failed",
+        "testsRan": 11,
+        "passing": 10,
+        "failing": 1,
+        "skipped": 0,
+        "testRunId": "707Ec00002Xg5Xz",
+        "testStartTime": "2026-09-06T23:27:30.000Z"
+      },
+      "tests": [
+        {
+          "class": "ActionChainingFlowTest",
+          "method": "testAwardLoyaltyPoints",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "ActionChainingFlowTest",
+          "method": "testLogTransaction",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "ActionChainingFlowTest",
+          "method": "testProcessPaymentSuccess",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "ActionChainingFlowTest",
+          "method": "testSendReceipt",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "WeatherAlertServiceTest",
+          "method": "testSendAlertBulkRequests",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "WeatherAlertServiceTest",
+          "method": "testSendAlertSingleRequest",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "WeatherAlertServiceTest",
+          "method": "testSendAlertWithEmptyMessage",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "ActionDefinitionsFlowTest",
+          "method": "testGetCurrentWeather",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "ActionDefinitionsFlowTest",
+          "method": "testGetWeatherForecast",
+          "outcome": "Pass",
+          "message": null
+        },
+        {
+          "class": "PersonalizedGuestExperiencesTest",
+          "method": "testPersonalizedGuestExperiencesSuccess",
+          "outcome": "Fail",
+          "message": "System.QueryException: No such column 'Interest_Type__c' on entity 'ASR_Customer_Interest__c'. If you are attempting to use a custom field, be sure to append the '__c' after the custom field name. Please reference your WSDL or the describe call for the appropriate names."
+        }
+      ]
+    },
+    "upstream-permissions-retest": {
+      "summary": {
+        "outcome": "Passed",
+        "testsRan": 1,
+        "passing": 1,
+        "failing": 0,
+        "skipped": 0,
+        "testRunId": "",
+        "testStartTime": "2026-09-06T23:35:15.376Z"
+      },
+      "tests": [
+        {
+          "class": "PersonalizedGuestExperiencesTest",
+          "method": "testPersonalizedGuestExperiencesSuccess",
+          "outcome": "Pass",
+          "message": ""
+        }
+      ]
+    }
+  },
+  "publicAudits": [
+    {
+      "discoveryErrors": null,
+      "reportId": "a00Ec00000lpWXTIA2",
+      "energyWh": 0.0,
+      "findings": 0,
+      "score": 100,
+      "grade": "A",
+      "ohmActions": 0,
+      "ohmTopics": 0,
+      "agentGraphPresent": false,
+      "persistedScopeChars": 0,
+      "actionTypes": {
+        "flow": 4
+      },
+      "structuralActions": 4,
+      "structuralTopics": 2,
+      "plannerId": "16jEc000000PAIjIAO",
+      "planner": "ActionChaining_v1"
+    },
+    {
+      "discoveryErrors": null,
+      "reportId": "a00Ec00000lpWXUIA2",
+      "energyWh": 0.0,
+      "findings": 0,
+      "score": 100,
+      "grade": "A",
+      "ohmActions": 0,
+      "ohmTopics": 0,
+      "agentGraphPresent": false,
+      "persistedScopeChars": 0,
+      "actionTypes": {
+        "apex": 1,
+        "flow": 2
+      },
+      "structuralActions": 3,
+      "structuralTopics": 2,
+      "plannerId": "16jEc000000PAH7IAO",
+      "planner": "ActionDefinitions_v1"
+    },
+    {
+      "discoveryErrors": null,
+      "reportId": "a00Ec00000lpWXVIA2",
+      "energyWh": 0.0,
+      "findings": 0,
+      "score": 100,
+      "grade": "A",
+      "ohmActions": 0,
+      "ohmTopics": 0,
+      "agentGraphPresent": false,
+      "persistedScopeChars": 0,
+      "actionTypes": {
+        "generatePromptResponse": 1
+      },
+      "structuralActions": 1,
+      "structuralTopics": 2,
+      "plannerId": "16jEc000000PAKLIA4",
+      "planner": "PromptTemplateActions_v1"
+    }
+  ],
+  "deployments": {
+    "ohm-deploy": {
+      "exitStatus": 0,
+      "message": null,
+      "id": "0AfEc00000nXtW9KAK",
+      "status": "Succeeded",
+      "success": true,
+      "botDeveloperName": null,
+      "numberComponentsDeployed": 134
+    },
+    "recipes-deploy": {
+      "exitStatus": 0,
+      "message": null,
+      "id": "0AfEc00000nXtcbKAC",
+      "status": "Succeeded",
+      "success": true,
+      "botDeveloperName": null,
+      "numberComponentsDeployed": 37
+    },
+    "localinfo-deploy": {
+      "exitStatus": 0,
+      "message": null,
+      "id": "0AfEc00000nXmEZKA0",
+      "status": "Succeeded",
+      "success": true,
+      "botDeveloperName": null,
+      "numberComponentsDeployed": 12
+    },
+    "controls-deploy": {
+      "exitStatus": 0,
+      "message": null,
+      "id": "0AfEc00000nXq6sKAC",
+      "status": "Succeeded",
+      "success": true,
+      "botDeveloperName": null,
+      "numberComponentsDeployed": 12
+    },
+    "acceptance-deploy": {
+      "exitStatus": 0,
+      "message": null,
+      "id": "0AfEc00000nXuIXKA0",
+      "status": "Succeeded",
+      "success": true,
+      "botDeveloperName": null,
+      "numberComponentsDeployed": 2
+    },
+    "fixture-permissions-deploy": {
+      "exitStatus": 0,
+      "message": null,
+      "id": "0AfEc00000nXujxKAC",
+      "status": "Succeeded",
+      "success": true,
+      "botDeveloperName": null,
+      "numberComponentsDeployed": 1
+    },
+    "publish-ActionDefinitions": {
+      "exitStatus": 0,
+      "message": null,
+      "id": null,
+      "status": null,
+      "success": true,
+      "botDeveloperName": "ActionDefinitions",
+      "numberComponentsDeployed": null
+    },
+    "publish-ActionChaining": {
+      "exitStatus": 0,
+      "message": null,
+      "id": null,
+      "status": null,
+      "success": true,
+      "botDeveloperName": "ActionChaining",
+      "numberComponentsDeployed": null
+    },
+    "publish-PromptTemplateActions": {
+      "exitStatus": 0,
+      "message": null,
+      "id": null,
+      "status": null,
+      "success": true,
+      "botDeveloperName": "PromptTemplateActions",
+      "numberComponentsDeployed": null
+    },
+    "publish-Local_Info_Agent": {
+      "exitStatus": 1,
+      "message": "request to https://test.api.salesforce.com/einstein/ai-agent/v1.1/authoring/agents failed, reason: ",
+      "id": null,
+      "status": null,
+      "success": null,
+      "botDeveloperName": null,
+      "numberComponentsDeployed": null
+    },
+    "publish-Local_Info_Agent-retry": {
+      "exitStatus": 1,
+      "message": "request to https://test.api.salesforce.com/einstein/ai-agent/v1.1/authoring/agents failed, reason: ",
+      "id": null,
+      "status": null,
+      "success": null,
+      "botDeveloperName": null,
+      "numberComponentsDeployed": null
+    }
+  },
+  "auditExecution": {
+    "compiled": true,
+    "success": true,
+    "compileProblem": "",
+    "exceptionMessage": ""
+  },
+  "fullDiscovery": {
+    "findings": [
+      {
+        "signalType": "LLM_WHERE_DETERMINISTIC",
+        "severityScore": 0.55,
+        "severity": "Medium",
+        "savings": null,
+        "recommendedTarget": null,
+        "recommendationText": null,
+        "parentTopicApiName": null,
+        "parentAgentApiName": null,
+        "metricValue": 1,
+        "metricUnit": "lexicon-hits",
+        "generatedBy": null,
+        "footprint": null,
+        "fixType": null,
+        "findingRecordId": null,
+        "evidence": "Prompt-typed action performs deterministic work (1 lexicon hit): a rule/flow/apex path would be exact and token-free.",
+        "effort": null,
+        "confidence": "Medium",
+        "artifactType": "Action",
+        "artifactToolingId": "172Ec00000VL5ndIAD",
+        "artifactLabel": "Generate Personalized Schedule",
+        "artifactApiName": "generate_personalized_schedule_179Ec000006G6ik",
+        "agentNarrative": null
+      }
+    ],
+    "promptTemplates": 0,
+    "actions": 8,
+    "topics": 6,
+    "agents": 3
+  },
+  "modelConnectivity": {
+    "compiled": true,
+    "success": true,
+    "scope": "One direct Models API request; not an end-to-end Ask Ohm or agent behavior test",
+    "result": {
+      "response": "It uses Flow actions to retrieve weather data and Apex actions to send weather alerts.",
+      "nonEmptyResponse": true,
+      "model": "sfdc_ai__DefaultGPT4OmniMini"
+    }
+  }
+}

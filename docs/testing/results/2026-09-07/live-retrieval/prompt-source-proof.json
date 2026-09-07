@@ -1,0 +1,54 @@
+[
+  {
+    "Id": "a06Ec00000crpL7IAI",
+    "Artifact_Api_Name__c": "PromptTemplateActions_v1",
+    "Source_Version__c": "MetadataApi:67.0:PromptTemplateActions.v1:ac4da8df29a7fabaf01c7e96d45257bf0e0833e1616f224d2c47fbc6ee4c87bb",
+    "Source_Kind__c": "RetrievedAgentScript",
+    "Source_Retrieved_At__c": "2026-09-07T17:50:14.000+0000",
+    "Source_Binding_Verified__c": true,
+    "Source_Hash__c": "c0893cac65687cb4411f4fa52fb88b6e0cfac9894b61da7b3360c1bcb3c1df3e",
+    "Character_Count__c": 83,
+    "exactInstructionsSha256": "c0893cac65687cb4411f4fa52fb88b6e0cfac9894b61da7b3360c1bcb3c1df3e",
+    "exactInstructionsChars": 83,
+    "hashVerified": true
+  },
+  {
+    "Id": "a06Ec00000crpL8IAI",
+    "Artifact_Api_Name__c": "agent_router_16jEc000000PAKL",
+    "Source_Version__c": "MetadataApi:67.0:PromptTemplateActions.v1:ac4da8df29a7fabaf01c7e96d45257bf0e0833e1616f224d2c47fbc6ee4c87bb",
+    "Source_Kind__c": "RetrievedAgentScript",
+    "Source_Retrieved_At__c": "2026-09-07T17:50:14.000+0000",
+    "Source_Binding_Verified__c": true,
+    "Source_Hash__c": "0204cc6cc8a8ed21695dd1d3fa64ccab53e0f0b66445612da8b90b0f3e72cec5",
+    "Character_Count__c": 117,
+    "exactInstructionsSha256": "0204cc6cc8a8ed21695dd1d3fa64ccab53e0f0b66445612da8b90b0f3e72cec5",
+    "exactInstructionsChars": 117,
+    "hashVerified": true
+  },
+  {
+    "Id": "a06Ec00000crpL9IAI",
+    "Artifact_Api_Name__c": "schedule_generation_16jEc000000PAKL",
+    "Source_Version__c": "MetadataApi:67.0:PromptTemplateActions.v1:ac4da8df29a7fabaf01c7e96d45257bf0e0833e1616f224d2c47fbc6ee4c87bb",
+    "Source_Kind__c": "RetrievedAgentScript",
+    "Source_Retrieved_At__c": "2026-09-07T17:50:14.000+0000",
+    "Source_Binding_Verified__c": true,
+    "Source_Hash__c": "4437e33d6c78ceaf1652163cc698ef3d05d7d5580443486ae89252d1daa53434",
+    "Character_Count__c": 376,
+    "exactInstructionsSha256": "4437e33d6c78ceaf1652163cc698ef3d05d7d5580443486ae89252d1daa53434",
+    "exactInstructionsChars": 376,
+    "hashVerified": true
+  },
+  {
+    "Id": "a06Ec00000crpLAIAY",
+    "Artifact_Api_Name__c": "generate_personalized_schedule_179Ec000006G6ik",
+    "Source_Version__c": "MetadataApi:67.0:ul8eo8Wmi00b0AAaWZ5z5Q0cwb3Wq2HdIrEhx41Dtl4=_1:d82c67f681f03070d2033dd8dd2534464296bdd7d7333600f9b8f40ff3e4b86f",
+    "Source_Kind__c": "RetrievedPromptTemplate",
+    "Source_Retrieved_At__c": "2026-09-07T17:50:14.000+0000",
+    "Source_Binding_Verified__c": true,
+    "Source_Hash__c": "dce551c323ad092321d0f2389dc1247dbaeecf140cf968ff071354827bb47628",
+    "Character_Count__c": 832,
+    "exactInstructionsSha256": "dce551c323ad092321d0f2389dc1247dbaeecf140cf968ff071354827bb47628",
+    "exactInstructionsChars": 832,
+    "hashVerified": true
+  }
+]

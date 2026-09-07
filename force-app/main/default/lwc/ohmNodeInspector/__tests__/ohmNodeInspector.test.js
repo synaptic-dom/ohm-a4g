@@ -1,9 +1,9 @@
 import { createElement } from 'lwc';
 import OhmNodeInspector from 'c/ohmNodeInspector';
-import createRemediationTask from '@salesforce/apex/OhmAuditController.createRemediationTask';
+import createRemediationTask from '@salesforce/apex/OhmAuditController.createFindingRemediationTask';
 
 jest.mock(
-    '@salesforce/apex/OhmAuditController.createRemediationTask',
+    '@salesforce/apex/OhmAuditController.createFindingRemediationTask',
     () => ({ default: jest.fn() }),
     { virtual: true }
 );
@@ -76,7 +76,7 @@ describe('c-ohm-node-inspector', () => {
         await flush();
         const empty = el.shadowRoot.querySelector('[data-id="inspector-empty"]');
         expect(empty).not.toBeNull();
-        expect(empty.textContent).toContain('Select a node to inspect it.');
+        expect(empty.textContent).toContain('Select a source above or open one from a recommendation.');
     });
 
     it('renders the finding summary + savings band for a wasteful node', async () => {
@@ -111,8 +111,8 @@ describe('c-ohm-node-inspector', () => {
             BLOAT_NODE.instructions.length - 2000
         );
         const caption = el.shadowRoot.querySelector('[data-id="excess-caption"]');
-        expect(caption.textContent).toContain('800 tokens over budget');
-        expect(caption.textContent).toContain('re-sent every turn');
+        expect(caption.textContent).toContain('800 tokens over the modeled instruction budget');
+        expect(caption.textContent).not.toContain('re-sent every turn');
     });
 
     it('does not highlight when instructions are short', async () => {
@@ -129,6 +129,18 @@ describe('c-ohm-node-inspector', () => {
         expect(
             el.shadowRoot.querySelector('[data-id="excess-caption"]')
         ).toBeNull();
+    });
+
+    it('presents unknown model evidence as a review rather than an oversized-model claim', async () => {
+        const el = create({
+            node: { ...CLEAN_NODE, wasteful: true, signalType: 'MODEL_RIGHTSIZING' },
+            finding: { id: 'MODEL1', signal: 'MODEL_RIGHTSIZING', evidence: 'model unknown', fixType: null }
+        });
+        await flush();
+        expect(el.shadowRoot.querySelector('[data-id="node-signal"]')).toBeNull();
+        expect(el.shadowRoot.querySelector('[data-id="fix-cta"]')).toBeNull();
+        expect(el.shadowRoot.textContent).not.toContain('Model larger than the task needs');
+        expect(el.shadowRoot.textContent).not.toContain('Downsize / swap model');
     });
 
     it('opens the fix panel and creates a remediation task from the finding', async () => {
@@ -156,11 +168,7 @@ describe('c-ohm-node-inspector', () => {
         await flush();
 
         expect(createRemediationTask).toHaveBeenCalledTimes(1);
-        const arg = createRemediationTask.mock.calls[0][0].input;
-        expect(arg.findingId).toBe('F1');
-        expect(arg.reportId).toBe('R1');
-        expect(arg.fixType).toBe('Trim_Instructions');
-        expect(arg.estimatedSavingsCentralWh).toBe(52921);
+        expect(createRemediationTask).toHaveBeenCalledWith({ findingId: 'F1', note: null });
         expect(
             el.shadowRoot.querySelector('[data-id="task-done"]')
         ).not.toBeNull();
@@ -187,7 +195,7 @@ describe('c-ohm-node-inspector', () => {
 
         expect(
             el.shadowRoot.querySelector('[data-id="node-clean"]').textContent
-        ).toContain('No waste found on this node.');
+        ).toContain('No detector finding recorded for this source.');
         expect(el.shadowRoot.querySelector('[data-id="fix-cta"]')).toBeNull();
         expect(
             el.shadowRoot.querySelector('[data-id="node-invocation"]').textContent
@@ -212,5 +220,39 @@ describe('c-ohm-node-inspector', () => {
         await flush();
         expect(el.shadowRoot.querySelector('[data-id="fix-panel"]')).toBeNull();
         expect(el.shadowRoot.querySelector('[data-id="task-done"]')).toBeNull();
+    });
+
+    it('identifies a retrieved publication with its exact version, retrieval time and artifact', async () => {
+        const el = create({ node: { ...BLOAT_NODE, sourceKind: 'RetrievedAgentScript', sourceBindingVerified: true,
+            sourceVersionIdentifier: 'WeatherLookup_v7', sourceRetrievedAt: '2026-09-07T15:42:19.000Z',
+            sourceApiName: 'WeatherLookup', sourcePath: 'Salesforce#reasoning.instructions', sourceHash: 'sha256-example' } });
+        await flush();
+        const panel = el.shadowRoot.querySelector('[data-id="source-handoff"]');
+        expect(panel.textContent).toContain('Retrieved from Salesforce');
+        expect(panel.textContent).toContain('Matched to the selected published version at retrieval time.');
+        expect(panel.querySelector('[data-id="source-version"]').textContent).toBe('WeatherLookup_v7');
+        expect(panel.querySelector('[data-id="source-time"]').textContent).toBe('2026-09-07 15:42:19 UTC');
+        expect(panel.textContent).toContain('WeatherLookup');
+        expect(panel.textContent).toContain('sha256-example');
+    });
+
+    it('labels imported instructions as a snapshot and does not claim Salesforce retrieval', async () => {
+        const el = create({ node: { ...BLOAT_NODE, sourceKind: 'ImportedAgentScript', sourceVersion: 'git-revision:full-file-hash', sourcePath: '/fixtures/weather.agent#instructions' } });
+        await flush();
+        const panel = el.shadowRoot.querySelector('[data-id="source-handoff"]');
+        expect(panel.textContent).toContain('Imported source snapshot');
+        expect(panel.textContent).toContain('Run a fresh audit to retrieve the published Salesforce source.');
+        expect(panel.textContent).not.toContain('Retrieved from Salesforce');
+        expect(panel.querySelector('[data-id="source-version"]').textContent).toBe('git-revision:full-file-hash');
+    });
+
+    it('makes unavailable instructions and unverified retrieval explicit', async () => {
+        const el = create({ node: { ...CLEAN_NODE, instructions: null } });
+        await flush();
+        expect(el.shadowRoot.querySelector('[data-id="source-status"]').textContent).toContain('no available instruction text');
+        expect(el.shadowRoot.querySelector('[data-id="source-time"]')).toBeNull();
+        el.node = { ...CLEAN_NODE, sourceKind: 'RetrievedPromptTemplate', sourceBindingVerified: false };
+        await flush();
+        expect(el.shadowRoot.querySelector('[data-id="source-status"]').textContent).toContain('publication matching has not been verified');
     });
 });

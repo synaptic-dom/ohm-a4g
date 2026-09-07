@@ -1,5 +1,5 @@
 import { LightningElement, api, track } from 'lwc';
-import createRemediationTask from '@salesforce/apex/OhmAuditController.createRemediationTask';
+import createRemediationTask from '@salesforce/apex/OhmAuditController.createFindingRemediationTask';
 import {
     SIGNAL_LABELS,
     SEVERITY_LABELS,
@@ -20,7 +20,7 @@ import {
  * Process-specific fix CTAs (Trim / Downsize / Replace) show only for the node's
  * signalType; each opens an inline fix panel with the concrete recommendation and
  * a "Create remediation task" button (createRemediationTask). Clean node → a
- * quiet "No waste found". No node → the empty invitation.
+ * quiet "No findings in available evidence". No node → the empty invitation.
  */
 const SOFT_BUDGET_TOKENS = 500;
 const SOFT_BUDGET_CHARS = 2000;
@@ -28,7 +28,7 @@ const SOFT_BUDGET_CHARS = 2000;
 // signalType -> the single relevant fix CTA
 const CTA_BY_SIGNAL = {
     INSTRUCTION_BLOAT: { key: 'trim', label: 'Trim instructions' },
-    MODEL_RIGHTSIZING: { key: 'downsize', label: 'Downsize / swap model' },
+    MODEL_RIGHTSIZING: { key: 'downsize', label: 'Review model sizing' },
     LLM_WHERE_DETERMINISTIC: { key: 'replace', label: 'Replace with Flow/Apex' }
 };
 
@@ -57,9 +57,7 @@ export default class OhmNodeInspector extends LightningElement {
     }
 
     get hostClass() {
-        return this.calmMode
-            ? 'ohm-inspector ohm-inspector--calm'
-            : 'ohm-inspector';
+        return 'ohm-inspector';
     }
 
     get hasNode() {
@@ -67,7 +65,7 @@ export default class OhmNodeInspector extends LightningElement {
     }
 
     get isWasteful() {
-        return !!(this.node && this.node.wasteful);
+        return !!(this.node && this.node.wasteful && this.node.signalType !== 'MODEL_RIGHTSIZING');
     }
 
     // ---- header fields ------------------------------------------------------
@@ -136,6 +134,38 @@ export default class OhmNodeInspector extends LightningElement {
     get hasInstructions() {
         return !!(this.node && this.node.instructions);
     }
+    get sourcePath() { return this.node && this.node.sourcePath; }
+    get sourceVersion() { return this.node && this.node.sourceVersion; }
+    get sourceKind() { return this.node && this.node.sourceKind; }
+    get sourceHash() { return this.node && this.node.sourceHash; }
+    get sourceRetrievedAt() { return this.node && this.node.sourceRetrievedAt; }
+    get sourceVersionLabel() { return this.node && (this.node.sourceVersionIdentifier || this.node.sourceVersion) || 'Version unavailable'; }
+    get sourceApiName() { return this.node && this.node.sourceApiName; }
+    get isRetrievedSource() { return (this.sourceKind || '').toLowerCase().startsWith('retrieved'); }
+    get isImportedSource() { return (this.sourceKind || '').toLowerCase().startsWith('imported'); }
+    get sourceVerified() { return this.node && this.node.sourceBindingVerified === true; }
+    get sourceTitle() {
+        if (this.isRetrievedSource) return 'Retrieved from Salesforce';
+        if (this.isImportedSource) return 'Imported source snapshot';
+        if (this.sourceKind === 'PlatformScope') return 'Salesforce metadata field';
+        return this.hasInstructions ? 'Instruction source snapshot' : 'Instruction source unavailable';
+    }
+    get sourceStatus() {
+        if (!this.hasInstructions) return 'This artifact has no available instruction text. Review audit coverage before drawing conclusions.';
+        if (this.isRetrievedSource) return this.sourceVerified ? 'Matched to the selected published version at retrieval time.' : 'Retrieved text is available; publication matching has not been verified.';
+        if (this.isImportedSource) return 'This is an imported snapshot. Run a fresh audit to retrieve the published Salesforce source.';
+        return 'Source reflects the recorded metadata snapshot.';
+    }
+    get sourceTimeText() {
+        if (!this.sourceRetrievedAt) return this.isImportedSource ? 'Retrieval time not recorded for this import' : 'Retrieval time unavailable';
+        const date = new Date(this.sourceRetrievedAt);
+        return Number.isNaN(date.getTime()) ? 'Retrieval time unavailable' : date.toISOString().replace('T', ' ').replace('.000Z', ' UTC');
+    }
+    get sourcePanelClass() { return `ohm-inspector__source ${this.isRetrievedSource && this.sourceVerified ? 'ohm-inspector__source--verified' : ''}`; }
+    get sourceHandoffText() {
+        return this.isRetrievedSource ? 'Review against this exact source, apply the edit manually and publish if required. Re-audit to retrieve and verify the new version.' : 'Review the draft against its recorded source. Apply and publish manually, then re-audit to retrieve the current Salesforce version.';
+    }
+
 
     get _isBloat() {
         return this.node && this.node.signalType === 'INSTRUCTION_BLOAT';
@@ -177,7 +207,7 @@ export default class OhmNodeInspector extends LightningElement {
             // fall back to a char-based estimate (~4 chars/token)
             excessTokens = Math.round(this.excessInstructions.length / 4);
         }
-        return `${formatNumber(excessTokens)} tokens over budget — re-sent every turn`;
+        return `${formatNumber(excessTokens)} tokens over the modeled instruction budget`;
     }
 
     // ---- fix CTAs -----------------------------------------------------------
@@ -228,28 +258,17 @@ export default class OhmNodeInspector extends LightningElement {
         const key = event.currentTarget.dataset.fix;
         this.activeFix = this.activeFix === key ? undefined : key;
     }
+    handleAskSource() { this.dispatchEvent(new CustomEvent('asksource', { bubbles: true, composed: true })); }
 
     async handleCreateTask() {
         if (!this.canCreateTask) {
             return;
         }
         const f = this.finding;
-        const input = {
-            findingId: f.id,
-            reportId: this.reportId || null,
-            fixType: f.fixType || null,
-            recommendedTarget: f.recommendedTarget || null,
-            recommendationText: f.recommendationText || null,
-            estimatedSavingsCentralWh:
-                f.estimatedSavingsCentral !== undefined
-                    ? f.estimatedSavingsCentral
-                    : null,
-            note: null
-        };
         this.taskState = 'saving';
         this.taskError = undefined;
         try {
-            const id = await createRemediationTask({ input });
+            const id = await createRemediationTask({ findingId: f.id, note: null });
             this.createdTaskId = id;
             this.taskState = 'done';
         } catch (e) {

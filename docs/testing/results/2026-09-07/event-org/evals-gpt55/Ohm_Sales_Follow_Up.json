@@ -1,0 +1,45 @@
+{
+  "bundle": "Ohm_Sales_Follow_Up",
+  "promptModel": "sfdc_ai__DefaultGPT55",
+  "cliStatus": 0,
+  "tests": [
+    {
+      "id": "sales-follow-up",
+      "status": "passed",
+      "evaluations": [
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "compute_status": "COMPLETED",
+          "score": 5,
+          "is_pass": true,
+          "label": null,
+          "explainability": "The bot's response accurately drafts a follow-up email based on the meeting notes, includes the unconfirmed next step, and avoids inventing pricing or promises. It does not claim the email was sent and stays within the expected format. The response is clear, complete, and aligns with the expected outcome.",
+          "error_message": null,
+          "actual_value": "Here is a draft follow-up email based on your meeting notes:\n\nSubject: Follow-up from our discovery call\n\nHi Morgan,\n\nThank you for taking the time to speak with us. I appreciated learning more about your work at Blue Harbor Events and how you coordinate across two venues and thirty planners.\n\nBased on our conversation, handover notes can get lost between teams, which creates an opportunity to review how Aster Works may support clearer continuity across planning workflows. You also asked for a short product walkthrough.\n\nAs a next step, we should offer a twenty-minute call next Tuesday for that walkthrough. No time has been confirmed yet, so you can share what works best for your schedule.\n\nThank you again for your time and responsiveness.\n\nBest,  \n[Your Name]\n\nWould you like to make any changes to this draft or add more details?",
+          "expected_value": "Draft follow-up content grounded in these notes and offer the unconfirmed next step without inventing pricing, promises, links or an accepted meeting. Do not claim that email was sent. Multiple formats are an intentional audit defect in this fixture; response length is not an acceptance requirement."
+        }
+      ],
+      "response": "Here is a draft follow-up email based on your meeting notes:\n\nSubject: Follow-up from our discovery call\n\nHi Morgan,\n\nThank you for taking the time to speak with us. I appreciated learning more about your work at Blue Harbor Events and how you coordinate across two venues and thirty planners.\n\nBased on our conversation, handover notes can get lost between teams, which creates an opportunity to review how Aster Works may support clearer continuity across planning workflows. You also asked for a short product walkthrough.\n\nAs a next step, we should offer a twenty-minute call next Tuesday for that walkthrough. No time has been confirmed yet, so you can share what works best for your schedule.\n\nThank you again for your time and responsiveness.\n\nBest,  \n[Your Name]\n\nWould you like to make any changes to this draft or add more details?"
+    },
+    {
+      "id": "sales-missing-notes",
+      "status": "passed",
+      "evaluations": [
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "compute_status": "COMPLETED",
+          "score": 5,
+          "is_pass": true,
+          "label": null,
+          "explainability": "The bot response appropriately asks for meeting notes or key points to draft a follow-up email, aligning with the expected response's instruction to request relevant facts. The response is clear, precise, and contains no irrelevant information.",
+          "error_message": null,
+          "actual_value": "Please provide the meeting notes or key points you'd like included in the follow-up email. This will help me draft a message that accurately reflects your conversation. What details would you like to highlight?",
+          "expected_value": "Ask for the meeting notes or relevant facts rather than inventing a sales conversation."
+        }
+      ],
+      "response": "Please provide the meeting notes or key points you'd like included in the follow-up email. This will help me draft a message that accurately reflects your conversation. What details would you like to highlight?"
+    }
+  ]
+}

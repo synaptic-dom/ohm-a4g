@@ -77,13 +77,13 @@ describe('c-ohm-call-graph', () => {
         );
         expect(waste.className).toContain('ohm-graph__node--waste');
         expect(waste.textContent).toContain('⚠');
-        expect(waste.getAttribute('aria-label')).toContain('flagged wasteful');
+        expect(waste.getAttribute('aria-label')).toContain('finding to review');
 
         const clean = nodeButtons(el).find((b) =>
             b.getAttribute('aria-label').includes('Classify Lead Tier')
         );
         expect(clean.className).toContain('ohm-graph__node--clean');
-        expect(clean.getAttribute('aria-label')).toContain('clean');
+        expect(clean.getAttribute('aria-label')).toContain('no findings in available evidence');
     });
 
     it('fires selectnode with the clicked node id', async () => {

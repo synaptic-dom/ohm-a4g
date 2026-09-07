@@ -1,0 +1,9 @@
+{
+  "orgId": "00DEc00000kvSbNMAU",
+  "transport": "Apex Named Credential \u2192 OAuth client credentials \u2192 SOAP SessionHeader",
+  "operation": "listMetadata AiAuthoringBundle",
+  "success": true,
+  "credentialSecretsInApex": false,
+  "cliTokenInApex": false,
+  "setupSecretApiRestoredDisabled": true
+}

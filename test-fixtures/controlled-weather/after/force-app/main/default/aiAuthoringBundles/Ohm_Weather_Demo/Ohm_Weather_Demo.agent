@@ -1,0 +1,154 @@
+# CONTROLLED AUDIT DEMO: renamed upstream weather recipe; see PROVENANCE.json.
+# ActionDefinitions - Using Actions to Call External Systems
+# This agent demonstrates how to define and use actions (external tools/APIs)
+
+config:
+   developer_name: "Ohm_Weather_Demo"
+   agent_label: "Controlled Weather Demo"
+   agent_type: "AgentforceEmployeeAgent"
+   description: "Controlled audit demo derived from Salesforce weather recipe; intentional instruction redundancy is added only in the before variant"
+
+# Variables to store weather data
+variables:
+   location: mutable string = ""
+      description: "The city or location for weather lookup"
+
+   current_temperature: mutable number = 0
+      description: "Current temperature in degrees"
+
+   conditions: mutable string = ""
+      description: "Weather conditions (sunny, rainy, etc.)"
+
+system:
+   messages:
+      welcome: "Hi! I can help you check the weather. What location would you like to know about?"
+      error: "I had trouble getting the weather data. Please try again."
+
+   instructions: "You are a helpful weather assistant. Provide accurate weather information for user-requested locations."
+
+start_agent agent_router:
+   description: "Welcome users and begin providing weather information"
+   
+   reasoning:
+      instructions:|
+         Select the tool that best matches the user's message and conversation history. If it's unclear, make your best guess.
+      actions:
+         begin_weather_lookup: @utils.transition to @subagent.weather_lookup
+            description: "Start helping with weather information"
+
+subagent weather_lookup:
+   description: "Looks up and reports weather information"
+
+   # Actions block: Define external capabilities the agent can use
+   # Actions represent calls to external systems (Flows, Apex, etc.)
+   actions:
+      # Action 1: Get current weather
+      # This would connect to a Salesforce Flow that calls a weather API
+      get_current_weather:
+         description: "Retrieves current weather conditions for a specified location"
+         # Inputs: What the action needs to execute
+         inputs:
+            city_name: string
+               description: "The name of the city to get weather for"
+               is_required: True
+            units: string
+               description: "Temperature units to use (fahrenheit, celsius, or kelvin)"
+               is_required: False
+         # Outputs: What the action returns
+         outputs:
+            temperature: number
+               description: "Current temperature value in the specified units"
+            weather_condition: string
+               description: "Description of current weather (e.g., sunny, cloudy, rainy)"
+            humidity: number
+               description: "Current humidity percentage (0-100)"
+            wind_speed: number
+               description: "Current wind speed in miles per hour"
+         # Target: Where this action executes
+         # flow:// points to a Salesforce Flow
+         target: "flow://GetCurrentWeather"
+
+      # Action 2: Get forecast
+      # Demonstrates an action with different input/output structure
+      get_forecast:
+         description: "Retrieves 5-day weather forecast for a location"
+         inputs:
+            city_name: string
+               description: "The name of the city to get forecast for"
+               is_required: True
+            days: number
+               description: "Number of days to include in the forecast (1-10)"
+               is_required: False
+         outputs:
+            forecast_data: list[string]
+               description: "List of daily forecast objects containing temperature, conditions, and precipitation data"
+               complex_data_type_name: "lightning__textType"
+         target: "flow://GetWeatherForecast"
+
+      # Action 3: Send weather alert
+      # Demonstrates an action that performs an operation without returning data
+      send_weather_alert:
+         description: "Sends a weather alert notification to the user"
+         inputs:
+            message: string
+               description: "The alert message content to send to the user"
+               is_required: True
+            severity: string
+               description: "Severity level of the alert (low, medium, high, or critical)"
+               is_required: True
+         outputs:
+            alertMessage: string
+               description: "The formatted weather alert message that was sent"
+         target: "apex://WeatherAlertService"
+
+   reasoning:
+      instructions:->
+         | Help users get weather information for their requested locations and send weather alerts.
+
+           Current data:
+         
+         if @variables.location:
+            | - Location: {!@variables.location}
+         else:
+            | - Location: None specified
+         
+         if @variables.current_temperature > 0:
+            | - Temperature: {!@variables.current_temperature}
+         else:
+            | - Temperature: Not fetched
+         
+         if @variables.conditions:
+            | - Conditions: {!@variables.conditions}
+         else:
+            | - Conditions: Not fetched
+         
+         | When a user asks about weather:
+           1. Identify the location they're asking about
+           2. Use {!@actions.get_current_weather} to fetch current conditions
+           3. Store the results in variables
+           4. Report the weather clearly to the user
+
+         | If the user asks to send a weather alert, use {!@actions.send_alert} to send the alert
+
+      # Actions available to the agent during reasoning
+      # These are the tools the LLM can choose to call
+      actions:
+         # Make get_current_weather available
+         # 'with' clause binds inputs to values
+         # '...' means the LLM will extract this from conversation
+         get_current_weather: @actions.get_current_weather
+            with city_name=...
+            with units="fahrenheit"
+            # After action runs, capture outputs into variables
+            set @variables.current_temperature = @outputs.temperature
+            set @variables.conditions = @outputs.weather_condition
+
+         # Make forecast action available
+         get_forecast: @actions.get_forecast
+            with city_name=...
+            with days=5
+
+         # Make alert action available with confirmation
+         send_alert: @actions.send_weather_alert
+            with message=...
+            with severity=...

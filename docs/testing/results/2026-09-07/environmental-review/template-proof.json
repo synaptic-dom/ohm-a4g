@@ -1,0 +1,17 @@
+{
+  "templateId": "0hfEc000002KqanIAC",
+  "activeVersionId": "3vNEc0000005pjRMAQ",
+  "versionIdentifier": "WCyeBTg2NZWRDVRViggPve0yyaQfI6t9+0AlEdZ1LCQ=_1",
+  "active": true,
+  "status": "Published",
+  "modelFields": {
+    "PrimaryModel": "sfdc_ai__DefaultGPT55"
+  },
+  "contentCharacters": 13729,
+  "contentSha256": "b78ad613657e667f10ec21174c64b055ea37f3cb5e349bba3cbe3cf07c7bb5db",
+  "contentMatchesLocal": true,
+  "versionMatchesLocal": true,
+  "declaredLocalModel": "sfdc_ai__DefaultGPT55",
+  "verifiedAt": "2026-09-07T19:00:48.629893+00:00",
+  "verificationMethod": "Read active published Prompt Builder version via Connect REST; compare exact decoded content to local metadata. This is configuration verification, not a per-generation version attestation."
+}

@@ -60,7 +60,7 @@ public with sharing class OhmPersistenceService {
     public void saveDiscoveryGraph(Id reportId, OhmDTO.AgentModel g) {
         String graphJson = (g == null) ? null : JSON.serialize(g);
         if (graphJson != null && graphJson.length() > GRAPH_JSON_MAX) {
-            graphJson = graphJson.substring(0, GRAPH_JSON_MAX);
+            throw new OhmPersistenceException('Discovery evidence exceeds the report storage limit. No truncated graph was saved.');
         }
         update new Agent_Audit_Report__c(
             Id = reportId,
@@ -74,6 +74,12 @@ public with sharing class OhmPersistenceService {
      */
     public void persistFindings(Id reportId, OhmDTO.AgentModel g,
                                 List<OhmDTO.Finding> findings, OhmDTO.EfficiencyResult rating) {
+        Agent_Audit_Report__c context = [
+            SELECT Id, Target_Type__c, Target_Planner_Id__c, Target_Planner_Api_Name__c
+            FROM Agent_Audit_Report__c WHERE Id = :reportId LIMIT 1
+        ];
+        String processKey = logicalProcessKey(context.Target_Planner_Api_Name__c, context.Target_Planner_Id__c);
+        OhmArtifactSnapshotService.capture(reportId, g, processKey);
         List<Finding__c> rows = new List<Finding__c>();
         if (findings != null) {
             for (OhmDTO.Finding f : findings) {
@@ -81,6 +87,7 @@ public with sharing class OhmPersistenceService {
                 rows.add(toRecord(reportId, f));
             }
         }
+        OhmRemediationLifecycle.prepare(reportId, context, g, rows);
         if (!rows.isEmpty()) {
             insert rows;
             // write the persisted Ids back onto the DTOs (same order as insert)
@@ -104,6 +111,8 @@ public with sharing class OhmPersistenceService {
             report.Efficiency_Grade__c = rating.grade;
             report.Efficiency_Score__c = rating.score;
         }
+        // Preserve the final graph after detector coverage and snapshot checks have run.
+        saveDiscoveryGraph(reportId, g);
         report.Methodology_Version__c = OhmConstants.load().methodologyVersion();
         report.Run_Status__c = 'Complete';
         report.Run_Stage_Message__c = 'Audit complete';
@@ -147,6 +156,33 @@ public with sharing class OhmPersistenceService {
         if (input == null || input.findingId == null) {
             throw new OhmPersistenceException('createRemediationTask requires a findingId.');
         }
+        Finding__c source = [
+            SELECT Id, Agent_Audit_Report__c, Remediation_Task_Id__c, Issue_Key__c
+            FROM Finding__c WHERE Id = :input.findingId LIMIT 1 FOR UPDATE
+        ];
+        if (input.reportId != null && input.reportId != source.Agent_Audit_Report__c) {
+            throw new OhmPersistenceException('The finding does not belong to the supplied audit report.');
+        }
+        input.reportId = source.Agent_Audit_Report__c;
+        // F8 and the worklist share this idempotent path. Repeated assignment never creates
+        // another Task for the same issue, including from a retained historical finding.
+        List<Finding__c> linked = new List<Finding__c>{ source };
+        if (String.isNotBlank(source.Issue_Key__c)) {
+            linked = [SELECT Id, Remediation_Task_Id__c FROM Finding__c
+                      WHERE Issue_Key__c = :source.Issue_Key__c FOR UPDATE];
+        }
+        Set<Id> existingTaskIds = new Set<Id>();
+        for (Finding__c row : linked) {
+            Id candidate = OhmRemediationLifecycle.taskIdOf(row.Remediation_Task_Id__c);
+            if (candidate != null) { existingTaskIds.add(candidate); }
+        }
+        List<Task> existingTasks = [SELECT Id FROM Task WHERE Id IN :existingTaskIds ORDER BY CreatedDate ASC LIMIT 1];
+        if (!existingTasks.isEmpty()) {
+            List<Finding__c> linksToSave = new List<Finding__c>();
+            for (Finding__c row : linked) { linksToSave.add(new Finding__c(Id = row.Id, Remediation_Task_Id__c = existingTasks[0].Id)); }
+            update linksToSave;
+            return existingTasks[0].Id;
+        }
         String fixLabel = String.isBlank(input.fixType) ? 'Apply recommendation' : input.fixType.replace('_', ' ');
         String subjectTarget = String.isBlank(input.recommendedTarget) ? '' : (' → ' + input.recommendedTarget);
         List<String> descParts = new List<String>();
@@ -176,10 +212,9 @@ public with sharing class OhmPersistenceService {
         );
         insert remediation;
 
-        update new Finding__c(
-            Id = input.findingId,
-            Remediation_Task_Id__c = remediation.Id
-        );
+        List<Finding__c> linksToSave = new List<Finding__c>();
+        for (Finding__c row : linked) { linksToSave.add(new Finding__c(Id = row.Id, Remediation_Task_Id__c = remediation.Id)); }
+        update linksToSave;
         return remediation.Id;
     }
 
@@ -189,7 +224,9 @@ public with sharing class OhmPersistenceService {
             SELECT Id, Run_Status__c, Run_Stage_Message__c, Percent_Complete__c,
                    Agents_Discovered__c, Topics_Discovered__c, Actions_Discovered__c,
                    Prompt_Templates_Discovered__c, Efficiency_Grade__c, Efficiency_Score__c,
-                   Methodology_Version__c, Discovery_Errors__c,
+                   Methodology_Version__c, Discovery_Errors__c, Impact_Snapshot__c, Review_Result__c,
+                   Modeled_Energy_Wh__c, Modeled_Energy_Wh_Low__c, Modeled_Energy_Wh_High__c,
+                   Modeled_Savings_Wh__c, Modeled_Savings_Wh_Low__c, Modeled_Savings_Wh_High__c,
                    (SELECT Id, Signal_Type__c, Severity__c, Confidence__c, Artifact_Type__c,
                            Artifact_Api_Name__c, Artifact_Label__c, Artifact_Tooling_Id__c,
                            Parent_Agent_Api_Name__c, Parent_Topic_Api_Name__c,
@@ -211,6 +248,7 @@ public with sharing class OhmPersistenceService {
         OhmConstants c = OhmConstants.load();
         OhmDTO.AuditReadoutDTO dto = new OhmDTO.AuditReadoutDTO();
         dto.reportId = report.Id;
+        dto.reviewJson = report.Run_Status__c == 'Complete' ? report.Review_Result__c : null;
         dto.runStatus = report.Run_Status__c;
         dto.stageMessage = report.Run_Stage_Message__c;
         dto.percentComplete = (report.Percent_Complete__c == null) ? 0 : Integer.valueOf(report.Percent_Complete__c);
@@ -236,28 +274,69 @@ public with sharing class OhmPersistenceService {
             'methodologyVersion' => c.methodologyVersion()
         };
 
-        dto.orgEnergyWhLow = 0; dto.orgEnergyWhCentral = 0; dto.orgEnergyWhHigh = 0;
-        dto.orgWaterMlLow = 0; dto.orgWaterMlCentral = 0; dto.orgWaterMlHigh = 0;
-        dto.orgCo2eGLow = 0; dto.orgCo2eGCentral = 0; dto.orgCo2eGHigh = 0;
-        dto.orgEnergySavingsWhLow = 0; dto.orgEnergySavingsWhCentral = 0; dto.orgEnergySavingsWhHigh = 0;
-
         dto.findings = new List<OhmDTO.FindingDTO>();
         for (Finding__c f : report.Findings__r) {
             dto.findings.add(toFindingDTO(f));
-            dto.orgEnergyWhLow += nz(f.Annual_Energy_Wh_Low__c);
-            dto.orgEnergyWhCentral += nz(f.Annual_Energy_Wh_Central__c);
-            dto.orgEnergyWhHigh += nz(f.Annual_Energy_Wh_High__c);
-            dto.orgWaterMlLow += nz(f.Annual_Water_mL_Low__c);
-            dto.orgWaterMlCentral += nz(f.Annual_Water_mL_Central__c);
-            dto.orgWaterMlHigh += nz(f.Annual_Water_mL_High__c);
-            dto.orgCo2eGLow += nz(f.Annual_CO2e_g_Low__c);
-            dto.orgCo2eGCentral += nz(f.Annual_CO2e_g_Central__c);
-            dto.orgCo2eGHigh += nz(f.Annual_CO2e_g_High__c);
-            dto.orgEnergySavingsWhLow += nz(f.Annual_Energy_Savings_Wh_Low__c);
-            dto.orgEnergySavingsWhCentral += nz(f.Annual_Energy_Savings_Wh__c);
-            dto.orgEnergySavingsWhHigh += nz(f.Annual_Energy_Savings_Wh_High__c);
+        }
+        // Report-level modeled workload is independent of detected waste. Historical reports
+        // without an impact snapshot have unknown totals, not a sum of overlapping findings.
+        if (String.isNotBlank(report.Impact_Snapshot__c)) {
+            OhmAuditImpactService.Snapshot impact = OhmAuditImpactService.readSnapshot(report.Impact_Snapshot__c);
+            if (impact.artifactCount > 0 && impact.baseline != null) {
+                dto.orgEnergyWhLow = impact.baseline.energyWhLow;
+                dto.orgEnergyWhCentral = impact.baseline.energyWhCentral;
+                dto.orgEnergyWhHigh = impact.baseline.energyWhHigh;
+                dto.orgWaterMlLow = impact.baseline.waterMlLow;
+                dto.orgWaterMlCentral = impact.baseline.waterMlCentral;
+                dto.orgWaterMlHigh = impact.baseline.waterMlHigh;
+                dto.orgCo2eGLow = impact.baseline.co2eGLow;
+                dto.orgCo2eGCentral = impact.baseline.co2eGCentral;
+                dto.orgCo2eGHigh = impact.baseline.co2eGHigh;
+                if (impact.savings != null) {
+                    dto.orgEnergySavingsWhLow = impact.savings.energyWhLow;
+                    dto.orgEnergySavingsWhCentral = impact.savings.energyWhCentral;
+                    dto.orgEnergySavingsWhHigh = impact.savings.energyWhHigh;
+                }
+            }
+            if (impact.baseline != null && impact.baseline.assumptions != null) {
+                dto.assumptions = impact.baseline.assumptions;
+            }
+            dto.assumptions.put('scope', impact.scope);
+            dto.assumptions.put('assumptionSummary', impact.assumptionSummary);
         }
         return dto;
+    }
+
+    /** Stable logical identity survives generated planner IDs and publication version suffixes. */
+    public static String logicalProcessKey(String plannerApiName, String plannerId) {
+        String value = String.isBlank(plannerApiName) ? plannerId : plannerApiName;
+        if (String.isBlank(value)) { return null; }
+        return value.trim().toLowerCase().replaceAll('_v[0-9]+$', '');
+    }
+
+    public static String logicalArtifactName(String apiName) {
+        if (String.isBlank(apiName)) { return ''; }
+        return apiName.trim().toLowerCase().replaceAll('_16j[a-z0-9]{12}([a-z0-9]{3})?$', '');
+    }
+
+    public static String artifactKey(String processKey, String artifactType, String artifactApiName, String parentTopicApiName) {
+        return sha256(JSON.serialize(new List<String>{ UserInfo.getOrganizationId(),
+            processKey == null ? '' : processKey.toLowerCase(),
+            artifactType == null ? '' : artifactType.toLowerCase(),
+            artifactType != null && artifactType.equalsIgnoreCase('Agent')
+                ? logicalProcessKey(artifactApiName, null) : logicalArtifactName(artifactApiName) }));
+    }
+
+    public static String issueKey(String artifactKey, String signal) {
+        return sha256(artifactKey + '|' + (signal == null ? '' : signal.toUpperCase()));
+    }
+
+    public static String sha256(String value) {
+        return EncodingUtil.convertToHex(Crypto.generateDigest('SHA-256', Blob.valueOf(value)));
+    }
+
+    public static Map<Id, Map<String, Audit_Artifact_Snapshot__c>> loadSnapshots(Set<Id> reportIds) {
+        return OhmArtifactSnapshotService.load(reportIds);
     }
 
     // ---------- private mapping helpers ----------

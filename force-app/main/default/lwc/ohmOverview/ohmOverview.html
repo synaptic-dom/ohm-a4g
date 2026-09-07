@@ -1,0 +1,40 @@
+<template>
+    <section class="overview" aria-label="Ohm overview">
+        <template lwc:if={ready}><c-ohm-footprint-strip class="footprint footprint--top" heading="What your agents can stop costing the planet" scope="fleet" footprints={rows} factors={impactFactors} assumption-summary={impactAssumptions} data-id="footprint"></c-ohm-footprint-strip></template>
+        <div class="hero">
+            <div class="hero__copy">
+                <p class="eyebrow"><span class="eyebrow__line"></span>Less energy. Less carbon. Less water.</p>
+                <h1>Better agents.<br /><span>A lighter planet.</span></h1>
+                <p class="hero__description">Every unnecessary token your agents read or write burns energy, carbon and water. Ohm finds that waste in your Agentforce bundles and shows what you save by fixing it, with the assumptions in the open.</p>
+                <div class="hero__actions">
+                    <button class="button button--primary" onclick={handleBundles} data-id="explore">Explore your bundles <span aria-hidden="true">↗</span></button>
+                    <button class="button button--text" onclick={handleRecommendations}>Recommendations <span aria-hidden="true">→</span></button>
+                </div>
+            </div>
+            <div class="instrument" aria-hidden="true">
+                <div class="instrument__grid"></div>
+                <div class="orbit orbit--outer"></div><div class="orbit orbit--middle"></div><div class="orbit orbit--inner"></div>
+                <div class="instrument__core"><span>Ω</span><small>LESS IS MORE</small></div>
+                <span class="signal signal--input"><i></i>Input</span><span class="signal signal--output"><i></i>Output</span><span class="signal signal--calls"><i></i>Calls</span>
+            </div>
+        </div>
+        <template lwc:if={loading}><c-ohm-loading-state heading="Finding your bundles" detail="Reading published agents and their latest reviews."></c-ohm-loading-state></template>
+        <template lwc:elseif={error}><div class="state" role="alert"><p>{error}</p><button class="button button--text" onclick={handleRefresh}>Try again →</button></div></template>
+        <template lwc:elseif={ready}>
+            <div class="workspace">
+                <div class="workspace__stats">
+                    <p class="eyebrow">Your workspace</p>
+                    <div class="stats"><div><strong data-id="reviewed">{reviewed}<small> / {total}</small></strong><span>bundles reviewed</span></div><div><strong class="stats__opportunities" data-id="opportunities">{opportunityCount}</strong><span>{opportunityLabel}</span></div></div>
+                </div>
+                <div class="next">
+                    <p class="eyebrow">Up next <span aria-hidden="true">↗</span></p>
+                    <h2>{nextTitle}</h2>
+                    <p class="next__description">{nextDescription}</p>
+                    <template lwc:if={hasBundles}><div class="next__action"><span class="next__bundle">{nextLabel}</span><button class="button button--outline" onclick={handleNext} data-id="next">{nextAction} <span aria-hidden="true">→</span></button></div></template>
+                    <template lwc:else><button class="button button--outline" onclick={handleRefresh}>Refresh bundles →</button></template>
+                </div>
+            </div>
+        </template>
+        <div class="method"><span>THE OHM LOOP</span><p><b>01</b> Discover</p><i aria-hidden="true">→</i><p><b>02</b> Review</p><i aria-hidden="true">→</i><p><b>03</b> Improve</p></div>
+    </section>
+</template>

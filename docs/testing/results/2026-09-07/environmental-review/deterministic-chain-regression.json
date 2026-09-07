@@ -1,0 +1,243 @@
+{
+  "review": {
+    "artifacts": [
+      {
+        "apiName": "Ohm_Review_Synthetic_DeterministicChain_v1",
+        "artifactId": "16j000000000004AAA",
+        "artifactKey": "8b1e41ac5bad4cf397bd629c0d9788dad2b8e697d8d8ef8e3f452b80e1e29a41",
+        "artifactType": "Agent",
+        "boundModel": null,
+        "categories": [
+          {
+            "assessedArtifactCount": null,
+            "assessment": "The agent instruction is concise and relevant to payment assistance. The safety constraint supports the task and should remain.",
+            "coverageNote": "The supplied source was assessed under the review rubric.",
+            "coverageStatus": "Complete",
+            "environmentalMechanism": "Removing unnecessary instruction input may reduce inference work when that source is included in a request.",
+            "id": "INPUT",
+            "issues": [],
+            "label": "Input efficiency",
+            "rating": "A",
+            "status": "reviewed",
+            "totalArtifactCount": null
+          },
+          {
+            "assessedArtifactCount": null,
+            "assessment": "The instruction asks for transaction confirmations and does not demand unbounded or unnecessary output.",
+            "coverageNote": "The supplied source was assessed under the review rubric.",
+            "coverageStatus": "Complete",
+            "environmentalMechanism": "Avoiding unnecessary generated output may reduce inference work while preserving the required response.",
+            "id": "OUTPUT",
+            "issues": [],
+            "label": "Output efficiency",
+            "rating": "A",
+            "status": "reviewed",
+            "totalArtifactCount": null
+          },
+          {
+            "assessedArtifactCount": null,
+            "assessment": "The model binding is unavailable for this source. Model fit cannot be assessed.",
+            "coverageNote": "No model quality evaluation is available. A verified binding permits candidates only; fit is unproven.",
+            "coverageStatus": "Unknown",
+            "environmentalMechanism": "A suitable smaller model may use less compute; model quality and environmental effects require separate validation.",
+            "id": "MODEL",
+            "issues": [],
+            "label": "Model fit",
+            "rating": "UNRATED",
+            "status": "unknown",
+            "totalArtifactCount": null
+          },
+          {
+            "assessedArtifactCount": null,
+            "assessment": "This artifact does not include a configured model invocation path or eligible prompt target evidence for call review.",
+            "coverageNote": "Static source suitability only. Runtime frequency, repeated execution and complete path coverage are unverified.",
+            "coverageStatus": "Unknown",
+            "environmentalMechanism": "Avoiding unnecessary model invocations may reduce inference work; static source does not establish runtime call frequency.",
+            "id": "CALLS",
+            "issues": [],
+            "label": "Call efficiency",
+            "rating": "UNRATED",
+            "status": "unknown",
+            "totalArtifactCount": null
+          }
+        ],
+        "characterCount": 193,
+        "estimatedTokens": 49,
+        "exactDuplicates": [],
+        "hardBudgetTokens": 800,
+        "label": "SYNTHETIC ONLY - deterministic action chain",
+        "modelBindingKnown": false,
+        "softBudgetTokens": 400,
+        "sourceHash": "42f51b704c60615bdce3c437d7fac43150269c5f33f71e3e82df62410a63b07e",
+        "sourceKind": "RetrievedAgentScript",
+        "sourcePath": "synthetic/deterministic_chain/fixture.agent#system",
+        "sourceVersion": "SYNTHETIC_ONLY_V1"
+      },
+      {
+        "apiName": "payment_processing",
+        "artifactId": "16a000000000004AAA",
+        "artifactKey": "05860766efb44af12b50c6cf5f12c788116be42ff8efbc8f75696a8fdc8d1c18",
+        "artifactType": "Topic",
+        "boundModel": null,
+        "categories": [
+          {
+            "assessedArtifactCount": null,
+            "assessment": "The topic source is coherent for payment processing and confirmation. It uses variable state and action chaining without unrelated context or material repetition.",
+            "coverageNote": "The supplied source was assessed under the review rubric.",
+            "coverageStatus": "Complete",
+            "environmentalMechanism": "Removing unnecessary instruction input may reduce inference work when that source is included in a request.",
+            "id": "INPUT",
+            "issues": [],
+            "label": "Input efficiency",
+            "rating": "A",
+            "status": "reviewed",
+            "totalArtifactCount": null
+          },
+          {
+            "assessedArtifactCount": null,
+            "assessment": "The output request is bounded to informing the user about transaction state. It does not require excess elaboration or a mismatched format.",
+            "coverageNote": "The supplied source was assessed under the review rubric.",
+            "coverageStatus": "Complete",
+            "environmentalMechanism": "Avoiding unnecessary generated output may reduce inference work while preserving the required response.",
+            "id": "OUTPUT",
+            "issues": [],
+            "label": "Output efficiency",
+            "rating": "A",
+            "status": "reviewed",
+            "totalArtifactCount": null
+          },
+          {
+            "assessedArtifactCount": null,
+            "assessment": "The model binding is unavailable for this source. Model fit cannot be assessed.",
+            "coverageNote": "No model quality evaluation is available. A verified binding permits candidates only; fit is unproven.",
+            "coverageStatus": "Unknown",
+            "environmentalMechanism": "A suitable smaller model may use less compute; model quality and environmental effects require separate validation.",
+            "id": "MODEL",
+            "issues": [],
+            "label": "Model fit",
+            "rating": "UNRATED",
+            "status": "unknown",
+            "totalArtifactCount": null
+          },
+          {
+            "assessedArtifactCount": null,
+            "assessment": "The source shows deterministic Flow and Apex action chaining, but it does not provide an eligible natural-language directive assigning fixed computation to a model.",
+            "coverageNote": "Static source suitability only. Runtime frequency, repeated execution and complete path coverage are unverified.",
+            "coverageStatus": "Complete",
+            "environmentalMechanism": "Avoiding unnecessary model invocations may reduce inference work; static source does not establish runtime call frequency.",
+            "id": "CALLS",
+            "issues": [],
+            "label": "Call efficiency",
+            "rating": "A",
+            "status": "reviewed",
+            "totalArtifactCount": null
+          }
+        ],
+        "characterCount": 1385,
+        "estimatedTokens": 347,
+        "exactDuplicates": [],
+        "hardBudgetTokens": 1000,
+        "label": "SYNTHETIC ONLY - payment processing",
+        "modelBindingKnown": false,
+        "softBudgetTokens": 500,
+        "sourceHash": "3d96f9c57863979733a56d45ed305e5f6f29569309a5555e0b44d74a52c6e16c",
+        "sourceKind": "RetrievedAgentScript",
+        "sourcePath": "synthetic/deterministic_chain/fixture.agent#payment_processing",
+        "sourceVersion": "SYNTHETIC_ONLY_V1"
+      }
+    ],
+    "categories": [
+      {
+        "assessedArtifactCount": 2,
+        "assessment": "The supplied artifacts align around payment processing, confirmation, and payment-data safety. No source-supported consolidation issue is evident.",
+        "coverageNote": "The supplied source was assessed under the review rubric.",
+        "coverageStatus": "Complete",
+        "environmentalMechanism": "Removing unnecessary instruction input may reduce inference work when that source is included in a request.",
+        "id": "INPUT",
+        "issues": [],
+        "label": "Input efficiency",
+        "rating": "A",
+        "status": "reviewed",
+        "totalArtifactCount": 2
+      },
+      {
+        "assessedArtifactCount": 2,
+        "assessment": "The bundle output requirements remain bounded to confirmations and status details. No format conflict is shown by the supplied source.",
+        "coverageNote": "The supplied source was assessed under the review rubric.",
+        "coverageStatus": "Complete",
+        "environmentalMechanism": "Avoiding unnecessary generated output may reduce inference work while preserving the required response.",
+        "id": "OUTPUT",
+        "issues": [],
+        "label": "Output efficiency",
+        "rating": "A",
+        "status": "reviewed",
+        "totalArtifactCount": 2
+      },
+      {
+        "assessedArtifactCount": 0,
+        "assessment": "Not every supplied artifact has a verified model binding, and no task quality evaluation is available.",
+        "coverageNote": "No model quality evaluation is available. A verified binding permits candidates only; fit is unproven.",
+        "coverageStatus": "Unknown",
+        "environmentalMechanism": "A suitable smaller model may use less compute; model quality and environmental effects require separate validation.",
+        "id": "MODEL",
+        "issues": [],
+        "label": "Model fit",
+        "rating": "UNRATED",
+        "status": "unknown",
+        "totalArtifactCount": 2
+      },
+      {
+        "assessedArtifactCount": 1,
+        "assessment": "The configured chain references Flow and Apex targets, and the reviewed source does not establish repeated or avoidable model work.",
+        "coverageNote": "Static source suitability only. Runtime frequency, repeated execution and complete path coverage are unverified.",
+        "coverageStatus": "Partial",
+        "environmentalMechanism": "Avoiding unnecessary model invocations may reduce inference work; static source does not establish runtime call frequency.",
+        "id": "CALLS",
+        "issues": [],
+        "label": "Call efficiency",
+        "rating": "UNRATED",
+        "status": "reviewed",
+        "totalArtifactCount": 2
+      }
+    ],
+    "contextSources": [
+      {
+        "artifactId": "configuration:16j000000000004AAA",
+        "characterCount": 5417,
+        "instructions": null,
+        "label": "Ohm_Review_Synthetic_DeterministicChain_v1 configuration",
+        "plannerId": "16j000000000004AAA",
+        "sourceHash": "16b3c70b5260ff71d7b863581478b6c645699f0030dbd43afeb3b9fb0cc20a82",
+        "sourcePath": "synthetic/deterministic_chain/fixture.agent"
+      }
+    ],
+    "coverage": {
+      "artifactCount": 2,
+      "assessedArtifactCount": 2
+    },
+    "limitations": [
+      "Ratings assess source and configured review budgets; they are not environmental measurements.",
+      "Source tokens are approximated from characters. Rendered requests, generated tokens and actual call frequency are unknown.",
+      "Model quality has not been evaluated. Known bindings support review candidates, not a proven model-fit grade.",
+      "Call efficiency is a static source review, not verified runtime execution or a complete execution graph.",
+      "A hard-budget rule confirms only that a configured source review budget is exceeded; it does not establish unnecessary text or savings."
+    ],
+    "reviewedAt": "2026-09-07T19:00:37.912Z",
+    "reviewer": "Salesforce Prompt Builder",
+    "reviewerModel": "sfdc_ai__DefaultGPT55",
+    "reviewerTemplate": "Ohm_Bundle_Environmental_Review",
+    "reviewerVersion": "WCyeBTg2NZWRDVRViggPve0yyaQfI6t9+0AlEdZ1LCQ=_1",
+    "rubricVersion": "OHM_ENVIRONMENTAL_REVIEW_V1",
+    "schemaVersion": 1,
+    "scope": "Published Agent Script bundles and linked prompts",
+    "status": "Reviewed"
+  },
+  "decodedEscapesVerified": true,
+  "configurationHashVerified": true,
+  "noMissingBound": true,
+  "noRepeatCandidate": true,
+  "noDeterministicAlternative": true,
+  "success": true,
+  "syntheticOnly": true,
+  "fixture": "deterministic_chain"
+}

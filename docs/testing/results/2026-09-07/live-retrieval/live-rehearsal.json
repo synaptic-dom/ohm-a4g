@@ -1,0 +1,66 @@
+[
+  {
+    "Id": "a00Ec00000lsywzIAA",
+    "Target_Planner_Api_Name__c": "ActionChaining_v1",
+    "Run_Status__c": "Complete",
+    "Run_Stage_Message__c": "Audit complete with coverage gaps",
+    "Findings_Count__c": 0,
+    "Coverage_Status__c": "Incomplete",
+    "CreatedDate": "2026-09-07T17:49:43.000+0000",
+    "retrievalJobs": 3,
+    "sourceRecordIds": [
+      "a07Ec00002XqJ1JIAV"
+    ],
+    "verifiedTargets": [
+      "ActionChaining.v1"
+    ]
+  },
+  {
+    "Id": "a00Ec00000lsyx0IAA",
+    "Target_Planner_Api_Name__c": "ActionDefinitions_v1",
+    "Run_Status__c": "Complete",
+    "Run_Stage_Message__c": "Audit complete with coverage gaps",
+    "Findings_Count__c": 0,
+    "Coverage_Status__c": "Incomplete",
+    "CreatedDate": "2026-09-07T17:49:43.000+0000",
+    "retrievalJobs": 3,
+    "sourceRecordIds": [
+      "a07Ec00002XqKhwIAF"
+    ],
+    "verifiedTargets": [
+      "ActionDefinitions.v1"
+    ]
+  },
+  {
+    "Id": "a00Ec00000lsyx1IAA",
+    "Target_Planner_Api_Name__c": "Ohm_Weather_Demo_v4",
+    "Run_Status__c": "Complete",
+    "Run_Stage_Message__c": "Audit complete with coverage gaps",
+    "Findings_Count__c": 0,
+    "Coverage_Status__c": "Incomplete",
+    "CreatedDate": "2026-09-07T17:49:43.000+0000",
+    "retrievalJobs": 3,
+    "sourceRecordIds": [
+      "a07Ec00002XqCufIAF"
+    ],
+    "verifiedTargets": [
+      "Ohm_Weather_Demo.v4"
+    ]
+  },
+  {
+    "Id": "a00Ec00000lsytlIAA",
+    "Target_Planner_Api_Name__c": "PromptTemplateActions_v1",
+    "Run_Status__c": "Complete",
+    "Run_Stage_Message__c": "Audit complete with coverage gaps",
+    "Findings_Count__c": 1,
+    "Coverage_Status__c": "Incomplete",
+    "CreatedDate": "2026-09-07T17:49:11.000+0000",
+    "retrievalJobs": 6,
+    "sourceRecordIds": [
+      "a07Ec00002XqGi3IAF"
+    ],
+    "verifiedTargets": [
+      "PromptTemplateActions.v1"
+    ]
+  }
+]

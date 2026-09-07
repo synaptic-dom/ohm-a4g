@@ -1,0 +1,279 @@
+Browser tab: 1, Title: "Ohm Audit | Salesforce", URL: "https://innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/n/Ohm_Audit".
+1 AXWebArea Ohm Audit | Salesforce, URL: innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/n/Ohm_Audit
+	2 container
+		3 container
+			4 container oneHeader
+				5 link Description: Skip to Navigation, Value: javascript:void(0);
+				6 link Description: Skip to Main Content, Value: javascript:void(0);
+				7 container
+					8 button (collapsed) Description: Toggle Panel, Secondary Actions: Expand
+						9 text Menu
+					10 text Scratch Org
+					11 pop up button (collapsed) Show menu, Secondary Actions: Expand
+						12 text Show menu
+				13 button Search
+				14 container Global Header
+					15 content list
+						16 container
+							17 text EPT:
+							18 link Description: 0.96 s, Help: EPT, Value: javascript:void(0);
+							19 container
+								20 text ART 0 s
+							21 link Description: 7726.26 KB, Value: javascript:void(0);
+						22 container
+							23 checkbox Description: Add favorite, Value: 0
+								24 container
+									25 container Add favorite, ID: tt-for-6:200;a
+										26 text Add favorite
+							27 button Favorites list
+								28 container
+									29 container Favorites list, ID: tt-for-30:200;a
+										30 text Favorites list
+						31 pop up button (collapsed) Global Actions, Secondary Actions: Expand
+							32 container
+								33 container Global Actions, ID: tt-for-7:620;a
+									34 text Global Actions
+						35 pop up button Guidance Center
+							36 container
+								37 container Guidance Center, ID: tt-for-497:0
+									38 text Guidance Center
+						39 pop up button Salesforce Help
+							40 container
+								41 container Salesforce Help, ID: tt-for-116:200;a
+									42 text Salesforce Help
+						43 pop up button (collapsed) Setup, Secondary Actions: Expand
+							44 container
+								45 container Setup, ID: tt-for-159:200;a
+									46 text Setup
+						47 container
+							48 pop up button 1 Notifications
+								49 container
+									50 text 1
+									51 container Notifications, ID: tt-for-64:200;a
+										52 text Notifications
+							53 text 1 new notifications
+						54 pop up button View profile
+							55 container
+								56 container View profile, ID: tt-for-90:200;a
+									57 text View profile
+			58 container
+				59 container App
+					60 pop up button (collapsed) App Launcher, Secondary Actions: Expand
+						61 container
+							62 text App Launcher
+				63 heading Ohm, Value: 1
+					64 text Ohm
+				65 container Global
+					66 content list
+						67 link Description: Ohm Audit, Value: innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/n/Ohm_Audit
+						68 button Edit nav items, Help: Personalize your nav bar
+			69 container
+				70 heading Ohm Audit, Value: 1
+					71 text Ohm Audit
+				72 container
+					73 text Ohm FLEET WORKBENCH
+					74 tab group Workbench sections
+						75 tab (selected, settable, boolean) FLEET, Value: 1
+						76 tab (selectable, settable, boolean) FINDINGS, Value: 0
+						77 tab (selectable, settable, boolean) RECOMMENDATIONS, Value: 0
+						78 tab (selectable, settable, boolean) TRENDS, Value: 0
+					79 switch Calm Mode ON, Value: 1
+				80 text Fleet › Controlled Weather Demo
+				81 container
+					82 button ‹ Back to fleet
+					83 heading Controlled Weather Demo, Value: 1
+						84 text Controlled Weather Demo
+					85 text INTERNAL
+					86 container Incomplete
+						87 text IN Incomplete
+					88 text 14,783 Wh/yr
+					89 button Re-audit
+					90 container Audit scope and evidence
+						91 text Audit coverage: Incomplete
+						92 content list
+							93 text Instructions: Covered
+							94 text Repeated calls: Unknown
+							95 text Model suitability: Covered
+							96 text Action review: Covered
+						97 text Imported Agent Script is versioned static source; conditional branches are retained. Source size is not measured rendered prompt usage.
+						98 text Execution graph unavailable; redundant-call coverage is unknown.
+						99 container
+							100 text Modeled instruction-source scenario  · Range 13,140–16,425 Wh/year · Low confidence
+						101 text 109500 modeled calls/year per source block; source characters / 4 approximate tokens. Conditional branches and dynamic outputs are not executed. Unknown models use standard multiplier 1.0; reference cost is 0.27 Wh per 500 tokens. Low confidence. Excludes output tokens, tool compute and actual runtime frequency. Potential savings cover instruction trimming only.
+					102 container Call graph
+						103 text CALL GRAPH
+						104 container
+							105 checkbox Description: Controlled Weather Demo, Agent, no findings in available evidence, Value: 0
+							106 checkbox Description: Agent Router, Topic, no findings in available evidence, Value: 0
+							107 checkbox Description: Weather Lookup, Topic, no findings in available evidence, Value: 1
+							108 checkbox Description: Send Weather Alert, Action, no findings in available evidence, Value: 0
+							109 checkbox Description: Get Current Weather, Action, no findings in available evidence, Value: 0
+							110 checkbox Description: Get Forecast, Action, no findings in available evidence, Value: 0
+					111 container Node inspector
+						112 text INSPECTOR
+						129 container
+							130 heading Weather Lookup, Value: 3
+								131 text Weather Lookup
+							132 text TOPIC weather_lookup_16jEc000000PASP · 194 tokens
+						133 container Editable instruction source
+							134 container
+								135 text Selected source  · ImportedAgentScript
+							136 text /Users/dom/Documents/ohm-a4g/test-fixtures/controlled-weather/after/force-app/main/default/aiAuthoringBundles/Ohm_Weather_Demo/Ohm_Weather_Demo.agent#weather_lookup
+							137 text Version: controlled-weather-after:5f054b92b76b8ec97f04bf19570633cda61d5bbdb76e59b2f9cc11e8cc0482b6
+							138 button (collapsed) Source fingerprint, Secondary Actions: Expand
+								139 text Source fingerprint
+							140 text Review the draft against this source. Apply the edit manually, publish the agent if required, then refresh its source import and re-audit.
+						141 container
+							142 text INSTRUCTIONS | Help users get weather information for their requested locations and send weather alerts.
+
+  Current data:
+
+if @variables.location:
+   | - Location: {!@variables.location}
+else:
+   | - Location: None specified
+
+if @variables.current_temperature > 0:
+   | - Temperature: {!@variables.current_temperature}
+else:
+   | - Temperature: Not fetched
+
+if @variables.conditions:
+   | - Conditions: {!@variables.conditions}
+else:
+   | - Conditions: Not fetched
+
+| When a user asks about weather:
+  1. Identify the location they're asking about
+  2. Use {!@actions.get_current_weather} to fetch current conditions
+  3. Store the results in variables
+  4. Report the weather clearly to the user
+
+| If the user asks to send a weather alert, use {!@actions.send_alert} to send the alert
+						143 text No findings in available evidence.
+					114 button (expanded) Hide comparison, Secondary Actions: Collapse
+					115 text Before / after — the two most recent audits of this process.
+					144 text Same artifact and modeled workload assumptions; values are estimates, not measured usage.
+					145 container
+						146 text Selected artifact:  Weather Lookup
+					147 container Before
+						148 text BEFORE Sep 6 GRADE
+						149 container Incomplete
+							150 text IN Incomplete
+						151 text SCORE — MODELED INPUT 63,742 Wh/yr FINDINGS 1
+					152 container After
+						153 text AFTER Sep 6 GRADE
+						154 container Incomplete
+							155 text IN Incomplete
+						156 text SCORE — MODELED INPUT 14,783 Wh/yr FINDINGS 0
+					157 container
+						158 text IMPROVED IN → IN −48,960 Wh/yr 1 → 0 findings
+					159 container Instructions comparison
+						160 text INSTRUCTIONS (TOPIC SCOPE) −3,312 chars BEFORE 4,085 chars · ~1,022 tok
+						161 text | Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+| Help users get weather information for their requested locations and send weather alerts.
+
+  Current data:
+
+if @variables.location:
+   | - Location: {!@variables.location}
+else:
+   | - Location: None specified
+
+if @variables.current_temperature > 0:
+   | - Temperature: {!@variables.current_temperature}
+else:
+   | - Temperature: Not fetched
+
+if @variables.conditions:
+   | - Conditions: {!@variables.conditions}
+else:
+   | - Conditions: Not fetched
+
+| When a user asks about weather:
+  1. Identify the location they're asking about
+  2. Use {!@actions.get_current_weather} to fetch current conditions
+  3. Store the results in variables
+  4. Report the weather clearly to the user
+
+| If the user asks to send a weather alert, use {!@actions.send_alert} to send the alert
+						162 text AFTER 773 chars · ~194 tok
+						163 text | Help users get weather information for their requested locations and send weather alerts.
+
+  Current data:
+
+if @variables.location:
+   | - Location: {!@variables.location}
+else:
+   | - Location: None specified
+
+if @variables.current_temperature > 0:
+   | - Temperature: {!@variables.current_temperature}
+else:
+   | - Temperature: Not fetched
+
+if @variables.conditions:
+   | - Conditions: {!@variables.conditions}
+else:
+   | - Conditions: Not fetched
+
+| When a user asks about weather:
+  1. Identify the location they're asking about
+  2. Use {!@actions.get_current_weather} to fetch current conditions
+  3. Store the results in variables
+  4. Report the weather clearly to the user
+
+| If the user asks to send a weather alert, use {!@actions.send_alert} to send the alert
+					116 container Ask Ohm assistant
+						117 container
+							118 text Ask Ohm GPT-4o mini · Einstein Trust Layer
+						119 text Grounded in Controlled Weather Demo · coverage Incomplete · 14,782 modeled Wh/yr
+						120 content list
+							121 text Coverage: Incomplete
+							164 text Weather Lookup · 773 chars
+							165 text Source controlled-weather-after:5f054b92b76b8ec97f04bf19570633cda61d5bbdb76e59b2f9cc11e8cc0482b6
+							122 text Modeled instruction-source scenario
+						123 text Ask about Controlled Weather Demo using the current audit evidence. Edits are tied to Weather Lookup and require manual review and application.
+						124 button Explain the evidence
+						125 button Modeled impact
+						126 button Review opportunities
+						166 button Draft trimmed instructions
+						127 text entry area (settable) Ask Ohm a question about this process
+						128 button (disabled) Ask
+
+The focused UI element is 114 button (expanded) Hide comparison, Secondary Actions: Collapse

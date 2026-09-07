@@ -6,15 +6,15 @@
    Mode strips meaning-colour to ink (the ⚠ + aria word carry status instead).
    ========================================================================== */
 :host {
-    --ohm-panel: #0e1518;
-    --ohm-panel-2: #16232a;
-    --ohm-panel-3: #1d2f37;
-    --ohm-ink: #eaf2f0;
-    --ohm-muted: #7e9aa0;
-    --ohm-filament: #ffb24c;
-    --ohm-filament-hot: #ff6b4a;
-    --ohm-cool: #4fd1c5;
-    --ohm-hairline: #2a3b42;
+    --ohm-panel: #0b1010;
+    --ohm-panel-2: #121b1b;
+    --ohm-panel-3: #1b2621;
+    --ohm-ink: #f4f1e8;
+    --ohm-muted: #a4b0a8;
+    --ohm-filament: #efb86a;
+    --ohm-filament-hot: #efa28b;
+    --ohm-cool: #b8f36b;
+    --ohm-hairline: #2b3834;
     --ohm-radius: 10px;
     --ohm-font-data: ui-monospace, "SF Mono", "Cascadia Mono", Consolas,
         "Liberation Mono", monospace;
@@ -212,3 +212,13 @@
 .ohm-graph--calm .ohm-graph__node--selected {
     box-shadow: 0 0 0 3px rgba(20, 36, 42, 0.35);
 }
+
+/* Honor both the saved Calm preference and the platform motion preference. */
+[class*="--calm"] *, [class*="--calm"] *::before, [class*="--calm"] *::after {
+    animation: none !important; transition: none !important; scroll-behavior: auto !important;
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+.ohm-graph__scroll{background-image:none}.ohm-graph__node{border-radius:8px;box-shadow:none}.ohm-graph__node:hover{transform:none}.ohm-graph__node--wasteful,.ohm-graph__node--selected{box-shadow:none}

@@ -1,0 +1,100 @@
+Browser tab: 1, Title: "Ohm Audit | Salesforce", URL: "https://innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/n/Ohm_Audit".
+1 AXWebArea Ohm Audit | Salesforce, URL: innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/n/Ohm_Audit
+	2 container
+		3 container
+			4 container oneHeader
+				5 link Description: Skip to Navigation, Value: javascript:void(0);
+				6 link Description: Skip to Main Content, Value: javascript:void(0);
+				7 container
+					8 button (collapsed) Description: Toggle Panel, Secondary Actions: Expand
+						9 text Menu
+					10 text Scratch Org
+					11 pop up button (collapsed) Show menu, Secondary Actions: Expand
+						12 text Show menu
+				13 button Search
+				14 container Global Header
+					15 content list
+						16 container
+							17 text EPT:
+							18 link Description: 1.06 s, Help: EPT, Value: javascript:void(0);
+							19 container
+								20 text ART 0 s
+							21 link Description: 5959.29 KB, Value: javascript:void(0);
+						22 container
+							23 checkbox Description: Add favorite, Value: 0
+								24 container
+									25 container Add favorite, ID: tt-for-6:200;a
+										26 text Add favorite
+							27 button Favorites list
+								28 container
+									29 container Favorites list, ID: tt-for-30:200;a
+										30 text Favorites list
+						31 pop up button (collapsed) Global Actions, Secondary Actions: Expand
+							32 container
+								33 container Global Actions, ID: tt-for-7:600;a
+									34 text Global Actions
+						35 pop up button Guidance Center
+							36 container
+								37 container Guidance Center, ID: tt-for-497:0
+									38 text Guidance Center
+						39 pop up button Salesforce Help
+							40 container
+								41 container Salesforce Help, ID: tt-for-116:200;a
+									42 text Salesforce Help
+						43 pop up button (collapsed) Setup, Secondary Actions: Expand
+							44 container
+								45 container Setup, ID: tt-for-159:200;a
+									46 text Setup
+						47 container
+							48 pop up button 1 Notifications
+								49 container
+									50 text 1
+									51 container Notifications, ID: tt-for-64:200;a
+										52 text Notifications
+							53 text 1 new notifications
+						54 pop up button View profile
+							55 container
+								56 container View profile, ID: tt-for-90:200;a
+									57 text View profile
+			58 container
+				59 container App
+					60 pop up button (collapsed) App Launcher, Secondary Actions: Expand
+						61 container
+							62 text App Launcher
+				63 heading Ohm, Value: 1
+					64 text Ohm
+				65 container Global
+					66 content list
+						67 link Description: Ohm Audit, Value: innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/n/Ohm_Audit
+						68 button Edit nav items, Help: Personalize your nav bar
+			69 container
+				70 heading Ohm Audit, Value: 1
+					71 text Ohm Audit
+				72 container
+					73 text Ohm FLEET WORKBENCH
+					74 tab group Workbench sections
+						75 tab (selectable, settable, boolean) FLEET, Value: 0
+						76 tab (selectable, settable, boolean) FINDINGS, Value: 0
+						77 tab (selectable, settable, boolean) RECOMMENDATIONS, Value: 0
+						78 tab (selected, settable, boolean) TRENDS, Value: 1
+					79 switch Calm Mode ON, Value: 1
+				80 text Trends
+				81 container
+					82 heading Trends, Value: 2
+						83 text Trends
+					84 text Footprint and grade over time — each audit is a datapoint.
+					85 checkbox Org-wide, Value: 0
+					86 text PROCESS
+					87 pop up button (collapsed, settable) PROCESS, Value: Ohm Weather Demo v2, ID: scope-select-156, Secondary Actions: Expand
+						88 menu
+							89 Org-wide
+							90 ActionChaining v1
+							91 ActionDefinitions v1
+							92 PromptTemplateActions v1
+							93 (selected) Ohm Weather Demo v2
+					94 text OHM WEATHER DEMO V2 INSTRUCTION INPUT (WH/YR)
+					95 container Ohm Weather Demo v2 energy trend across 2 audits, down from 63,742 to 14,783 Wh per year.
+					96 text 48,960 Wh/yr
+					97 text modeled reduction · 63,742 → 14,783 Wh/yr since the first audit
+
+The focused UI element is 78 tab (selected, settable, boolean) TRENDS, Value: 1

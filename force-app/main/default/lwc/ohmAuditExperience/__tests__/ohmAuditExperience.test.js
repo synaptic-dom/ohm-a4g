@@ -9,6 +9,8 @@ import {
     mockAuditReadoutRunning
 } from 'c/ohmTestData';
 import { POLL_INTERVAL_MS } from 'c/ohmConstants';
+import { pendingGuidedAudit, pendingAudits } from 'c/ohmAuditRun';
+import { reviewFixture } from '../../../../../../test-fixtures/review/reviewFixture';
 
 jest.mock(
     '@salesforce/apex/OhmAuditController.startAudit',
@@ -57,8 +59,10 @@ async function startTo(el) {
 
 describe('c-ohm-audit-experience', () => {
     beforeEach(() => {
+        sessionStorage.clear();
         startAudit.mockReset();
         getAuditStatus.mockReset();
+        getAuditStatus.mockResolvedValue(mockAuditReadoutRunning({ runStatus: 'Discovering' }));
         getCalmModePreference.mockReset();
         setCalmModePreference.mockReset();
         getCalmModePreference.mockResolvedValue(false);
@@ -69,30 +73,19 @@ describe('c-ohm-audit-experience', () => {
         while (document.body.firstChild) {
             document.body.removeChild(document.body.firstChild);
         }
+        jest.clearAllTimers();
         jest.useRealTimers();
     });
 
-    it('gates first render until getCalmModePreference resolves, then shows WELCOME', async () => {
-        let resolveCalm;
-        getCalmModePreference.mockReturnValue(
-            new Promise((r) => {
-                resolveCalm = r;
-            })
-        );
+    it('renders one dark palette immediately without loading or saving a display preference', async () => {
+        getCalmModePreference.mockReturnValue(new Promise(() => {}));
         const el = create();
-        // Not ready yet -> nothing rendered.
-        expect(child(el, 'welcome')).toBeNull();
-        resolveCalm(false);
         await flush();
         expect(child(el, 'welcome')).not.toBeNull();
-    });
-
-    it('loads Calm Mode before first paint and threads it to children', async () => {
-        getCalmModePreference.mockResolvedValue(true);
-        const el = create();
-        await flush();
-        expect(child(el, 'welcome').calmMode).toBe(true);
-        expect(child(el, 'calm-toggle').calmMode).toBe(true);
+        expect(child(el, 'calm-toggle')).toBeNull();
+        expect(el.shadowRoot.querySelector('.ohm-experience--calm')).toBeNull();
+        expect(getCalmModePreference).not.toHaveBeenCalled();
+        expect(setCalmModePreference).not.toHaveBeenCalled();
     });
 
     it('focus lands on the welcome heading after first paint', async () => {
@@ -137,7 +130,8 @@ describe('c-ohm-audit-experience', () => {
 
     it('Complete -> IMPACT, stores readout, and STOPS polling (no timer after terminal)', async () => {
         jest.useFakeTimers();
-        getAuditStatus.mockResolvedValue(mockAuditReadoutComplete());
+        const reviewJson = JSON.stringify(reviewFixture());
+        getAuditStatus.mockResolvedValue(mockAuditReadoutComplete({ reviewJson }));
         const el = create();
         await flush();
         await startTo(el);
@@ -146,10 +140,12 @@ describe('c-ohm-audit-experience', () => {
 
         expect(child(el, 'impact')).not.toBeNull();
         expect(child(el, 'impact').readout.runStatus).toBe('Complete');
+        expect(child(el, 'review-panel').reviewJson).toBe(reviewJson);
+        expect(child(el, 'supporting-evidence').open).toBe(false);
         expect(jest.getTimerCount()).toBe(0);
     });
 
-    it('focus moves to the impact heading on the Complete transition', async () => {
+    it('focus moves to the review heading on the Complete transition', async () => {
         jest.useFakeTimers();
         getAuditStatus.mockResolvedValue(mockAuditReadoutComplete());
         const el = create();
@@ -158,9 +154,9 @@ describe('c-ohm-audit-experience', () => {
         jest.advanceTimersByTime(POLL_INTERVAL_MS);
         await flush();
 
-        const impact = child(el, 'impact');
-        const h2 = impact.shadowRoot.querySelector('[data-focus-heading]');
-        expect(impact.shadowRoot.activeElement).toBe(h2);
+        const review = child(el, 'review-panel');
+        const h2 = review.shadowRoot.querySelector('[data-focus-heading]');
+        expect(review.shadowRoot.activeElement).toBe(h2);
     });
 
     it('Failed status -> ERROR screen', async () => {
@@ -177,6 +173,8 @@ describe('c-ohm-audit-experience', () => {
         expect(child(el, 'error-message')).not.toBeNull();
         expect(child(el, 'error-message').textContent).toContain('boom');
         expect(jest.getTimerCount()).toBe(0);
+        expect(pendingGuidedAudit()).toBeNull();
+        expect(child(el, 'retry-button').label).toBe('Try again');
     });
 
     it('rejected startAudit -> ERROR', async () => {
@@ -217,29 +215,6 @@ describe('c-ohm-audit-experience', () => {
         expect(child(el, 'welcome')).not.toBeNull();
     });
 
-    it('calm toggle is optimistic and persists via setCalmModePreference', async () => {
-        const el = create();
-        await flush();
-        child(el, 'calm-toggle').dispatchEvent(
-            new CustomEvent('calmtoggle', { detail: { enabled: true } })
-        );
-        await flush();
-        expect(setCalmModePreference).toHaveBeenCalledTimes(1);
-        expect(setCalmModePreference.mock.calls[0][0]).toEqual({ enabled: true });
-        expect(child(el, 'calm-toggle').calmMode).toBe(true);
-    });
-
-    it('calm toggle reverts when the persist call rejects', async () => {
-        setCalmModePreference.mockRejectedValue(new Error('nope'));
-        const el = create();
-        await flush();
-        child(el, 'calm-toggle').dispatchEvent(
-            new CustomEvent('calmtoggle', { detail: { enabled: true } })
-        );
-        await flush();
-        expect(child(el, 'calm-toggle').calmMode).toBe(false);
-    });
-
     it('disconnectedCallback clears the poll handle', async () => {
         jest.useFakeTimers();
         getAuditStatus.mockResolvedValue(
@@ -253,14 +228,83 @@ describe('c-ohm-audit-experience', () => {
         expect(jest.getTimerCount()).toBe(0);
     });
 
-    it('is accessible in both Calm variants', async () => {
-        const loud = create();
+    it('continues checking a genuine retrieval run beyond the previous 60-second cutoff', async () => {
+        jest.useFakeTimers();
+        getAuditStatus.mockResolvedValue(mockAuditReadoutRunning({ runStatus: 'Discovering', stageMessage: 'Waiting for Salesforce source retrieval' }));
+        const el = create();
         await flush();
-        await expect(loud).toBeAccessible();
+        await startTo(el);
+        for (let i = 0; i < 45; i += 1) {
+            jest.advanceTimersByTime(POLL_INTERVAL_MS);
+            // eslint-disable-next-line no-await-in-loop
+            await flush();
+        }
+        expect(getAuditStatus).toHaveBeenCalledTimes(46);
+        expect(child(el, 'error-message')).toBeNull();
+        expect(child(el, 'discover').stageMessage).toBe('Waiting for Salesforce source retrieval');
+        getAuditStatus.mockResolvedValue(mockAuditReadoutComplete());
+        jest.advanceTimersByTime(POLL_INTERVAL_MS);
+        await flush();
+        expect(child(el, 'impact')).not.toBeNull();
+        expect(pendingGuidedAudit()).toBeNull();
+    });
 
-        getCalmModePreference.mockResolvedValue(true);
-        const calm = create();
+    it('persists and resumes an org-wide run across refresh without treating it as a planner audit', async () => {
+        jest.useFakeTimers();
+        const el = create();
         await flush();
-        await expect(calm).toBeAccessible();
+        await startTo(el);
+        expect(pendingGuidedAudit()).toBe('AUDIT-1');
+        expect(pendingAudits()).toEqual([]);
+        document.body.removeChild(el);
+        jest.advanceTimersByTime(9000);
+        await flush();
+        expect(getAuditStatus).toHaveBeenCalledTimes(1);
+        const resumed = create();
+        await flush();
+        expect(child(resumed, 'discover').reportId).toBe('AUDIT-1');
+        expect(getAuditStatus).toHaveBeenCalledTimes(2);
+        expect(startAudit).toHaveBeenCalledTimes(1);
+    });
+
+    it('resumes the same report after a connection error instead of starting another audit', async () => {
+        jest.useFakeTimers();
+        getAuditStatus.mockRejectedValueOnce(new Error('Connection interrupted'));
+        const el = create();
+        await flush();
+        await startTo(el);
+        expect(child(el, 'error-message').textContent).toBe('Connection interrupted');
+        expect(child(el, 'retry-button').label).toBe('Resume checking');
+        expect(pendingGuidedAudit()).toBe('AUDIT-1');
+        getAuditStatus.mockResolvedValue(mockAuditReadoutComplete());
+        child(el, 'retry-button').click();
+        await flush();
+        expect(child(el, 'impact')).not.toBeNull();
+        expect(startAudit).toHaveBeenCalledTimes(1);
+        expect(getAuditStatus).toHaveBeenLastCalledWith({ reportId: 'AUDIT-1' });
+        expect(pendingGuidedAudit()).toBeNull();
+    });
+
+    it('never overlaps status calls and ignores an in-flight response after disconnect', async () => {
+        jest.useFakeTimers();
+        let resolveStatus;
+        getAuditStatus.mockReturnValue(new Promise((resolve) => { resolveStatus = resolve; }));
+        const el = create();
+        await flush();
+        await startTo(el);
+        jest.advanceTimersByTime(9000);
+        await flush();
+        expect(getAuditStatus).toHaveBeenCalledTimes(1);
+        document.body.removeChild(el);
+        resolveStatus(mockAuditReadoutComplete());
+        await flush();
+        expect(pendingGuidedAudit()).toBe('AUDIT-1');
+        expect(jest.getTimerCount()).toBe(0);
+    });
+
+    it('keeps the guided welcome accessible in the single visual mode', async () => {
+        const el = create();
+        await flush();
+        await expect(el).toBeAccessible();
     });
 });

@@ -1,0 +1,87 @@
+{
+  "verifiedAt": "2026-09-07T18:17:14.998828+00:00",
+  "targetOrg": "ohm-audit-lab",
+  "orgId": "00DEc00000kvSbNMAU",
+  "scope": {
+    "auditTargets": "Published Agent Script bundles",
+    "linkedPromptTemplates": "Retrieved and audited within their parent bundle",
+    "excludedTargets": [
+      "Legacy and unversioned agents",
+      "Standalone prompt templates",
+      "Standalone Flows",
+      "Standalone Apex classes"
+    ],
+    "flowApexImplementationAudit": false,
+    "publicationProof": "Candidate name filter followed by exact target verification in retrieved AiAuthoringBundle"
+  },
+  "deployments": [
+    {
+      "id": "0AfEc00000nZd77KAC",
+      "status": "Succeeded",
+      "success": true,
+      "completedDate": "2026-09-07T18:11:34.000Z",
+      "numberComponentsDeployed": 88,
+      "numberComponentErrors": 0,
+      "numberTestsCompleted": 0,
+      "numberTestErrors": 0
+    },
+    {
+      "id": "0AfEc00000nZaHKKA0",
+      "status": "Succeeded",
+      "success": true,
+      "completedDate": "2026-09-07T18:13:33.000Z",
+      "numberComponentsDeployed": 5,
+      "numberComponentErrors": 0,
+      "numberTestsCompleted": 264,
+      "numberTestErrors": 0
+    }
+  ],
+  "apex": {
+    "testsRan": 264,
+    "failed": 0,
+    "details": "apex-tests.json"
+  },
+  "jest": {
+    "command": "npm run test:unit -- -- --runInBand",
+    "suitesPassed": 24,
+    "testsPassed": 187,
+    "exitCode": 0,
+    "durationSeconds": 3.216,
+    "evidence": "Observed final tool session 25390; raw log not saved; no UI edits afterward"
+  },
+  "browser": {
+    "fleetHeader": "Published Agent Script bundles",
+    "tableHeader": "BUNDLE",
+    "audited": 4,
+    "discovered": 4,
+    "bundles": [
+      "ActionDefinitions_v1",
+      "Ohm_Weather_Demo_v4",
+      "PromptTemplateActions_v1",
+      "ActionChaining_v1"
+    ],
+    "scopeCopyVerified": true,
+    "detailScopeLabel": "Published Agent Script bundle \u00b7 linked prompts included",
+    "liveReaudit": {
+      "reportId": "a00Ec00000lt3JxIAI",
+      "target": "PromptTemplateActions_v1",
+      "startedVia": "Browser Re-audit button",
+      "observedStage": "Audit complete with coverage gaps",
+      "completionVerified": true,
+      "sourceInspectorVerified": true,
+      "sourceCharacters": 832,
+      "activeModel": "sfdc_ai__DefaultOpenAIGPT4OmniMini",
+      "allSnapshotHashesAndBindingsVerified": true,
+      "details": "linked-prompt-reaudit.json",
+      "comparison": "Same artifact, 832 characters before and after, no source change"
+    }
+  },
+  "existingData": "Four baseline reports and published demo agents preserved; no data deletion during scope change",
+  "knownLimitations": [
+    "Execution graph unavailable for demo bundles; redundant-call coverage remains Unknown",
+    "Runtime usage and energy are modeled rather than measured",
+    "Automatic apply/revert remains unfinished",
+    "Older DiscoverAgenticWork/RunSignals invocable helpers analyze saved or caller-supplied graphs without the dashboard retrieval gate. No current dashboard or deployed Flow/action XML references them; they cannot complete a full audit themselves. They are outside the supported demo audit path."
+  ],
+  "fleetProbe": "fleet-probe.json"
+}

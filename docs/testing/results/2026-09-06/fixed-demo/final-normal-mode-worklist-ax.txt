@@ -1,0 +1,161 @@
+Browser tab: 1, Title: "Ohm Audit | Salesforce", URL: "https://innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/n/Ohm_Audit".
+1 AXWebArea Ohm Audit | Salesforce, URL: innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/n/Ohm_Audit
+	2 container
+		3 container
+			4 container oneHeader
+				5 link Description: Skip to Navigation, Value: javascript:void(0);
+				6 link Description: Skip to Main Content, Value: javascript:void(0);
+				7 container
+					8 button (collapsed) Description: Toggle Panel, Secondary Actions: Expand
+						9 text Menu
+					10 text Scratch Org
+					11 pop up button (collapsed) Show menu, Secondary Actions: Expand
+						12 text Show menu
+				13 button Search
+				14 container Global Header
+					15 content list
+						16 container
+							17 checkbox Description: Add favorite, Value: 0
+								18 container
+									19 container Add favorite, ID: tt-for-6:203;a
+										20 text Add favorite
+							21 button Favorites list
+								22 container
+									23 container Favorites list, ID: tt-for-30:203;a
+										24 text Favorites list
+						25 pop up button (collapsed) Global Actions, Secondary Actions: Expand
+							26 container
+								27 container Global Actions, ID: tt-for-7:604;a
+									28 text Global Actions
+						29 pop up button Guidance Center
+							30 container
+								31 container Guidance Center, ID: tt-for-497:0
+									32 text Guidance Center
+						33 pop up button Salesforce Help
+							34 container
+								35 container Salesforce Help, ID: tt-for-116:203;a
+									36 text Salesforce Help
+						37 pop up button (collapsed) Setup, Secondary Actions: Expand
+							38 container
+								39 container Setup, ID: tt-for-159:203;a
+									40 text Setup
+						41 container
+							42 pop up button 1 Notifications
+								43 container
+									44 text 1
+									45 container Notifications, ID: tt-for-64:203;a
+										46 text Notifications
+							47 text 1 new notifications
+						48 pop up button View profile
+							49 container
+								50 container View profile, ID: tt-for-90:203;a
+									51 text View profile
+			52 container
+				53 container App
+					54 pop up button (collapsed) App Launcher, Secondary Actions: Expand
+						55 container
+							56 text App Launcher
+				57 heading Ohm, Value: 1
+					58 text Ohm
+				59 container Global
+					60 content list
+						61 link Description: Ohm Audit, Value: innovation-inspiration-231-dev-ed.scratch.lightning.force.com/lightning/n/Ohm_Audit
+						62 button Edit nav items, Help: Personalize your nav bar
+			63 container
+				64 heading Ohm Audit, Value: 1
+					65 text Ohm Audit
+				66 container
+					67 text Ohm FLEET WORKBENCH
+					68 tab group Workbench sections
+						69 tab (selectable, settable, boolean) FLEET, Value: 0
+						70 tab (selected, settable, boolean) FINDINGS, Value: 1
+						71 tab (selectable, settable, boolean) RECOMMENDATIONS, Value: 0
+						72 tab (selectable, settable, boolean) TRENDS, Value: 0
+					73 switch Calm Mode ON, Value: 1
+				74 text Findings
+				75 container
+					76 container Findings filters
+						77 container
+							78 text STATUS
+							79 pop up button (collapsed, settable) STATUS, Value: All statuses, Secondary Actions: Expand
+								80 menu
+									81 (selected) All statuses
+									82 Open
+									83 Accepted
+									84 Dismissed
+									85 Applied
+						86 container
+							87 text SEVERITY
+							88 pop up button (collapsed, settable) SEVERITY, Value: All severities, Secondary Actions: Expand
+								89 menu
+									90 (selected) All severities
+									91 High
+									92 Medium
+									93 Low
+						94 button Sort by savings
+					95 table
+						96 row
+							97 cell
+								98 text SEVERITY
+							99 cell
+								100 text PROCESS
+							101 cell
+								102 text SIGNAL
+							103 cell
+								104 text SAVINGS
+							105 cell
+								106 text ASSIGNEE
+							107 cell
+								108 text DUE
+							109 cell
+								110 text STATUS
+							111 cell
+								112 text ACTIONS
+						113 row
+							114 cell
+								115 text Medium
+							116 cell
+								117 text PromptTemplateActions v1 Generate Personalized Schedule
+							118 cell
+								119 text Bloated instructions / scope
+							120 cell
+								121 text 1,715 Wh/yr
+							122 cell
+								123 text —
+							124 cell
+								125 text —
+							126 cell
+								127 pop up button (collapsed, settable) Description: Change finding status, Value: Open, Secondary Actions: Expand
+									128 menu
+										129 (selected) Open
+										130 Accepted
+										131 Dismissed
+										132 Applied
+							133 cell
+								134 button (collapsed) Assign, Secondary Actions: Expand
+								135 button (collapsed) Details, Secondary Actions: Expand
+						136 row
+							137 cell
+								138 text Low
+							139 cell
+								140 text PromptTemplateActions v1 Generate Personalized Schedule
+							141 cell
+								142 text Model sizing review
+							143 cell
+								144 text —
+							145 cell
+								146 text —
+							147 cell
+								148 text —
+							149 cell
+								150 pop up button (collapsed, settable) Description: Change finding status, Value: Open, Secondary Actions: Expand
+									151 menu
+										152 (selected) Open
+										153 Accepted
+										154 Dismissed
+										155 Applied
+							156 cell
+								157 button (collapsed) Assign, Secondary Actions: Expand
+								158 button (collapsed) Details, Secondary Actions: Expand
+
+The focused UI element is 70 tab (selected, settable, boolean) FINDINGS, Value: 1

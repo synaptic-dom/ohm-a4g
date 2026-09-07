@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>31QM9vZYaYGCYPXHuMnRtW+weKTVFFx+hcNF+0lbong=_1</activeVersionIdentifier>
+    <description>Controlled event fixture: Draft Customer Support Reply. Uses synthetic user-supplied text; does not send messages or update records.</description>
+    <developerName>Ohm_Support_Reply</developerName>
+    <masterLabel>Draft Customer Support Reply</masterLabel>
+    <templateVersions>
+        <content>You work for Juniper Outdoor customer support. Draft one helpful reply to the customer message below. Use the supplied policy, acknowledge the problem, and give the next step. Do not invent an order status, approval, or previous contact. Keep the reply within a short paragraph and a short list of requested information.
+
+Customer message:
+{!$Input:customerMessage}
+
+Support policy:
+For a damaged item reported within thirty days, ask for the order reference and a photo of the damage, then explain the replacement review. A specialist decides eligibility; do not promise a refund or replacement approval. Do not request card details.
+
+For a damaged item reported within thirty days, ask for the order reference and a photo of the damage, then explain the replacement review. A specialist decides eligibility; do not promise a refund or replacement approval. Do not request card details.
+
+For a damaged item reported within thirty days, ask for the order reference and a photo of the damage, then explain the replacement review. A specialist decides eligibility; do not promise a refund or replacement approval. Do not request card details.
+
+For a damaged item reported within thirty days, ask for the order reference and a photo of the damage, then explain the replacement review. A specialist decides eligibility; do not promise a refund or replacement approval. Do not request card details.
+
+For a damaged item reported within thirty days, ask for the order reference and a photo of the damage, then explain the replacement review. A specialist decides eligibility; do not promise a refund or replacement approval. Do not request card details.
+
+For a damaged item reported within thirty days, ask for the order reference and a photo of the damage, then explain the replacement review. A specialist decides eligibility; do not promise a refund or replacement approval. Do not request card details.
+</content>
+        <inputs>
+            <apiName>customerMessage</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>Customer message</masterLabel>
+            <referenceName>Input:customerMessage</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT55</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>31QM9vZYaYGCYPXHuMnRtW+weKTVFFx+hcNF+0lbong=_1</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

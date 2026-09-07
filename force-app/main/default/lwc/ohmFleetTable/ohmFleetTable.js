@@ -1,7 +1,10 @@
 import { LightningElement, api, track } from 'lwc';
 import getFleet from '@salesforce/apex/OhmAuditController.getFleet';
 import auditProcess from '@salesforce/apex/OhmAuditController.auditProcess';
-import { formatNumber, GRADE_WORDS } from 'c/ohmConstants';
+import { pendingAudits, rememberAudit, forgetAudit, watchAudit, auditError } from 'c/ohmAuditRun';
+import { formatNumber } from 'c/ohmConstants';
+import { parseReview } from 'c/ohmReviewData';
+import { bundleLabel } from 'c/ohmDisplay';
 
 /**
  * ohmFleetTable — the Fleet home (SPEC §2.1).
@@ -11,8 +14,6 @@ import { formatNumber, GRADE_WORDS } from 'c/ohmConstants';
  * returned list. Everything is null-guarded because an un-audited row has null
  * grade/score/energy/lastAudited.
  */
-const GRADE_ORDER = { A: 0, B: 1, C: 2, D: 3, F: 4 };
-
 export default class OhmFleetTable extends LightningElement {
     @api calmMode = false;
 
@@ -27,30 +28,46 @@ export default class OhmFleetTable extends LightningElement {
     @track searchTerm = '';
 
     // per-row audit progress + error, keyed by plannerId
-    @track auditingId;
     @track rowErrors = {};
+    @track auditRuns = {};
+    _auditWatches = new Map();
+    _connected = false;
+    _fleetLoadRevision = 0;
 
     connectedCallback() {
+        this._connected = true;
         this.loadFleet();
+        pendingAudits().forEach((run) => this.observeAudit({ ...run, runStatus: 'Queued', stageMessage: 'Reconnecting to your audit in Salesforce.' }));
     }
+    disconnectedCallback() {
+        this._connected = false;
+        this._auditWatches.forEach((stop) => stop());
+        this._auditWatches.clear();
+    }
+    get progressRuns() { return Object.values(this.auditRuns); }
+    get anyAuditPending() { return this.progressRuns.some((run) => !run.error && run.runStatus !== 'Complete' && run.runStatus !== 'Failed'); }
+
 
     async loadFleet() {
+        const revision = ++this._fleetLoadRevision;
         this.isLoading = true;
         this.loadError = undefined;
         try {
             const data = await getFleet();
-            this.rows = Array.isArray(data) ? data : [];
+            if (revision !== this._fleetLoadRevision) return;
+            this.rows = Array.isArray(data) ? data.map((row) => ({ ...row, _review: parseReview(row.reviewJson) })) : [];
         } catch (e) {
+            if (revision !== this._fleetLoadRevision) return;
             this.loadError = this._msg(e) || 'Could not load the fleet.';
             this.rows = [];
         } finally {
-            this.isLoading = false;
+            if (revision === this._fleetLoadRevision) this.isLoading = false;
         }
     }
 
     // ---- host class ---------------------------------------------------------
     get hostClass() {
-        return this.calmMode ? 'ohm-fleet ohm-fleet--calm' : 'ohm-fleet';
+        return 'ohm-fleet';
     }
 
     // ---- filter option models ----------------------------------------------
@@ -70,14 +87,13 @@ export default class OhmFleetTable extends LightningElement {
 
     get gradeOptions() {
         return [
-            { label: 'All grades', value: 'ALL' },
-            { label: 'A', value: 'A' },
-            { label: 'B', value: 'B' },
-            { label: 'C', value: 'C' },
-            { label: 'D', value: 'D' },
-            { label: 'F', value: 'F' },
-            { label: 'Not audited', value: 'NONE' }
-        ];
+            { label: 'All reviews', value: 'ALL' },
+            { label: 'A · No material issue', value: 'A' },
+            { label: 'B · Improvement opportunity', value: 'B' },
+            { label: 'C · Priority fix', value: 'C' },
+            { label: 'Unrated · Insufficient evidence', value: 'UNRATED' },
+            { label: 'Review not run', value: 'NONE' }
+        ].map((option) => ({ ...option, selected: option.value === this.gradeFilter }));
     }
 
     // ---- the visible, decorated rows ---------------------------------------
@@ -88,9 +104,9 @@ export default class OhmFleetTable extends LightningElement {
             out = out.filter((r) => r.domain === this.domainFilter);
         }
         if (this.gradeFilter === 'NONE') {
-            out = out.filter((r) => !r.audited);
+            out = out.filter((r) => r._review.state === 'not-run');
         } else if (this.gradeFilter !== 'ALL') {
-            out = out.filter((r) => r.audited && r.grade === this.gradeFilter);
+            out = out.filter((r) => r._review.state === 'reviewed' && r._review.categories.some((category) => category.id !== 'MODEL' && category.rating === this.gradeFilter));
         }
         if (this.searchTerm) {
             const term = this.searchTerm.toLowerCase();
@@ -100,44 +116,40 @@ export default class OhmFleetTable extends LightningElement {
                     (r.plannerApiName || '').toLowerCase().includes(term)
             );
         }
-        if (this.sortDir !== 'none') {
-            const dir = this.sortDir === 'asc' ? 1 : -1;
-            out.sort((a, b) => {
-                const av = a.energyWhCentral;
-                const bv = b.energyWhCentral;
-                // null energy (un-audited) always sorts to the bottom
-                if (av === null || av === undefined) {
-                    return bv === null || bv === undefined ? 0 : 1;
-                }
-                if (bv === null || bv === undefined) {
-                    return -1;
-                }
-                return (av - bv) * dir;
-            });
-        }
+        // Put supported opportunities first; never prioritize estimated energy totals.
+        const priority = (row) => row._review.categories.some((c) => c.id !== 'MODEL' && c.rating === 'C') ? 3 :
+            row._review.categories.some((c) => c.id !== 'MODEL' && c.rating === 'B') ? 2 : row._review.state !== 'reviewed' ? 1 : 0;
+        out.sort((a, b) => priority(b) - priority(a) || bundleLabel(a.label).localeCompare(bundleLabel(b.label)));
 
         return out.map((r) => this._decorate(r));
     }
 
     _decorate(r) {
         const audited = !!r.audited;
-        const grade = audited ? r.grade || null : null;
-        const isAuditing = this.auditingId === r.plannerId;
+        const review = r._review;
+        const run = this.auditRuns[r.plannerId];
+        const isAuditing = !!(run && !run.error && run.runStatus !== 'Complete' && run.runStatus !== 'Failed');
         return {
             ...r,
             audited,
-            grade,
-            gradeWord: grade ? GRADE_WORDS[grade] || '' : '',
+            hasReview: review.state === 'reviewed',
+            displayLabel: bundleLabel(r.label),
+            reviewCategories: review.categories.filter((category) => category.id !== 'MODEL'),
+            opportunityLabel: review.categories.some((c) => c.id !== 'MODEL' && c.rating === 'C') ? 'Priority fix' : review.categories.some((c) => c.id !== 'MODEL' && c.rating === 'B') ? 'Improvement opportunity' : null,
+            reviewStateLabel: review.state === 'unavailable' ? 'Review unavailable' : 'Review not run',
+            hasScenario: audited && r.energyWhCentral != null,
             energyText:
                 audited && r.energyWhCentral !== null && r.energyWhCentral !== undefined
                     ? `${formatNumber(r.energyWhCentral)} Wh/yr`
                     : '—',
             topicText: this._count(r.topicCount),
+            topicNoun: r.topicCount === 1 ? 'topic' : 'topics',
+            actionNoun: r.actionCount === 1 ? 'action' : 'actions',
             actionText: this._count(r.actionCount),
-            chipClass: `ohm-fleet__chip ohm-fleet__chip--${this._chipTone(
-                grade
-            )}`,
             isAuditing,
+            hasPriorResults: audited && isAuditing,
+            auditDisabled: this.anyAuditPending,
+            progressLabel: run ? run.stageMessage || 'Checking published source…' : '',
             rowError: this.rowErrors[r.plannerId] || null,
             statusLabel: audited ? 'Audited' : 'Not audited yet'
         };
@@ -147,31 +159,15 @@ export default class OhmFleetTable extends LightningElement {
         return n === null || n === undefined ? '—' : formatNumber(n);
     }
 
-    // grade -> tone bucket (F/D hot, C muted, B/A cool)
-    _chipTone(grade) {
-        if (grade === 'F') {
-            return 'hot';
-        }
-        if (grade === 'D') {
-            return 'warm';
-        }
-        if (grade === 'C') {
-            return 'muted';
-        }
-        if (grade === 'A' || grade === 'B') {
-            return 'cool';
-        }
-        return 'muted';
-    }
-
     // ---- summary strip ------------------------------------------------------
     get discoveredCount() {
         return this.rows.length;
     }
     get auditedCount() {
-        return this.rows.filter((r) => r.audited).length;
+        return this.rows.filter((r) => r._review.state === 'reviewed').length;
     }
     get totalEnergyText() {
+        const hasImpact = this.rows.some((r) => r.audited && r.energyWhCentral != null);
         const sum = this.rows.reduce((acc, r) => {
             if (
                 r.audited &&
@@ -182,22 +178,10 @@ export default class OhmFleetTable extends LightningElement {
             }
             return acc;
         }, 0);
-        return this.auditedCount > 0 ? `${formatNumber(sum)} Wh/yr` : '—';
+        return hasImpact ? `${formatNumber(sum)} Wh/yr` : '—';
     }
-    get worstGradeText() {
-        let worst = null;
-        this.rows.forEach((r) => {
-            if (r.audited && r.grade) {
-                if (
-                    worst === null ||
-                    (GRADE_ORDER[r.grade] || 0) > (GRADE_ORDER[worst] || 0)
-                ) {
-                    worst = r.grade;
-                }
-            }
-        });
-        return worst || '—';
-    }
+    get priorityCount() { return this.rows.filter((r) => r._review.categories.some((category) => category.id !== 'MODEL' && category.rating === 'C')).length; }
+    get opportunityCount() { return this.rows.filter((r) => r._review.categories.some((category) => category.id !== 'MODEL' && category.rating === 'B')).length; }
 
     get hasRows() {
         return this.visibleRows.length > 0;
@@ -216,12 +200,12 @@ export default class OhmFleetTable extends LightningElement {
 
     get sortLabel() {
         if (this.sortDir === 'desc') {
-            return 'Energy ▼';
+            return 'Input scenario ▼';
         }
         if (this.sortDir === 'asc') {
-            return 'Energy ▲';
+            return 'Input scenario ▲';
         }
-        return 'Energy —';
+        return 'Input scenario —';
     }
 
     // ---- interaction --------------------------------------------------------
@@ -234,6 +218,7 @@ export default class OhmFleetTable extends LightningElement {
     handleSearch(event) {
         this.searchTerm = event.target.value || '';
     }
+    handleClearFilters() { this.searchTerm = ''; this.domainFilter = 'ALL'; this.gradeFilter = 'ALL'; }
     handleSortToggle() {
         this.sortDir =
             this.sortDir === 'desc'
@@ -245,22 +230,58 @@ export default class OhmFleetTable extends LightningElement {
 
     async handleAudit(event) {
         const plannerId = event.currentTarget.dataset.planner;
-        if (!plannerId || this.auditingId) {
+        await this.startRowAudit(plannerId);
+    }
+    async startRowAudit(plannerId) {
+        if (!plannerId || this.anyAuditPending) return;
+        const existing = this.auditRuns[plannerId];
+        if (existing && existing.reportId && !existing.terminal && existing.error) {
+            this.observeAudit({ ...existing, error: null, canRetry: false });
             return;
         }
-        this.auditingId = plannerId;
+        const row = this.rows.find((item) => item.plannerId === plannerId);
+        const run = { plannerId, label: row && row.label, hadPriorAudit: row && row.audited, runStatus: 'Queued', stageMessage: 'Requesting a fresh audit from Salesforce.' };
+        this.auditRuns = { ...this.auditRuns, [plannerId]: run };
         this.rowErrors = { ...this.rowErrors, [plannerId]: null };
         try {
-            await auditProcess({ plannerId });
-            await this.loadFleet();
-        } catch (e) {
-            this.rowErrors = {
-                ...this.rowErrors,
-                [plannerId]: this._msg(e) || 'Audit failed. Please try again.'
-            };
-        } finally {
-            this.auditingId = undefined;
+            const reportId = await auditProcess({ plannerId });
+            if (!reportId) throw new Error('Salesforce did not return an audit record. Retry the audit.');
+            const pending = { ...run, reportId };
+            rememberAudit(pending);
+            if (this._connected) this.observeAudit(pending);
+        } catch (error) {
+            this.failAudit({ ...run, error: auditError(error), canRetry: true, terminal: true });
         }
+    }
+    observeAudit(run) {
+        const prior = this._auditWatches.get(run.plannerId);
+        if (prior) prior();
+        this.auditRuns = { ...this.auditRuns, [run.plannerId]: run };
+        this._auditWatches.set(run.plannerId, watchAudit(run,
+            (status) => { this.auditRuns = { ...this.auditRuns, [run.plannerId]: status }; },
+            async (status) => {
+                try {
+                    await this.loadFleet();
+                    if (!this._connected) return;
+                    const row = this.rows.find((item) => item.plannerId === status.plannerId);
+                    if (!row || row.latestReportId !== status.reportId) throw new Error('The audit finished, but its results are not available yet. Resume checking this report.');
+                    forgetAudit(status.plannerId);
+                    this.auditRuns = { ...this.auditRuns, [status.plannerId]: status };
+                    this._auditWatches.delete(status.plannerId);
+                } catch (error) { this.failAudit({ ...status, error: auditError(error), canRetry: true, terminal: false }); }
+            }, (status) => this.failAudit(status)));
+    }
+    failAudit(run) {
+        this.auditRuns = { ...this.auditRuns, [run.plannerId]: run };
+        this.rowErrors = { ...this.rowErrors, [run.plannerId]: run.error };
+        if (run.terminal) forgetAudit(run.plannerId);
+    }
+    handleRunRetry(event) {
+        const run = this.auditRuns[event.detail.plannerId];
+        if (!run) return;
+        this.rowErrors = { ...this.rowErrors, [run.plannerId]: null };
+        if (run.terminal || !run.reportId) this.startRowAudit(run.plannerId);
+        else this.observeAudit({ ...run, error: null, canRetry: false, stageMessage: 'Reconnecting to your audit in Salesforce.' });
     }
 
     handleOpen(event) {

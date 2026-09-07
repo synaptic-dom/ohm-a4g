@@ -23,6 +23,8 @@
         </template>
 
         <template lwc:if={hasDiff}>
+            <p role="status" data-id="comparison-reason">{comparisonReason}</p>
+            <template lwc:if={artifactLabel}><p>Selected artifact: <strong>{artifactLabel}</strong></p></template>
             <!-- Single-audit empty state ------------------------------------ -->
             <template lwc:if={isSingle}>
                 <div class="ohm-diff__single" data-id="single-note" role="status">
@@ -74,7 +76,7 @@
                                 >
                             </div>
                             <div class="ohm-diff__metric">
-                                <span class="ohm-diff__metric-k">Energy</span>
+                                <span class="ohm-diff__metric-k">Modeled input</span>
                                 <span
                                     class="ohm-diff__metric-v ohm-diff__metric-v--energy"
                                     data-id="before-energy"
@@ -126,7 +128,7 @@
                                 >
                             </div>
                             <div class="ohm-diff__metric">
-                                <span class="ohm-diff__metric-k">Energy</span>
+                                <span class="ohm-diff__metric-k">Modeled input</span>
                                 <span
                                     class="ohm-diff__metric-v ohm-diff__metric-v--energy"
                                     data-id="after-energy"

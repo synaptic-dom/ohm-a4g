@@ -2,8 +2,8 @@
 <LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>67.0</apiVersion>
     <isExposed>true</isExposed>
-    <masterLabel>Ohm Workbench</masterLabel>
-    <description>Ohm v2 — the Fleet Workbench shell (tabbed console + Calm context).</description>
+    <masterLabel>Ohm</masterLabel>
+    <description>Review Agentforce bundles and act on grounded recommendations.</description>
     <targets>
         <target>lightning__AppPage</target>
     </targets>

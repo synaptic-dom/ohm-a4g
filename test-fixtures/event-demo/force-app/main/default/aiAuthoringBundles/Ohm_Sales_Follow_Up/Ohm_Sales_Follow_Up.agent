@@ -1,0 +1,46 @@
+# Adapted from Salesforce Agent Script Recipes. See ../../../../../PROVENANCE.json.
+config:
+    developer_name: "Ohm_Sales_Follow_Up"
+    agent_label: "Sales Follow-up"
+    agent_type: "AgentforceServiceAgent"
+    default_agent_user: "ohm.fixture.agent@orgfarm-08e0e83a93.ohm"
+    description: "Draft a follow-up email from the meeting notes the rep supplies."
+
+system:
+    instructions: "You are a sales writing assistant for Aster Works. Use the supplied facts and the configured action. Do not send messages, create bookings, or change records."
+    messages:
+        welcome: "I can help you prepare a draft. Share the meeting notes to get started."
+        error: "The draft could not be prepared. Please try again."
+
+start_agent agent_router:
+    description: "Route requests to the drafting workflow."
+    reasoning:
+        instructions:|
+            Route requests in this assistant's scope to the drafting workflow. Briefly explain the scope for unrelated requests.
+        actions:
+            begin_work: @utils.transition to @subagent.sales_follow_up
+                description: "Draft a follow-up email from the meeting notes the rep supplies."
+
+subagent sales_follow_up:
+    description: "Draft a follow-up email from the meeting notes the rep supplies."
+    reasoning:
+        instructions: ->
+            | Ask for the meeting notes if it is missing. Preserve the supplied text when passing it to the drafting action.
+            | Once that input is available, use {!@actions.draft_follow_up} and show the returned draft to the user for review.
+            | If the user corrects the input or asks for a revision, use the action with the revised input. Do not retry automatically on an error.
+        actions:
+            draft_follow_up: @actions.draft_follow_up
+                with "Input:meetingNotes" = ...
+    actions:
+        draft_follow_up:
+            description: "Draft a follow-up email from the meeting notes the rep supplies."
+            inputs:
+                "Input:meetingNotes": string
+                    description: "Meeting notes, forwarded unchanged from the user's supplied text."
+                    is_required: True
+            outputs:
+                promptResponse: string
+                    description: "Draft content for the user to review."
+                    is_used_by_planner: True
+                    is_displayable: True
+            target: "generatePromptResponse://Ohm_Sales_Follow_Up_Email"

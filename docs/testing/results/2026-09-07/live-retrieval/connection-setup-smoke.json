@@ -1,0 +1,25 @@
+{
+  "status": "Configured",
+  "targetOrg": "ohm-audit-lab",
+  "instanceUrl": "https://innovation-inspiration-231-dev-ed.scratch.my.salesforce.com",
+  "runAs": "test-0w1smir2zegu@example.com",
+  "mode": "refresh-vault",
+  "credentialValuesPrinted": false,
+  "originalSettingsRestored": true,
+  "temporarySetupPermissionRemoved": true,
+  "deploymentSteps": [
+    {
+      "step": "Create temporary setup permission",
+      "deploymentId": "0AfEc00000nZbN4KAK"
+    },
+    {
+      "step": "Temporarily enable REST consumer secret access",
+      "deploymentId": "0AfEc00000nZPsDKAW"
+    },
+    {
+      "step": "Restore original REST consumer secret access",
+      "deploymentId": "0AfEc00000nZZ6mKAG"
+    }
+  ],
+  "auditUsersGrantedPrincipalAccess": []
+}

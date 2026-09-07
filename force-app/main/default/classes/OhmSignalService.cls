@@ -55,6 +55,7 @@ public with sharing class OhmSignalService {
 
         if (findings != null) {
             for (OhmDTO.Finding f : findings) {
+                if (f.reviewRequired == true) { continue; }
                 Decimal w = c.signalWeight(f.signalType);
                 Decimal s = (f.severityScore == null) ? 0 : f.severityScore;
                 r.weightedSeveritySum += w * s;
@@ -71,8 +72,11 @@ public with sharing class OhmSignalService {
         }
         if (score < 0) { score = 0; }
         if (score > 100) { score = 100; }
-        r.score = score;
-        r.grade = letterFor(score, c.gradeCutoffs());
+        Boolean complete = g != null && g.coverageComplete == true
+            && (g.discoveryErrors == null || g.discoveryErrors.isEmpty());
+        r.coverageStatus = complete ? 'Complete' : 'Incomplete';
+        r.score = complete ? score : null;
+        r.grade = complete ? letterFor(score, c.gradeCutoffs()) : 'IN';
         return r;
     }
 

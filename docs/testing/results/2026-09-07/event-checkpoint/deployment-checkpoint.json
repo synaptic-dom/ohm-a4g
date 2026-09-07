@@ -1,0 +1,132 @@
+{
+  "targetOrg": "ohm-hackathon",
+  "orgId": "00Daj000013wTtpEAE",
+  "currentAppDeploymentVerified": false,
+  "deployments": [
+    {
+      "sourceFile": "/tmp/ohm-event-app-deploy.json",
+      "id": "0Afaj00000jVnvNCAS",
+      "status": "Canceled",
+      "done": true,
+      "success": false,
+      "numberComponentsDeployed": 212,
+      "numberComponentErrors": 0,
+      "numberTestsCompleted": 169,
+      "numberTestErrors": 20,
+      "failures": [
+        {
+          "class": "OhmAssistantServiceTest",
+          "method": "testAskDraftReturnsRewriteWithDeltas",
+          "message": "System.AssertException: Assertion Failed: Fixture requires an Agent Script publication."
+        },
+        {
+          "class": "OhmAssistantServiceTest",
+          "method": "testAskReturnsGroundedAnswer",
+          "message": "System.AssertException: Assertion Failed: Fixture requires an Agent Script publication."
+        },
+        {
+          "class": "OhmAssistantServiceTest",
+          "method": "testBlankReplyThrowsInsteadOfEmptyDraft",
+          "message": "System.AssertException: Assertion Failed: Fixture requires an Agent Script publication."
+        },
+        {
+          "class": "OhmAssistantServiceTest",
+          "method": "testGetContextGroundsOnAudit",
+          "message": "System.AssertException: Assertion Failed: Published Weather Agent Script fixture must exist: Same value: null"
+        },
+        {
+          "class": "OhmAssistantServiceTest",
+          "method": "testGroundedContextCarriesAuditNumbers",
+          "message": "System.AssertException: Assertion Failed: Fixture requires an Agent Script publication."
+        },
+        {
+          "class": "OhmAssistantServiceTest",
+          "method": "testUnoptimizedLabelDoesNotTriggerDraft",
+          "message": "System.AssertException: Assertion Failed: Fixture requires an Agent Script publication."
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testAuditProcessCapturesInstructionSnapshotForBloatFinding",
+          "message": "System.AssertException: Assertion Failed: Published Weather Agent Script fixture must exist in the org: Same value: null"
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testAuditProcessPersistsScopedReportAndFleetReflectsGrade",
+          "message": "System.AssertException: Assertion Failed: Published Weather Agent Script fixture must exist in the org: Same value: null"
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testGetDiffAfterTwoAuditsReturnsBeforeAfterWithDeltas",
+          "message": "System.AssertException: Assertion Failed: Published Weather Agent Script fixture must exist in the org: Same value: null"
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testGetDiffSingleAuditReturnsAfterOnly",
+          "message": "System.AssertException: Assertion Failed: Published Weather Agent Script fixture must exist in the org: Same value: null"
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testGetFindingsDedupsAcrossReAudits",
+          "message": "System.AssertException: Assertion Failed: Published Weather Agent Script fixture must exist in the org: Same value: null"
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testGetFleetReturnsUnauditedFleet",
+          "message": "System.AssertException: Assertion Failed: live org has agents; fleet must be non-empty"
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testGetProcessDetailMarksBloatedTopicWasteful",
+          "message": "System.AssertException: Assertion Failed: Published Weather Agent Script fixture must exist in the org: Same value: null"
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testGetTrendsOrgReturnsPointsAndPerAgentHistory",
+          "message": "System.AssertException: Assertion Failed: Published Weather Agent Script fixture must exist in the org: Same value: null"
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testGetTrendsPerProcessReturnsChronologicalPoints",
+          "message": "System.AssertException: Assertion Failed: Published Weather Agent Script fixture must exist in the org: Same value: null"
+        },
+        {
+          "class": "OhmAuditControllerTest",
+          "method": "testStartAuditReturnsCompleteReportWithReadout",
+          "message": "System.AssertException: Assertion Failed: Fixture requires an Agent Script publication."
+        },
+        {
+          "class": "OhmAuditCoordinatorTest",
+          "method": "processEndpointReturnsQueuedExactPublication",
+          "message": "System.QueryException: List has no rows for assignment to SObject"
+        },
+        {
+          "class": "OhmDiscoveryServiceTest",
+          "method": "test_discoverFindsLiveAgentScriptAndExcludesLegacyAgents",
+          "message": "System.AssertException: Assertion Failed: Org has published Agent Script bundles \u2014 expected >= 1 agent, got 0"
+        },
+        {
+          "class": "OhmDiscoveryServiceTest",
+          "method": "test_discoverProcessScopedToPublishedBundleKeepsInstructionEvidence",
+          "message": "System.AssertException: Assertion Failed: Fixture requires an Agent Script publication."
+        },
+        {
+          "class": "OhmDiscoveryServiceTest",
+          "method": "test_listFleetReturnsProcessesWithCountsAndDomainsNoGrade",
+          "message": "System.AssertException: Assertion Failed: Org has 4 Agent Script families \u2014 expected >= 4 fleet rows, got 0"
+        }
+      ]
+    },
+    {
+      "sourceFile": "/tmp/ohm-event-fixture-deploy.json",
+      "id": "0Afaj00000jVocvCAC",
+      "status": "Canceled",
+      "done": true,
+      "success": false,
+      "numberComponentsDeployed": 170,
+      "numberComponentErrors": 0,
+      "numberTestsCompleted": 0,
+      "numberTestErrors": 0,
+      "failures": []
+    }
+  ]
+}

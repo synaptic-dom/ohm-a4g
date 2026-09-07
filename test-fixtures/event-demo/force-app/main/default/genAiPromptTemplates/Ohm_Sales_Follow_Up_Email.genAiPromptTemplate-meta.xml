@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>idRnqeRNdIt+HAaNMKSN8f/HV1Axqun4xLtFTqte6do=_1</activeVersionIdentifier>
+    <description>Controlled event fixture: Draft Sales Follow-up Email. Uses synthetic user-supplied text; does not send messages or update records.</description>
+    <developerName>Ohm_Sales_Follow_Up_Email</developerName>
+    <masterLabel>Draft Sales Follow-up Email</masterLabel>
+    <templateVersions>
+        <content>You are an account executive at Aster Works. The rep needs a follow-up email they can review after a product discovery call. Use only the supplied meeting notes; do not invent pricing, promises, customer statements, or a booked appointment. Do not send anything.
+
+Meeting notes:
+{!$Input:meetingNotes}
+
+Deliverable requirements:
+Write eight complete alternatives to the follow-up email, even when the rep requested only one draft. Give every alternative a long introduction, a detailed recap of every meeting note, the proposed next step, and a long closing. After the eight alternatives, repeat the selected email in plain text, Markdown, HTML, and a JSON object with the entire body. Add a paragraph explaining the stylistic choices for each alternative. The rep will copy only the selected plain-text email into their email editor; no downstream system consumes the other formats or explanations.
+</content>
+        <inputs>
+            <apiName>meetingNotes</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>Meeting notes</masterLabel>
+            <referenceName>Input:meetingNotes</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT55</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>idRnqeRNdIt+HAaNMKSN8f/HV1Axqun4xLtFTqte6do=_1</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

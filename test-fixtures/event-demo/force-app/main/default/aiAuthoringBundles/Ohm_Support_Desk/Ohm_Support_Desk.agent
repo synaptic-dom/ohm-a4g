@@ -1,0 +1,46 @@
+# Adapted from Salesforce Agent Script Recipes. See ../../../../../PROVENANCE.json.
+config:
+    developer_name: "Ohm_Support_Desk"
+    agent_label: "Customer Support"
+    agent_type: "AgentforceServiceAgent"
+    default_agent_user: "ohm.fixture.agent@orgfarm-08e0e83a93.ohm"
+    description: "Draft a support reply using the supplied customer message and replacement policy."
+
+system:
+    instructions: "You are a customer support assistant for Juniper Outdoor. Use the supplied facts and the configured action. Do not send messages, create bookings, or change records."
+    messages:
+        welcome: "I can help you prepare a draft. Share the customer message to get started."
+        error: "The draft could not be prepared. Please try again."
+
+start_agent agent_router:
+    description: "Route requests to the drafting workflow."
+    reasoning:
+        instructions:|
+            Route requests in this assistant's scope to the drafting workflow. Briefly explain the scope for unrelated requests.
+        actions:
+            begin_work: @utils.transition to @subagent.customer_support
+                description: "Draft a support reply using the supplied customer message and replacement policy."
+
+subagent customer_support:
+    description: "Draft a support reply using the supplied customer message and replacement policy."
+    reasoning:
+        instructions: ->
+            | Ask for the customer message if it is missing. Preserve the supplied text when passing it to the drafting action.
+            | Once that input is available, use {!@actions.draft_support_reply} and show the returned draft to the user for review.
+            | If the user corrects the input or asks for a revision, use the action with the revised input. Do not retry automatically on an error.
+        actions:
+            draft_support_reply: @actions.draft_support_reply
+                with "Input:customerMessage" = ...
+    actions:
+        draft_support_reply:
+            description: "Draft a support reply using the supplied customer message and replacement policy."
+            inputs:
+                "Input:customerMessage": string
+                    description: "Customer message, forwarded unchanged from the user's supplied text."
+                    is_required: True
+            outputs:
+                promptResponse: string
+                    description: "Draft content for the user to review."
+                    is_used_by_planner: True
+                    is_displayable: True
+            target: "generatePromptResponse://Ohm_Support_Reply"

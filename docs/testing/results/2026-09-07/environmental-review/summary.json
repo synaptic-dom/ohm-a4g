@@ -1,0 +1,107 @@
+{
+  "scope": "Published Agent Script bundles, including linked prompts; no standalone targets",
+  "reviewerModel": "sfdc_ai__DefaultGPT55",
+  "templateProof": {
+    "templateId": "0hfEc000002KqanIAC",
+    "activeVersionId": "3vNEc0000005pjRMAQ",
+    "versionIdentifier": "WCyeBTg2NZWRDVRViggPve0yyaQfI6t9+0AlEdZ1LCQ=_1",
+    "active": true,
+    "status": "Published",
+    "modelFields": {
+      "PrimaryModel": "sfdc_ai__DefaultGPT55"
+    },
+    "contentCharacters": 13729,
+    "contentSha256": "b78ad613657e667f10ec21174c64b055ea37f3cb5e349bba3cbe3cf07c7bb5db",
+    "contentMatchesLocal": true,
+    "versionMatchesLocal": true,
+    "declaredLocalModel": "sfdc_ai__DefaultGPT55",
+    "verifiedAt": "2026-09-07T19:00:48.629893+00:00",
+    "verificationMethod": "Read active published Prompt Builder version via Connect REST; compare exact decoded content to local metadata. This is configuration verification, not a per-generation version attestation."
+  },
+  "deploymentId": "0AfEc00000nZdBzKAK",
+  "apexTestExecutions": 302,
+  "apexFailures": 0,
+  "jestSuites": 25,
+  "jestTests": 197,
+  "jestFailures": 0,
+  "latestUiFollowup": {
+    "testSuites": 1,
+    "tests": 8,
+    "passed": true,
+    "reason": "Explain ratings inherited from individual prompt opportunities"
+  },
+  "liveBundleCount": 4,
+  "allLiveSourceEvidenceVerified": true,
+  "instructionArtifactCount": 13,
+  "configurationSourceCount": 4,
+  "liveReports": [
+    {
+      "planner": "ActionChaining_v1",
+      "reportId": "a00Ec00000lsvJMIAY",
+      "ratings": {
+        "INPUT": "A",
+        "OUTPUT": "A",
+        "MODEL": "UNRATED",
+        "CALLS": "UNRATED"
+      }
+    },
+    {
+      "planner": "ActionDefinitions_v1",
+      "reportId": "a00Ec00000lsvJNIAY",
+      "ratings": {
+        "INPUT": "A",
+        "OUTPUT": "A",
+        "MODEL": "UNRATED",
+        "CALLS": "UNRATED"
+      }
+    },
+    {
+      "planner": "Ohm_Weather_Demo_v4",
+      "reportId": "a00Ec00000lsvJOIAY",
+      "ratings": {
+        "INPUT": "A",
+        "OUTPUT": "A",
+        "MODEL": "UNRATED",
+        "CALLS": "UNRATED"
+      }
+    },
+    {
+      "planner": "PromptTemplateActions_v1",
+      "reportId": "a00Ec00000lsvJPIAY",
+      "ratings": {
+        "INPUT": "A",
+        "OUTPUT": "A",
+        "MODEL": "UNRATED",
+        "CALLS": "B"
+      }
+    }
+  ],
+  "syntheticProbes": [
+    {
+      "fixture": "clean",
+      "passed": true
+    },
+    {
+      "fixture": "poor",
+      "passed": true
+    },
+    {
+      "fixture": "source_injection",
+      "passed": true
+    },
+    {
+      "fixture": "deterministic_chain",
+      "passed": true
+    }
+  ],
+  "limits": [
+    "Static source review; no runtime call or output telemetry",
+    "No model quality evaluation; Model fit remains Unrated",
+    "Configured reviewer identity is declared, not an attested provider generation version",
+    "No automatic publishing of recommendations",
+    "Bounded validation, not an exhaustive model evaluation"
+  ],
+  "workState": "Local and deployed to scratch org; not committed or pushed",
+  "browserChecks": "browser-checks.json",
+  "finalUiDeploymentId": "0AfEc00000nZbuwKAC"
+}

@@ -114,9 +114,9 @@ describe('c-ohm-findings-worklist', () => {
             severityFilter: 'All'
         });
         expect(rows(el)).toHaveLength(2);
-        // severity + savings render as text
+        // Severity and the source are readable without a modeled savings claim.
         expect(el.shadowRoot.textContent).toContain('High');
-        expect(el.shadowRoot.textContent).toContain('52,921 Wh/yr');
+        expect(el.shadowRoot.textContent).not.toContain('Wh/yr');
         expect(el.shadowRoot.textContent).toContain('Lead Concierge');
 
         // Each row's status control reflects that finding's real status.
@@ -125,24 +125,15 @@ describe('c-ohm-findings-worklist', () => {
         expect(selects[1].value).toBe('Accepted'); // FIND-2
     });
 
-    it('sorts by savings descending by default, and flips on toggle', async () => {
+    it('orders supporting checks by severity, with a reversible priority control', async () => {
         const el = create();
         await flush();
-
-        let savings = Array.from(
-            el.shadowRoot.querySelectorAll('[data-id="savings"]')
-        ).map((n) => n.textContent.trim());
-        expect(savings[0]).toContain('52,921');
-        expect(savings[1]).toContain('16,083');
-
-        el.shadowRoot.querySelector('[data-id="sort-savings"]').click();
+        expect(rows(el)[0].textContent).toContain('Lead Concierge');
+        expect(rows(el)[1].textContent).toContain('Order Support');
+        el.shadowRoot.querySelector('[data-id="sort-priority"]').click();
         await flush();
-
-        savings = Array.from(
-            el.shadowRoot.querySelectorAll('[data-id="savings"]')
-        ).map((n) => n.textContent.trim());
-        expect(savings[0]).toContain('16,083');
-        expect(savings[1]).toContain('52,921');
+        expect(rows(el)[0].textContent).toContain('Order Support');
+        expect(rows(el)[1].textContent).toContain('Lead Concierge');
     });
 
     it('changing a row status calls updateFindingStatus and refreshes', async () => {
@@ -225,7 +216,7 @@ describe('c-ohm-findings-worklist', () => {
 
         const empty = el.shadowRoot.querySelector('[data-id="empty"]');
         expect(empty).not.toBeNull();
-        expect(empty.textContent).toContain('audit a process from the Fleet tab');
+        expect(empty.textContent).toContain('No supporting check findings are waiting here');
     });
 
     it('surfaces a row error when a status update rejects', async () => {
@@ -243,7 +234,7 @@ describe('c-ohm-findings-worklist', () => {
         expect(err.textContent).toContain('DML failed');
     });
 
-    it('is accessible in both Calm variants', async () => {
+    it('keeps the single dark interface accessible for existing callers', async () => {
         const dark = create();
         await flush();
         await expect(dark).toBeAccessible();

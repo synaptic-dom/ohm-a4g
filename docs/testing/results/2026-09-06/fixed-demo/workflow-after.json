@@ -1,0 +1,164 @@
+{
+  "recordedAt": "2026-09-07T01:22:22.625402+00:00",
+  "phase": "after",
+  "orgAlias": "ohm-audit-lab",
+  "agentApiName": "Ohm_Weather_Demo",
+  "plannerApiName": "Ohm_Weather_Demo_v2",
+  "sourceSha256": "5f054b92b76b8ec97f04bf19570633cda61d5bbdb76e59b2f9cc11e8cc0482b6",
+  "mode": "published Agent API through sf agent test run-eval",
+  "spec": "test-fixtures/controlled-weather/workflow-smoke.json",
+  "executionNotes": [
+    "Five independent sessions; expected outcomes scored by the Salesforce bot_response_rating evaluator.",
+    "Weather Flows return fixed reference values; these are not real weather observations.",
+    "The alert action formats a string only. No external weather call, email, payment, or business-record change is part of these cases.",
+    "Publication/activation is managed separately; run against the stated active version before changing it."
+  ],
+  "executedAt": "2026-09-07T01:22:22.625853+00:00",
+  "status": 0,
+  "error": null,
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "scored": 0,
+    "errors": 0
+  },
+  "cases": [
+    {
+      "case": "missing-location",
+      "status": "passed",
+      "responses": [
+        "Could you please tell me the location you want the current weather for?"
+      ],
+      "evaluations": [
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "compute_status": "COMPLETED",
+          "score": 5,
+          "is_pass": true,
+          "label": null,
+          "explainability": "The bot's response appropriately asks for the location to provide the weather, aligning with the expected response to collect necessary information. The response is clear, precise, and contains no irrelevant information.",
+          "error_message": null,
+          "actual_value": "Could you please tell me the location you want the current weather for?",
+          "expected_value": "Ask the user which city or location they want weather for; do not invent a city."
+        }
+      ],
+      "responsePassed": true
+    },
+    {
+      "case": "current-weather",
+      "status": "passed",
+      "responses": [
+        "The current weather in San Francisco is sunny, with a temperature of 72.5°F. Humidity is at 45% and the wind speed is 10 mph. Would you like the forecast for the next few days as well?"
+      ],
+      "evaluations": [
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "compute_status": "COMPLETED",
+          "score": 5,
+          "is_pass": true,
+          "label": null,
+          "explainability": "The bot response provides the exact weather details requested in the expected response and adds an extra question about the forecast, which is not required but not detrimental. The response is clear, precise, and contains all relevant information.",
+          "error_message": null,
+          "actual_value": "The current weather in San Francisco is sunny, with a temperature of 72.5°F. Humidity is at 45% and the wind speed is 10 mph. Would you like the forecast for the next few days as well?",
+          "expected_value": "San Francisco is sunny, with a temperature of 72.5 degrees Fahrenheit, humidity of 45 percent, and wind speed of 10 mph."
+        }
+      ],
+      "responsePassed": true
+    },
+    {
+      "case": "forecast",
+      "status": "passed",
+      "responses": [
+        "Here is the five-day weather forecast for San Francisco:\n\n- Monday: Partly cloudy, high of 67°F\n- Tuesday: Sunny, high of 70°F\n- Wednesday: Cloudy, high of 64°F\n- Thursday: Rain, high of 61°F\n- Friday: Partly cloudy, high of 66°F\n\nWould you like more details about any specific day or the current weather in San Francisco?"
+      ],
+      "evaluations": [
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "compute_status": "COMPLETED",
+          "score": 5,
+          "is_pass": true,
+          "label": null,
+          "explainability": "The bot response provides the five-day weather forecast for San Francisco as requested, matching the expected response. It also offers additional information about specific days or current weather, which is not required but not detrimental. The response is clear, complete, and contains no irrelevant information.",
+          "error_message": null,
+          "actual_value": "Here is the five-day weather forecast for San Francisco:\n\n- Monday: Partly cloudy, high of 67°F\n- Tuesday: Sunny, high of 70°F\n- Wednesday: Cloudy, high of 64°F\n- Thursday: Rain, high of 61°F\n- Friday: Partly cloudy, high of 66°F\n\nWould you like more details about any specific day or the current weather in San Francisco?",
+          "expected_value": "Monday partly cloudy 67 F, Tuesday sunny 70 F, Wednesday cloudy 64 F, Thursday rain 61 F, Friday partly cloudy 66 F."
+        }
+      ],
+      "responsePassed": true
+    },
+    {
+      "case": "out-of-scope",
+      "status": "passed",
+      "responses": [
+        "I am here to help with weather information. If you need details about the weather in a specific location, please let me know which city or area you are interested in. If you have questions about weather conditions, forecasts, or related topics, feel free to ask!"
+      ],
+      "evaluations": [
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "compute_status": "COMPLETED",
+          "score": 5,
+          "is_pass": true,
+          "label": null,
+          "explainability": "The bot's response correctly declines the programming request and redirects the user to its actual domain of expertise (weather information), aligning with the expected outcome. The response is clear, precise, and contains no irrelevant information.",
+          "error_message": null,
+          "actual_value": "I am here to help with weather information. If you need details about the weather in a specific location, please let me know which city or area you are interested in. If you have questions about weather conditions, forecasts, or related topics, feel free to ask!",
+          "expected_value": "Decline the programming request and explain that the assistant helps with weather questions."
+        }
+      ],
+      "responsePassed": true
+    },
+    {
+      "case": "weather-alert",
+      "status": "passed",
+      "responses": [
+        "A low severity weather alert has been issued with the message: \"Light rain expected in San Francisco.\" Would you like to check the current weather or forecast for San Francisco as well?"
+      ],
+      "evaluations": [
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "compute_status": "COMPLETED",
+          "score": 5,
+          "is_pass": true,
+          "label": null,
+          "explainability": "The bot response confirms the issuance of the weather alert with the exact message as requested, which aligns with the expected outcome. The additional offer to check current weather or forecast is irrelevant to the user's query and does not detract from the primary goal. The response is clear, precise, and complete regarding the alert confirmation.",
+          "error_message": null,
+          "actual_value": "A low severity weather alert has been issued with the message: \"Light rain expected in San Francisco.\" Would you like to check the current weather or forecast for San Francisco as well?",
+          "expected_value": "Confirm the low severity weather alert was processed with the exact message Light rain expected in San Francisco."
+        }
+      ],
+      "responsePassed": true
+    }
+  ],
+  "directTraceAssertions": [
+    {
+      "case": "weather-alert",
+      "passed": true,
+      "expectedFunction": "send_weather_alert",
+      "observedFunctions": [
+        {
+          "name": "send_weather_alert",
+          "input": {
+            "message": "Light rain expected in San Francisco",
+            "severity": "low"
+          },
+          "executionStatus": "success",
+          "alertMessage": "Weather Alert: Light rain expected in San Francisco Severity: low"
+        }
+      ]
+    }
+  ],
+  "responseCaseSummary": {
+    "passed": 5,
+    "total": 5
+  },
+  "directTraceSummary": {
+    "passed": 1,
+    "total": 1
+  },
+  "outcome": "Passed"
+}

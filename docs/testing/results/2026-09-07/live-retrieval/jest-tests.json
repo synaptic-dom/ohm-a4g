@@ -1,0 +1,30 @@
+{
+  "reportType": "summary-of-observed-jest-output",
+  "date": "2026-09-07",
+  "workingDirectory": "/Users/dom/Documents/ohm-a4g",
+  "command": "npm run test:unit -- -- --runInBand",
+  "exitCode": 0,
+  "testSuites": {
+    "passed": 24,
+    "failed": 0,
+    "total": 24
+  },
+  "tests": {
+    "passed": 187,
+    "failed": 0,
+    "total": 187
+  },
+  "snapshots": {
+    "total": 0
+  },
+  "reportedDurationSeconds": 3.366,
+  "logFilePath": null,
+  "evidence": "Captured terminal output from the completed full Jest run. No separate log file or native Jest JSON report was written. This summary records that observed run without rerunning it.",
+  "summaryLines": [
+    "Test Suites: 24 passed, 24 total",
+    "Tests:       187 passed, 187 total",
+    "Snapshots:   0 total",
+    "Time:        3.366 s, estimated 4 s",
+    "Ran all test suites."
+  ]
+}

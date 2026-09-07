@@ -1,0 +1,32 @@
+{
+  "bundle": "Ohm_Support_Desk",
+  "promptModel": "sfdc_ai__DefaultGPT55",
+  "cliStatus": 1,
+  "tests": [
+    {
+      "id": "support-damaged-lantern",
+      "status": "failed",
+      "evaluations": [],
+      "response": null
+    },
+    {
+      "id": "support-missing-message",
+      "status": "passed",
+      "evaluations": [
+        {
+          "type": "evaluator.bot_response_rating",
+          "id": "check_outcome",
+          "compute_status": "COMPLETED",
+          "score": 5,
+          "is_pass": true,
+          "label": null,
+          "explainability": "The bot's response appropriately asks for the customer's message or issue details, aligning with the expected response. It is clear, precise, and contains no irrelevant information.",
+          "error_message": null,
+          "actual_value": "I can help you draft a reply. Please provide the customer's message or describe their issue so I can create an appropriate response. What did the customer say?",
+          "expected_value": "Ask for the customer message or details of the issue rather than inventing a customer or order."
+        }
+      ],
+      "response": "I can help you draft a reply. Please provide the customer's message or describe their issue so I can create an appropriate response. What did the customer say?"
+    }
+  ]
+}

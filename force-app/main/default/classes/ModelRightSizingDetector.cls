@@ -1,9 +1,9 @@
 /**
  * Signal (b) MODEL_RIGHTSIZING — best-effort (SPEC §S.6b, canon C7b).
  * Uses action.boundModel (never fetches — closes S1/S2 circularity).
- *  - boundModel null => informational finding, zero savings, evidence='model unknown', Confidence=Low.
+ *  - missing/unmapped/assumed model => informational finding, no downsizing or savings.
  *  - else overshoot = rank(bound) - rank(taskComplexity); fire when overshoot >= 1;
- *    score = min(1, overshoot/2); Confidence = Medium (Low when modelAssumed).
+ *    score = min(1, overshoot/2); Confidence = Low because task complexity is inferred.
  * Metric_Value = bound rate-card multiplier, Metric_Unit = 'model-multiplier',
  * Recommended_Target = recommended tier name. Never performs a callout.
  */
@@ -26,12 +26,12 @@ public with sharing class ModelRightSizingDetector implements SignalDetector {
             if (a == null) {
                 continue;
             }
-            String targetType = (a.invocationTargetType == null) ? '' : a.invocationTargetType.toLowerCase();
-            if (targetType != 'prompt') {
+            if (!OhmActionTypes.isPrompt(a.invocationTargetType)) {
                 continue; // only prompt-typed actions burn model tokens
             }
 
-            if (String.isBlank(a.boundModel)) {
+            ModelRegistry.ModelInfo bound = ModelRegistry.lookup(a.boundModel);
+            if (String.isBlank(a.boundModel) || bound.assumed || a.modelAssumed == true) {
                 // degrade — informational, no savings
                 OhmDTO.Finding f = baseFinding(a);
                 f.severityScore = 0;
@@ -40,11 +40,11 @@ public with sharing class ModelRightSizingDetector implements SignalDetector {
                 f.metricValue = null;
                 f.metricUnit = 'model-multiplier';
                 f.evidence = 'model unknown';
+                f.reviewRequired = true;
                 out.add(f);
                 continue;
             }
 
-            ModelRegistry.ModelInfo bound = ModelRegistry.lookup(a.boundModel);
             ModelRegistry.TaskComplexity complexity = classifyComplexity(a);
             Integer complexityRank = rankFor(complexity);
             Integer overshoot = bound.rank - complexityRank;
@@ -56,13 +56,14 @@ public with sharing class ModelRightSizingDetector implements SignalDetector {
             OhmDTO.Finding f = baseFinding(a);
             f.severityScore = score;
             f.severity = OhmSeverity.band(score);
-            f.confidence = (a.modelAssumed == true) ? 'Low' : 'Medium';
+            f.confidence = 'Low';
             f.metricValue = bound.rateCardMultiplier;   // bound multiplier (drives savingsFor)
             f.metricUnit = 'model-multiplier';
             f.recommendedTarget = recommended.tier;
-            f.evidence = 'Bound model tier ' + bound.tier + ' (×' + bound.rateCardMultiplier +
-                ') overshoots task by ' + overshoot + ' tier(s); ' + recommended.tier +
-                ' (×' + recommended.rateCardMultiplier + ') covers the work.';
+            f.evidence = 'Bound model maps to the modeled ' + bound.tier + ' tier (×' +
+                bound.rateCardMultiplier + '). Metadata suggests evaluating the ' + recommended.tier +
+                ' tier (×' + recommended.rateCardMultiplier +
+                '); task quality and edge cases must be tested before changing models.';
             out.add(f);
         }
         return out;
@@ -71,6 +72,7 @@ public with sharing class ModelRightSizingDetector implements SignalDetector {
     private OhmDTO.Finding baseFinding(OhmDTO.ActionNode a) {
         OhmDTO.Finding f = new OhmDTO.Finding();
         f.signalType = SIGNAL;
+        f.boundModel = a.boundModel;
         f.artifactType = 'Action';
         f.artifactApiName = a.developerName;
         f.artifactLabel = a.masterLabel;
@@ -79,11 +81,9 @@ public with sharing class ModelRightSizingDetector implements SignalDetector {
     }
 
     private ModelRegistry.TaskComplexity classifyComplexity(OhmDTO.ActionNode a) {
-        String text = ((a.masterLabel == null ? '' : a.masterLabel) + ' ' +
-                       (a.developerName == null ? '' : a.developerName) + ' ' +
-                       (a.description == null ? '' : a.description)).toLowerCase();
+        String text = OhmIntentEvidence.actionText(a);
         for (String term : TRIVIAL_LEXICON) {
-            if (text.contains(term)) {
+            if (OhmIntentEvidence.containsTerm(text, term)) {
                 return ModelRegistry.TaskComplexity.TRIVIAL;
             }
         }

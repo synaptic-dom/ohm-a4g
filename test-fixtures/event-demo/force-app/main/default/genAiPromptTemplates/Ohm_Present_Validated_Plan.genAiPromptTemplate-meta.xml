@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>KOgTdSzVM2/3z2KU2t/XM9yiO7qX46j5hEljCJFkikc=_1</activeVersionIdentifier>
+    <description>Controlled event fixture: Present a Validated Day Plan. Uses synthetic user-supplied text; does not send messages or update records.</description>
+    <developerName>Ohm_Present_Validated_Plan</developerName>
+    <masterLabel>Present a Validated Day Plan</masterLabel>
+    <templateVersions>
+        <content>You are the guest coordinator at Cedar Bay Retreat. Turn the validated plan below into a welcoming, concise guest-facing message. The preparation action has already validated input, sorted activities, checked overlap, and enforced the minimum gap.
+
+Validated preparation output:
+{!$Input:validatedPlan}
+
+Preserve every supplied activity, time, location, omission, and validation message. Do not calculate times, reorder activities, add a new activity, or repeat the preparation checks. If the preparation output requests corrected input, relay that request and do not propose a schedule. Use one short greeting, the provided plan, and a brief invitation to contact the desk to book. Do not claim a reservation was made. Return only that message.
+</content>
+        <inputs>
+            <apiName>validatedPlan</apiName>
+            <definition>primitive://String</definition>
+            <masterLabel>Validated day plan</masterLabel>
+            <referenceName>Input:validatedPlan</referenceName>
+            <required>true</required>
+        </inputs>
+        <primaryModel>sfdc_ai__DefaultGPT55</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>KOgTdSzVM2/3z2KU2t/XM9yiO7qX46j5hEljCJFkikc=_1</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

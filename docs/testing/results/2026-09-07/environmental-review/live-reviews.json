@@ -1,0 +1,511 @@
+{
+  "collectedAt": "2026-09-07T19:02:53.957295+00:00",
+  "targetOrg": "ohm-audit-lab",
+  "requestedReportCount": 4,
+  "returnedReportCount": 4,
+  "reports": [
+    {
+      "reportId": "a00Ec00000lsvJMIAY",
+      "planner": "ActionChaining_v1",
+      "status": "Complete",
+      "stageMessage": "Salesforce review complete; category ratings ready",
+      "reviewerModel": "sfdc_ai__DefaultGPT55",
+      "reviewerTemplate": "Ohm_Bundle_Environmental_Review",
+      "declaredReviewerVersion": "WCyeBTg2NZWRDVRViggPve0yyaQfI6t9+0AlEdZ1LCQ=_1",
+      "reviewedAt": "2026-09-07T19:00:40.579Z",
+      "coverage": {
+        "assessedArtifactCount": 3,
+        "artifactCount": 3
+      },
+      "categories": [
+        {
+          "totalArtifactCount": 3,
+          "status": "reviewed",
+          "rating": "A",
+          "label": "Input efficiency",
+          "issues": [],
+          "id": "INPUT",
+          "environmentalMechanism": "Removing unnecessary instruction input may reduce inference work when that source is included in a request.",
+          "coverageStatus": "Complete",
+          "coverageNote": "The supplied source was assessed under the review rubric.",
+          "assessment": "Across the supplied artifacts, the instructions support routing and payment confirmation without evidenced removable context, conflict, or material repetition requiring consolidation.",
+          "assessedArtifactCount": 3
+        },
+        {
+          "totalArtifactCount": 3,
+          "status": "reviewed",
+          "rating": "A",
+          "label": "Output efficiency",
+          "issues": [],
+          "id": "OUTPUT",
+          "environmentalMechanism": "Avoiding unnecessary generated output may reduce inference work while preserving the required response.",
+          "coverageStatus": "Complete",
+          "coverageNote": "The supplied source was assessed under the review rubric.",
+          "assessment": "The bundle has bounded source-level output expectations for confirmations and routing. No explicit requirement calls for excessive verbosity or a conflicting output format.",
+          "assessedArtifactCount": 3
+        },
+        {
+          "totalArtifactCount": 3,
+          "status": "unknown",
+          "rating": "UNRATED",
+          "label": "Model fit",
+          "issues": [],
+          "id": "MODEL",
+          "environmentalMechanism": "A suitable smaller model may use less compute; model quality and environmental effects require separate validation.",
+          "coverageStatus": "Unknown",
+          "coverageNote": "No model quality evaluation is available. A verified binding permits candidates only; fit is unproven.",
+          "assessment": "Not every artifact has a verified model binding, and no task quality evaluation is available.",
+          "assessedArtifactCount": 0
+        },
+        {
+          "totalArtifactCount": 3,
+          "status": "unknown",
+          "rating": "UNRATED",
+          "label": "Call efficiency",
+          "issues": [],
+          "id": "CALLS",
+          "environmentalMechanism": "Avoiding unnecessary model invocations may reduce inference work; static source does not establish runtime call frequency.",
+          "coverageStatus": "Unknown",
+          "coverageNote": "Static source suitability only. Runtime frequency, repeated execution and complete path coverage are unverified.",
+          "assessment": "The supplied configuration shows deterministic flow chaining, but flow implementations and runtime traces are unavailable, so repeated or avoidable model work is not established.",
+          "assessedArtifactCount": 0
+        }
+      ],
+      "artifacts": [
+        {
+          "artifactId": "16jEc000000PAIjIAO",
+          "label": "Action Chaining",
+          "characterCount": 193,
+          "sourceHash": "42f51b704c60615bdce3c437d7fac43150269c5f33f71e3e82df62410a63b07e",
+          "sourceVersion": "MetadataApi:67.0:ActionChaining.v1:7b0b6ef2d8140d20a34a31f142f0ccb369e3a194b6621f78479e347269cc7bef",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "UNRATED"
+          }
+        },
+        {
+          "artifactId": "179Ec000006G6h7IAC",
+          "label": "Agent Router",
+          "characterCount": 117,
+          "sourceHash": "0204cc6cc8a8ed21695dd1d3fa64ccab53e0f0b66445612da8b90b0f3e72cec5",
+          "sourceVersion": "MetadataApi:67.0:ActionChaining.v1:7b0b6ef2d8140d20a34a31f142f0ccb369e3a194b6621f78479e347269cc7bef",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "UNRATED"
+          }
+        },
+        {
+          "artifactId": "179Ec000006G6h8IAC",
+          "label": "Payment Processing",
+          "characterCount": 435,
+          "sourceHash": "2dc30063a3ac3529cf422c588ef06528f6172b383cfbc0b9bd6459afd923ca73",
+          "sourceVersion": "MetadataApi:67.0:ActionChaining.v1:7b0b6ef2d8140d20a34a31f142f0ccb369e3a194b6621f78479e347269cc7bef",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "UNRATED"
+          }
+        }
+      ],
+      "configurationSources": [
+        {
+          "artifactId": "configuration:16jEc000000PAIjIAO",
+          "verified": true
+        }
+      ],
+      "quotedEvidenceCount": 0,
+      "allQuotesMatchStoredSources": true,
+      "fleetSummaryMatchesDetail": true,
+      "verified": true
+    },
+    {
+      "reportId": "a00Ec00000lsvJNIAY",
+      "planner": "ActionDefinitions_v1",
+      "status": "Complete",
+      "stageMessage": "Salesforce review complete; category ratings ready",
+      "reviewerModel": "sfdc_ai__DefaultGPT55",
+      "reviewerTemplate": "Ohm_Bundle_Environmental_Review",
+      "declaredReviewerVersion": "WCyeBTg2NZWRDVRViggPve0yyaQfI6t9+0AlEdZ1LCQ=_1",
+      "reviewedAt": "2026-09-07T19:00:39.475Z",
+      "coverage": {
+        "assessedArtifactCount": 3,
+        "artifactCount": 3
+      },
+      "categories": [
+        {
+          "totalArtifactCount": 3,
+          "status": "reviewed",
+          "rating": "A",
+          "label": "Input efficiency",
+          "issues": [],
+          "id": "INPUT",
+          "environmentalMechanism": "Removing unnecessary instruction input may reduce inference work when that source is included in a request.",
+          "coverageStatus": "Complete",
+          "coverageNote": "The supplied source was assessed under the review rubric.",
+          "assessment": "The bundle sources are coherent for a weather assistant with routing and lookup responsibilities, and no consolidatable redundancy is supported.",
+          "assessedArtifactCount": 3
+        },
+        {
+          "totalArtifactCount": 3,
+          "status": "reviewed",
+          "rating": "A",
+          "label": "Output efficiency",
+          "issues": [],
+          "id": "OUTPUT",
+          "environmentalMechanism": "Avoiding unnecessary generated output may reduce inference work while preserving the required response.",
+          "coverageStatus": "Complete",
+          "coverageNote": "The supplied source was assessed under the review rubric.",
+          "assessment": "The bundle output requirements remain task bounded and do not require excess prose or a conflicting format.",
+          "assessedArtifactCount": 3
+        },
+        {
+          "totalArtifactCount": 3,
+          "status": "unknown",
+          "rating": "UNRATED",
+          "label": "Model fit",
+          "issues": [],
+          "id": "MODEL",
+          "environmentalMechanism": "A suitable smaller model may use less compute; model quality and environmental effects require separate validation.",
+          "coverageStatus": "Unknown",
+          "coverageNote": "No model quality evaluation is available. A verified binding permits candidates only; fit is unproven.",
+          "assessment": "Not every artifact has a verified model binding and no model quality evaluation is available.",
+          "assessedArtifactCount": 0
+        },
+        {
+          "totalArtifactCount": 3,
+          "status": "reviewed",
+          "rating": "UNRATED",
+          "label": "Call efficiency",
+          "issues": [],
+          "id": "CALLS",
+          "environmentalMechanism": "Avoiding unnecessary model invocations may reduce inference work; static source does not establish runtime call frequency.",
+          "coverageStatus": "Partial",
+          "coverageNote": "Static source suitability only. Runtime frequency, repeated execution and complete path coverage are unverified.",
+          "assessment": "The bundle evidence shows configured tool use, Flow and Apex targets, and state binding, but does not establish avoidable model work.",
+          "assessedArtifactCount": 2
+        }
+      ],
+      "artifacts": [
+        {
+          "artifactId": "16jEc000000PAH7IAO",
+          "label": "Action Definitions",
+          "characterCount": 103,
+          "sourceHash": "8f8dfca7d77a006c38bdb822a4be821c45da7f810114b8c18554a190861de2c3",
+          "sourceVersion": "MetadataApi:67.0:ActionDefinitions.v1:b67a3c7f22160058c0ad448fd61994d6824e9e04985dc417c8a401c7cbdcf555",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "UNRATED"
+          }
+        },
+        {
+          "artifactId": "179Ec000006G6fVIAS",
+          "label": "Weather Lookup",
+          "characterCount": 773,
+          "sourceHash": "8128ac0e1af2b1cda6aa7100fe60f3f1da96c1ae234d6740c5eb5f192cdae226",
+          "sourceVersion": "MetadataApi:67.0:ActionDefinitions.v1:b67a3c7f22160058c0ad448fd61994d6824e9e04985dc417c8a401c7cbdcf555",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        },
+        {
+          "artifactId": "179Ec000006G6fWIAS",
+          "label": "Agent Router",
+          "characterCount": 117,
+          "sourceHash": "0204cc6cc8a8ed21695dd1d3fa64ccab53e0f0b66445612da8b90b0f3e72cec5",
+          "sourceVersion": "MetadataApi:67.0:ActionDefinitions.v1:b67a3c7f22160058c0ad448fd61994d6824e9e04985dc417c8a401c7cbdcf555",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        }
+      ],
+      "configurationSources": [
+        {
+          "artifactId": "configuration:16jEc000000PAH7IAO",
+          "verified": true
+        }
+      ],
+      "quotedEvidenceCount": 0,
+      "allQuotesMatchStoredSources": true,
+      "fleetSummaryMatchesDetail": true,
+      "verified": true
+    },
+    {
+      "reportId": "a00Ec00000lsvJOIAY",
+      "planner": "Ohm_Weather_Demo_v4",
+      "status": "Complete",
+      "stageMessage": "Salesforce review complete; category ratings ready",
+      "reviewerModel": "sfdc_ai__DefaultGPT55",
+      "reviewerTemplate": "Ohm_Bundle_Environmental_Review",
+      "declaredReviewerVersion": "WCyeBTg2NZWRDVRViggPve0yyaQfI6t9+0AlEdZ1LCQ=_1",
+      "reviewedAt": "2026-09-07T19:00:40.340Z",
+      "coverage": {
+        "assessedArtifactCount": 3,
+        "artifactCount": 3
+      },
+      "categories": [
+        {
+          "totalArtifactCount": 3,
+          "status": "reviewed",
+          "rating": "A",
+          "label": "Input efficiency",
+          "issues": [],
+          "id": "INPUT",
+          "environmentalMechanism": "Removing unnecessary instruction input may reduce inference work when that source is included in a request.",
+          "coverageStatus": "Complete",
+          "coverageNote": "The supplied source was assessed under the review rubric.",
+          "assessment": "Across the supplied artifacts, the instructions are aligned around weather assistance, routing, lookup, and alerts, with no supported conflict or avoidable consolidation issue.",
+          "assessedArtifactCount": 3
+        },
+        {
+          "totalArtifactCount": 3,
+          "status": "reviewed",
+          "rating": "A",
+          "label": "Output efficiency",
+          "issues": [],
+          "id": "OUTPUT",
+          "environmentalMechanism": "Avoiding unnecessary generated output may reduce inference work while preserving the required response.",
+          "coverageStatus": "Complete",
+          "coverageNote": "The supplied source was assessed under the review rubric.",
+          "assessment": "The bundle requests concise weather assistance behavior and does not evidence mismatched, unbounded, or unnecessary output requirements.",
+          "assessedArtifactCount": 3
+        },
+        {
+          "totalArtifactCount": 3,
+          "status": "unknown",
+          "rating": "UNRATED",
+          "label": "Model fit",
+          "issues": [],
+          "id": "MODEL",
+          "environmentalMechanism": "A suitable smaller model may use less compute; model quality and environmental effects require separate validation.",
+          "coverageStatus": "Unknown",
+          "coverageNote": "No model quality evaluation is available. A verified binding permits candidates only; fit is unproven.",
+          "assessment": "Not every reviewed artifact has a verified model binding, and no model quality evaluation is available.",
+          "assessedArtifactCount": 0
+        },
+        {
+          "totalArtifactCount": 3,
+          "status": "unknown",
+          "rating": "UNRATED",
+          "label": "Call efficiency",
+          "issues": [],
+          "id": "CALLS",
+          "environmentalMechanism": "Avoiding unnecessary model invocations may reduce inference work; static source does not establish runtime call frequency.",
+          "coverageStatus": "Partial",
+          "coverageNote": "Static source suitability only. Runtime frequency, repeated execution and complete path coverage are unverified.",
+          "assessment": "The supplied evidence does not establish repeated model work, prompt invocation targets, or loops with missing bounds across the bundle.",
+          "assessedArtifactCount": 1
+        }
+      ],
+      "artifacts": [
+        {
+          "artifactId": "16jEc000000PBBZIA4",
+          "label": "Controlled Weather Demo",
+          "characterCount": 103,
+          "sourceHash": "8f8dfca7d77a006c38bdb822a4be821c45da7f810114b8c18554a190861de2c3",
+          "sourceVersion": "MetadataApi:67.0:Ohm_Weather_Demo.v4:5f054b92b76b8ec97f04bf19570633cda61d5bbdb76e59b2f9cc11e8cc0482b6",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "UNRATED"
+          }
+        },
+        {
+          "artifactId": "179Ec000006G6u1IAC",
+          "label": "Agent Router",
+          "characterCount": 117,
+          "sourceHash": "0204cc6cc8a8ed21695dd1d3fa64ccab53e0f0b66445612da8b90b0f3e72cec5",
+          "sourceVersion": "MetadataApi:67.0:Ohm_Weather_Demo.v4:5f054b92b76b8ec97f04bf19570633cda61d5bbdb76e59b2f9cc11e8cc0482b6",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "UNRATED"
+          }
+        },
+        {
+          "artifactId": "179Ec000006G6u2IAC",
+          "label": "Weather Lookup",
+          "characterCount": 773,
+          "sourceHash": "8128ac0e1af2b1cda6aa7100fe60f3f1da96c1ae234d6740c5eb5f192cdae226",
+          "sourceVersion": "MetadataApi:67.0:Ohm_Weather_Demo.v4:5f054b92b76b8ec97f04bf19570633cda61d5bbdb76e59b2f9cc11e8cc0482b6",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        }
+      ],
+      "configurationSources": [
+        {
+          "artifactId": "configuration:16jEc000000PBBZIA4",
+          "verified": true
+        }
+      ],
+      "quotedEvidenceCount": 0,
+      "allQuotesMatchStoredSources": true,
+      "fleetSummaryMatchesDetail": true,
+      "verified": true
+    },
+    {
+      "reportId": "a00Ec00000lsvJPIAY",
+      "planner": "PromptTemplateActions_v1",
+      "status": "Complete",
+      "stageMessage": "Salesforce review complete; category ratings ready",
+      "reviewerModel": "sfdc_ai__DefaultGPT55",
+      "reviewerTemplate": "Ohm_Bundle_Environmental_Review",
+      "declaredReviewerVersion": "WCyeBTg2NZWRDVRViggPve0yyaQfI6t9+0AlEdZ1LCQ=_1",
+      "reviewedAt": "2026-09-07T19:01:45.299Z",
+      "coverage": {
+        "assessedArtifactCount": 4,
+        "artifactCount": 4
+      },
+      "categories": [
+        {
+          "totalArtifactCount": 4,
+          "status": "reviewed",
+          "rating": "A",
+          "label": "Input efficiency",
+          "issues": [],
+          "id": "INPUT",
+          "environmentalMechanism": "Removing unnecessary instruction input may reduce inference work when that source is included in a request.",
+          "coverageStatus": "Complete",
+          "coverageNote": "The supplied source was assessed under the review rubric.",
+          "assessment": "The bundle sources align around email collection, Salesforce retrieval, and personalized schedule generation. No cross artifact redundancy or conflict merits an issue.",
+          "assessedArtifactCount": 4
+        },
+        {
+          "totalArtifactCount": 4,
+          "status": "reviewed",
+          "rating": "A",
+          "label": "Output efficiency",
+          "issues": [],
+          "id": "OUTPUT",
+          "environmentalMechanism": "Avoiding unnecessary generated output may reduce inference work while preserving the required response.",
+          "coverageStatus": "Complete",
+          "coverageNote": "The supplied source was assessed under the review rubric.",
+          "assessment": "The bundle output requirements support a guest-facing schedule with constrained details and ordering. No static output waste issue is supported.",
+          "assessedArtifactCount": 4
+        },
+        {
+          "totalArtifactCount": 4,
+          "status": "unknown",
+          "rating": "UNRATED",
+          "label": "Model fit",
+          "issues": [],
+          "id": "MODEL",
+          "environmentalMechanism": "A suitable smaller model may use less compute; model quality and environmental effects require separate validation.",
+          "coverageStatus": "Unknown",
+          "coverageNote": "No model quality evaluation is available. A verified binding permits candidates only; fit is unproven.",
+          "assessment": "Not every supplied artifact has a known binding, and no model fit evaluation is available for the bundle.",
+          "assessedArtifactCount": 0
+        },
+        {
+          "totalArtifactCount": 4,
+          "status": "reviewed",
+          "rating": "B",
+          "label": "Call efficiency",
+          "issues": [],
+          "id": "CALLS",
+          "environmentalMechanism": "Avoiding unnecessary model invocations may reduce inference work; static source does not establish runtime call frequency.",
+          "coverageStatus": "Complete",
+          "coverageNote": "Static source suitability only. Runtime frequency, repeated execution and complete path coverage are unverified.",
+          "assessment": "The bundle has one evidenced linked prompt path from the topic to the schedule prompt. No repeated equivalent model work is established by the supplied source.",
+          "assessedArtifactCount": 4
+        }
+      ],
+      "artifacts": [
+        {
+          "artifactId": "16jEc000000PAKLIA4",
+          "label": "Prompt Template Actions",
+          "characterCount": 83,
+          "sourceHash": "c0893cac65687cb4411f4fa52fb88b6e0cfac9894b61da7b3360c1bcb3c1df3e",
+          "sourceVersion": "MetadataApi:67.0:PromptTemplateActions.v1:ac4da8df29a7fabaf01c7e96d45257bf0e0833e1616f224d2c47fbc6ee4c87bb",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        },
+        {
+          "artifactId": "179Ec000006G6ijIAC",
+          "label": "Agent Router",
+          "characterCount": 117,
+          "sourceHash": "0204cc6cc8a8ed21695dd1d3fa64ccab53e0f0b66445612da8b90b0f3e72cec5",
+          "sourceVersion": "MetadataApi:67.0:PromptTemplateActions.v1:ac4da8df29a7fabaf01c7e96d45257bf0e0833e1616f224d2c47fbc6ee4c87bb",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        },
+        {
+          "artifactId": "179Ec000006G6ikIAC",
+          "label": "Schedule Generation",
+          "characterCount": 376,
+          "sourceHash": "4437e33d6c78ceaf1652163cc698ef3d05d7d5580443486ae89252d1daa53434",
+          "sourceVersion": "MetadataApi:67.0:PromptTemplateActions.v1:ac4da8df29a7fabaf01c7e96d45257bf0e0833e1616f224d2c47fbc6ee4c87bb",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "A"
+          }
+        },
+        {
+          "artifactId": "172Ec00000VL5ndIAD",
+          "label": "Generate Personalized Schedule",
+          "characterCount": 832,
+          "sourceHash": "dce551c323ad092321d0f2389dc1247dbaeecf140cf968ff071354827bb47628",
+          "sourceVersion": "MetadataApi:67.0:ul8eo8Wmi00b0AAaWZ5z5Q0cwb3Wq2HdIrEhx41Dtl4=_1:d82c67f681f03070d2033dd8dd2534464296bdd7d7333600f9b8f40ff3e4b86f",
+          "verified": true,
+          "ratings": {
+            "INPUT": "A",
+            "OUTPUT": "A",
+            "MODEL": "UNRATED",
+            "CALLS": "B"
+          }
+        }
+      ],
+      "configurationSources": [
+        {
+          "artifactId": "configuration:16jEc000000PAKLIA4",
+          "verified": true
+        }
+      ],
+      "quotedEvidenceCount": 3,
+      "allQuotesMatchStoredSources": true,
+      "fleetSummaryMatchesDetail": true,
+      "verified": true
+    }
+  ],
+  "allVerified": true
+}
